@@ -1,0 +1,71 @@
+<html>
+
+MIME ONLY <input id="zip_ext"  name="ZIP ONLY" type="file" accept=".zip"/><p/>
+EXTENSION ONLY <input id="zip_mime" name="MIME ONLY" type="file" accept="application/zip"/><p/>
+BOTH <input id="zip_both" name="ZIP AND MIME" type="file" accept=".zip,application/zip"/><p/>
+<p/>
+<div id="results" style="font-size: 100px; font-weight: bold; color: purple;">CHOOSE</div>
+
+
+<script>
+
+var zip_both = document.getElementById('zip_both');
+zip_both.onchange = function(e) {
+  var results = document.getElementById('results');
+  var ext = this.value.match(/\.([^\.]+)$/)[1];
+  var type = this.files[0].type;
+
+  switch (type) {
+    case 'application/x-zip-compressed':
+    case 'application/zip':
+      results.innerHTML = 'Success';
+      break;
+    default: {
+	  switch (ext) {
+	    case 'zip':
+	      results.innerHTML = 'Success';
+	      break;
+	    default:
+	      results.innerHTML = 'Failed';
+	      this.value = '';
+	  }
+	}
+  }
+};
+
+
+var zip_ext = document.getElementById('zip_ext');
+zip_ext.onchange = function(e) {
+  var results = document.getElementById('results');
+  var ext = this.value.match(/\.([^\.]+)$/)[1];
+  switch (ext) {
+    case 'zip':
+      results.innerHTML = 'Success';
+      break;
+    default:
+      results.innerHTML = 'Failed';
+      this.value = '';
+  }
+};
+
+var zip_mime = document.getElementById('zip_mime');
+zip_mime.onchange = function(e) {
+  var results = document.getElementById('results');
+  var type = this.files[0].type;
+  switch (type) {
+    case 'application/x-zip-compressed':
+    case 'application/zip':
+      results.innerHTML = 'Success';
+      break;
+    default:
+      results.innerHTML = 'Failed';
+      this.value = '';
+  }
+};
+
+
+</script>
+
+
+
+</html>
