@@ -1,0 +1,10 @@
+<html><body>
+<div id="counter" style="font-size: 100px; font-color: red;"></div>
+<script>
+var ctr = document.getElementById("counter");
+setInterval(() => {
+    var dt = new Date();
+    ctr.innerHTML =`${dt.toString()}.${dt.getMilliseconds()}`;  
+}, 50);
+</script>
+</body></html>
