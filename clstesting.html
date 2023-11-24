@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Testing CLS</title>
+    <style>
+        .shifting-container {
+            display: flex;
+            gap: 10px;
+        }
+
+        .shifting-element {
+            width: 100px;
+            height: 100px;
+            background-color: lightblue;
+            transition: transform 0.5s;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Testing CLS without Images</h1>
+
+    <div class="shifting-container">
+        <div class="shifting-element"></div>
+        <div class="shifting-element"></div>
+    </div>
+
+    <script>
+        // Simulate adding a new element after a delay
+        setTimeout(() => {
+            const newElement = document.createElement('div');
+            newElement.className = 'shifting-element';
+            document.querySelector('.shifting-container').appendChild(newElement);
+        }, 5000); // Introduce a delay of 5 seconds
+    </script>
+
+</body>
+</html>
