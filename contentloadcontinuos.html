@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Continuous Content Loading</title>
+    <style>
+        #content-container {
+            max-width: 600px;
+            margin: 0 auto;
+        }
+    </style>
+    <script>
+        // Simulated data for continuous loading
+        const simulatedData = [
+            "Content 1",
+            "Content 2",
+            "Content 3",
+            // Add more content as needed
+        ];
+
+        // Function to load more content
+        function loadMoreContent() {
+            const contentContainer = document.getElementById('content-container');
+
+            simulatedData.forEach(item => {
+                const paragraph = document.createElement('p');
+                paragraph.textContent = item;
+                contentContainer.appendChild(paragraph);
+            });
+        }
+
+        // Load initial content when the page loads
+        window.onload = loadMoreContent;
+    </script>
+</head>
+<body>
+
+    <h1>Continuous Content Loading</h1>
+    
+    <div id="content-container">
+        <!-- Content will be dynamically loaded here -->
+    </div>
+
+    <button onclick="loadMoreContent()">Load More</button>
+
+</body>
+</html>
