@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Delayed Document Complete</title>
+</head>
+<body>
+
+<!-- Your HTML content goes here -->
+
+<script>
+    // Simulating a delay of 8 seconds before triggering document.complete
+    setTimeout(function() {
+        window.addEventListener('load', function() {
+            // Your code that depends on document.complete goes here
+            console.log('document.complete event fired after delay');
+        });
+    }, 8000); // 8000 milliseconds = 8 seconds
+</script>
+
+</body>
+</html>
