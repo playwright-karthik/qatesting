@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Delayed DOMContentLoaded</title>
+</head>
+<body>
+
+<!-- Your HTML content goes here -->
+
+<script>
+    // Simulating a delay of 5 seconds before triggering DOMContentLoaded
+    setTimeout(function() {
+        document.addEventListener('DOMContentLoaded', function() {
+            // Your code that depends on DOMContentLoaded goes here
+            console.log('DOMContentLoaded event fired after delay');
+        });
+    }, 5000); // 5000 milliseconds = 5 seconds
+</script>
+
+</body>
+</html>
