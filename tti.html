@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Time to Interactive Test</title>
+    <script>
+        function simulateLongTask() {
+            // Simulate a long-running task (e.g., fetching data)
+            const start = Date.now();
+            while (Date.now() - start < 5000) {
+                // Simulate processing time
+            }
+            document.getElementById("result").innerText = "Task completed!";
+        }
+    </script>
+</head>
+<body>
+    <h1>Click the button to simulate a long task</h1>
+    <button onclick="simulateLongTask()">Simulate Task</button>
+    <p id="result"></p>
+</body>
+</html>
