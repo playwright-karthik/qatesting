@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Delayed Render Start Test</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+
+        .content {
+            text-align: center;
+            padding: 20px;
+            background-color: #f0f0f0;
+        }
+    </style>
+    <script>
+        // Simulate a delayed script that starts rendering after a delay
+        setTimeout(function () {
+            document.getElementById('delayedContent').innerText = 'Delayed Content Rendered!';
+        }, 3000); // Delayed render start after 3 seconds
+    </script>
+</head>
+<body>
+    <div class="content">
+        <h1>Hello, this is a delayed render start test!</h1>
+        <p id="delayedContent">This content will render after a delay.</p>
+    </div>
+</body>
+</html>
