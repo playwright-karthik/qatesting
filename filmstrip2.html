@@ -11,6 +11,10 @@
   </style>
 </head>
 <body>
+  <div id="delayedElement">
+    <!-- Content of the delayed element goes here -->
+    <p>This element is delayed and will appear after about 5 seconds.</p>
+  </div>
 
   <div id="counter" style="font-size: 100px; font-color: red;"></div>
 <script>
@@ -20,13 +24,6 @@ setInterval(() => {
     ctr.innerHTML =`${dt.toString()}.${dt.getMilliseconds()}`;  
 }, 50);
 </script>
-
-  <div id="delayedElement">
-    <!-- Content of the delayed element goes here -->
-    <p>This element is delayed and will appear after about 5 seconds.</p>
-  </div>
-
-  <!-- Your content after the delayed element -->
 
   <script>
     // Use JavaScript to show the delayed element after 5 seconds
