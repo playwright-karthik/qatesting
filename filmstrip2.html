@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Delayed Element</title>
+  <style>
+    #delayedElement {
+      display: none; /* Initially hide the element */
+    }
+  </style>
+</head>
+<body>
+
+  <div id="counter" style="font-size: 100px; font-color: red;"></div>
+<script>
+var ctr = document.getElementById("counter");
+setInterval(() => {
+    var dt = new Date();
+    ctr.innerHTML =`${dt.toString()}.${dt.getMilliseconds()}`;  
+}, 50);
+</script>
+
+  <div id="delayedElement">
+    <!-- Content of the delayed element goes here -->
+    <p>This element is delayed and will appear after about 5 seconds.</p>
+  </div>
+
+  <!-- Your content after the delayed element -->
+
+  <script>
+    // Use JavaScript to show the delayed element after 5 seconds
+    setTimeout(function() {
+      document.getElementById('delayedElement').style.display = 'block';
+    }, 5000); // 5000 milliseconds = 5 seconds
+  </script>
+</body>
+</html>
