@@ -15,7 +15,7 @@ class WebServerHandler(BaseHTTPRequestHandler):
             
             self.wfile.write(page.encode('ascii'))
         except (IOError, ValueError):
-            self.send_error(404, "File Not Found {}".format(self.path))
+            self.send_error(500, "File Not Found {}".format(self.path))
 
 def main():
     try:
