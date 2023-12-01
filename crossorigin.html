@@ -7,6 +7,13 @@
     <title>Your Web Page</title>
 </head>
 <body>
-    <!-- Your webpage content goes here -->
+    <div id="counter" style="font-size: 20px; font-color: red;"></div>
+<script>
+var ctr = document.getElementById("counter");
+setInterval(() => {
+    var dt = new Date();
+    ctr.innerHTML =`${dt.toString()}.${dt.getMilliseconds()}`;  
+}, 20);
+</script>
 </body>
 </html>
