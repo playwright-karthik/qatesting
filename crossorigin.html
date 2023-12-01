@@ -1,19 +1,14 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self'">
-    <title>Your Web Page</title>
+    <title>Karthik Cross Origin</title>
 </head>
 <body>
-    <div id="counter" style="font-size: 20px; font-color: red;"></div>
-<script>
-var ctr = document.getElementById("counter");
-setInterval(() => {
-    var dt = new Date();
-    ctr.innerHTML =`${dt.toString()}.${dt.getMilliseconds()}`;  
-}, 20);
-</script>
+<iframe src="https://practice-automation.com/iframes/" sandbox=""></iframe>iframe
+<p> sandbox="allow-same-origin"
+    Allows the iframe content to be treated as being from the same origin </br>
+sandbox=""
+    Applies all restrictions
+</p> 
 </body>
 </html>
