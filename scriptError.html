@@ -3,18 +3,19 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>JavaScript Request Error</title>
+  <title>Webpage with Script Error</title>
 </head>
 <body>
 
+<h1>This is a Webpage with a Script Error</h1>
+
 <script>
   document.addEventListener('DOMContentLoaded', function() {
-    // Simulated error in the script
+    // Simulated script error - accessing an undefined variable
     try {
-      // Simulated request code with a deliberate error
-      fetch(undefinedVariable);
+      console.log(undefinedVariable); // This line intentionally causes an error
     } catch (error) {
-      console.error('Error in script:', error.message);
+      console.error('Script Error:', error.message);
     }
   });
 </script>
