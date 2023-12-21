@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HTML with request failures</title>
+
+  <p> 404 Not Found:</p>
+<!-- Example: Requesting a nonexistent CSS file -->
+<link rel="stylesheet" type="text/css" href="nonexistent.css">
+  
+<p>403 Forbidden:</p>
+<!-- Example: Requesting a resource without proper permissions -->
+<img src="protected-image.jpg" alt="Protected Image">
+  
+<p>500 Internal Server Error:</p>
+<!-- Example: Incorrect server-side script causing an internal error -->
+<script src="malformed-script.php"></script>
+  
+<p>Timeouts:</p>
+<!-- Example: Requesting a resource from a slow or unresponsive server -->
+<img src="slow-server-image.jpg" alt="Slow Server Image">
+  
+<p>Network Issues:</p>
+<!-- Example: Requesting a resource when offline -->
+<img src="offline-image.jpg" alt="Offline Image">
+</head>
+<body>
+
+    <header>
+        <h1>Welcome to My Website</h1>
+    </header>
+
+    <section>
+        <h2>About Us</h2>
+        <p>This is a sample HTML page with request failures.</p>
+    </section>
+
+    <footer>
+        <p>&copy; 2023 My Website. All rights reserved.</p>
+    </footer>
+
+</body>
+</html>
