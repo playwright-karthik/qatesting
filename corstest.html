@@ -1,24 +1,21 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cross Origin Example</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cross-Origin Iframe</title>
 </head>
 <body>
 
-  <h2>HTML Forms</h2>
-<form action="/action_page.php">
-  <label for="fname">First name:</label><br>
-  <input type="text" id="fname" name="fname" value="John"><br>
-  <label for="lname">Last name:</label><br>
-  <input type="text" id="lname" name="lname" value="Doe"><br><br>
-  <input type="submit" value="Submit">
-</form> 
-<p>If you click the "Submit" button, it wont work".</p>
-
-    <h1>iFrame here</h1>
-    <iframe src="https://www.w3schools.com/html/tryit.asp?filename=tryhtml_form_submit" width="50%" height="300" style="border:1px solid black;">
+<iframe
+  src="http://autopract.com/selenium/form1/" 
+  width="600" 
+  height="400" 
+  frameborder="0" 
+  allow="fullscreen; accelerometer; gyroscope" 
+  sandbox="allow-same-origin allow-scripts" 
+>
+</iframe>
 
 </body>
 </html>
