@@ -3,24 +3,26 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>40x and 50x Errors requests</title>
+  <title>Multiple Requests for 40x and 50x</title>
 </head>
 <body>
+  <script>
+    async function fetchData(url) {
+      try {
+        const response = await fetch(url);
+        const data = await response.json();
+        console.log(data);
+      } catch (error) {
+        console.error('Error fetching data:', error);
+      }
+    }
 
-<script>
-  fetchData('https://httpstat.us/400');
-  fetchData('https://httpstat.us/401');
-  fetchData('https://httpstat.us/402');
-  fetchData('https://httpstat.us/403');
-  fetchData('https://httpstat.us/404');
-  fetchData('https://httpstat.us/405');
-  fetchData('https://httpstat.us/406');
-  fetchData('https://httpstat.us/407');
-  fetchData('https://httpstat.us/408');
-  fetchData('https://httpstat.us/409');
-  fetchData('https://httpstat.us/410');
-  
-</script>
-
+    // Make requests
+    fetchData('https://httpstat.us/400');
+    fetchData('https://api.example.com/endpoint2');
+    fetchData('https://api.example.com/endpoint3');
+    fetchData('https://api.example.com/endpoint4');
+    fetchData('https://api.example.com/endpoint5');
+  </script>
 </body>
 </html>
