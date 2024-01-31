@@ -3,25 +3,25 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Slow Page Load Simulation</title>
+    <title>Delayed Page Load</title>
+    <script>
+        // Simulate a delayed page load
+        setTimeout(function() {
+            document.getElementById('content').style.display = 'block';
+        }, 3000); // 3000ms delay
+    </script>
+    <style>
+        /* Hide content initially */
+        #content {
+            display: none;
+        }
+    </style>
 </head>
 <body>
-    <h1>Your Page Content Goes Here</h1>
-
-    <!-- Simulate loading an external resource (e.g., an image) -->
-    <img src="https://images.app.goo.gl/gq8DhZmYxqe9mbLy7" alt="Placeholder Image">
-
-    <script>
-        // Simulate a delay of 3000ms (3 seconds)
-        setTimeout(function() {
-            // Simulate additional content loading or processing
-
-            // For example, dynamically adding content after delay
-            var additionalContent = document.createElement('p');
-            additionalContent.textContent = 'Additional content loaded after 3000ms';
-            document.body.appendChild(additionalContent);
-
-        }, 3000); // Adjust the time in milliseconds as needed
-    </script>
+    <h1>Loading Page</h1>
+    <div id="content">
+        <h2>Delayed Content</h2>
+        <p>This content appears after a delay of 3000ms.</p>
+    </div>
 </body>
 </html>
