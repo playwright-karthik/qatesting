@@ -1,20 +1,27 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Cross-Origin Iframe</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Slow Page Load Simulation</title>
 </head>
 <body>
+    <h1>Your Page Content Goes Here</h1>
 
-<iframe
-  src="https://practice-automation.com/modals/" 
-  width="600" 
-  height="400" 
-  frameborder="0" 
-  allow="fullscreen; accelerometer; gyroscope" 
->
-</iframe>
-/*sandbox="allow-same-origin allow-modals" */
+    <!-- Simulate loading an external resource (e.g., an image) -->
+    <img src="https://images.app.goo.gl/gq8DhZmYxqe9mbLy7" alt="Placeholder Image">
+
+    <script>
+        // Simulate a delay of 3000ms (3 seconds)
+        setTimeout(function() {
+            // Simulate additional content loading or processing
+
+            // For example, dynamically adding content after delay
+            var additionalContent = document.createElement('p');
+            additionalContent.textContent = 'Additional content loaded after 3000ms';
+            document.body.appendChild(additionalContent);
+
+        }, 3000); // Adjust the time in milliseconds as needed
+    </script>
 </body>
 </html>
