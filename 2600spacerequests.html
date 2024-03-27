@@ -20,7 +20,7 @@ async function makeRequests() {
   try {
     for (let i = 0; i < 2600; i++) {
       await sendRequest(i + 1, responseContainer);
-      await delay(5); // Adjust delay as needed to prevent resource exhaustion
+      await delay(1); // Adjust delay as needed to prevent resource exhaustion
     }
   } catch (error) {
     console.error('Error making requests:', error);
