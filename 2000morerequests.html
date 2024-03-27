@@ -16,16 +16,21 @@
 <script>
 async function makeRequests() {
   const responseContainer = document.getElementById("response-container");
+  const requests = [];
 
   try {
-    for (let i = 0; i < 2005; i++) {
-      const response = await fetch('https://httpbin.org/status/200');
-      const responseData = await response.json();
-
-      const responseDiv = document.createElement('div');
-      responseDiv.textContent = `Request ${i + 1}: ${responseData.url}`;
-      responseContainer.appendChild(responseDiv);
+    for (let i = 0; i < 2000; i++) {
+      requests.push(fetch('https://httpbin.org/status/200'));
     }
+
+    const responses = await Promise.all(requests);
+
+    responses.forEach(async (response, index) => {
+      const responseData = await response.json();
+      const responseDiv = document.createElement('div');
+      responseDiv.textContent = `Request ${index + 1}: ${responseData.url}`;
+      responseContainer.appendChild(responseDiv);
+    });
   } catch (error) {
     console.error('Error making requests:', error);
   }
