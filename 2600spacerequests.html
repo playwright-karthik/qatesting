@@ -18,9 +18,9 @@ async function makeRequests() {
   const responseContainer = document.getElementById("response-container");
 
   try {
-    for (let i = 0; i < 2550; i++) {
+    for (let i = 0; i < 2600; i++) {
       await sendRequest(i + 1, responseContainer);
-      await delay(100); // Adjust delay as needed to prevent resource exhaustion
+      await delay(5); // Adjust delay as needed to prevent resource exhaustion
     }
   } catch (error) {
     console.error('Error making requests:', error);
@@ -29,7 +29,7 @@ async function makeRequests() {
 
 async function sendRequest(requestNumber, container) {
   try {
-    const response = await fetch('https://httpbin.org/status/200');
+    const response = await fetch('https://httpbin.org/bytes/100');
     const responseData = await response.json();
 
     const responseDiv = document.createElement('div');
