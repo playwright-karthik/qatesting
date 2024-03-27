@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Multiple Requests Example</title>
+</head>
+<body>
+
+<h1>Multiple Requests Example</h1>
+
+<div id="response-container">
+  <!-- Responses will be displayed here -->
+</div>
+
+<script>
+async function makeRequests() {
+  const responseContainer = document.getElementById("response-container");
+
+  try {
+    for (let i = 0; i < 2550; i++) {
+      await sendRequest(i + 1, responseContainer);
+      await delay(100); // Adjust delay as needed to prevent resource exhaustion
+    }
+  } catch (error) {
+    console.error('Error making requests:', error);
+  }
+}
+
+async function sendRequest(requestNumber, container) {
+  try {
+    const response = await fetch('https://httpbin.org/status/200');
+    const responseData = await response.json();
+
+    const responseDiv = document.createElement('div');
+    responseDiv.textContent = `Request ${requestNumber}: ${responseData.url}`;
+    container.appendChild(responseDiv);
+  } catch (error) {
+    console.error(`Error making request ${requestNumber}:`, error);
+  }
+}
+
+function delay(ms) {
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+makeRequests();
+</script>
+
+</body>
+</html>
