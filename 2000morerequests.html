@@ -20,7 +20,7 @@ async function makeRequests() {
 
   try {
     for (let i = 0; i < 2600; i++) {
-      requests.push(fetch('https://httpbin.org/status/200'));
+      requests.push(fetch('https://httpbin.org/bytes/100'));
     }
 
     const responses = await Promise.all(requests);
