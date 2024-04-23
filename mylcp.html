@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Manual LCP Test</title>
+</head>
+<body>
+  <div id="content" style="display: none;">
+    <!-- Your page content goes here -->
+    <h1>Welcome to My Website</h1>
+    <p>This is a sample paragraph.</p>
+    <img src="large-image.jpg" alt="Large Image">
+  </div>
+
+  <script>
+    // Simulate LCP of 7 seconds (7000 milliseconds)
+    setTimeout(() => {
+      document.getElementById('content').style.display = 'block';
+    }, 7000); // Adjust the delay time here to simulate different LCP values
+  </script>
+</body>
+</html>
