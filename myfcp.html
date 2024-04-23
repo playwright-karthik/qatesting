@@ -32,13 +32,13 @@
   </div>
 
   <script>
-    // Delay to simulate FCP
+    // Delay to simulate FCP of 7 seconds
     setTimeout(() => {
       // Measure and display First Contentful Paint (FCP)
       const time = performance.now();
       console.log('First Contentful Paint:', time);
       document.getElementById('fcp').textContent = `First Contentful Paint: ${time.toFixed(2)} ms`;
-    }, 7000); // Change this value to set FCP to 500ms or 7seconds=7000ms respectively
+    }, 7000); // Set the delay to 7000 milliseconds for 7 seconds FCP
   </script>
   
   <div id="fcp" style="position: fixed; bottom: 10px; left: 10px; background-color: #fff; padding: 5px;"></div>
