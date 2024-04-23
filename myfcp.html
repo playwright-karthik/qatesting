@@ -32,8 +32,14 @@
   </div>
 
   <script>
+    // Log the current time before the delay
+    console.log('Before delay:', performance.now());
+    
     // Delay to simulate FCP of 7 seconds
     setTimeout(() => {
+      // Log the time after the delay
+      console.log('After delay:', performance.now());
+      
       // Measure and display First Contentful Paint (FCP)
       const time = performance.now();
       console.log('First Contentful Paint:', time);
