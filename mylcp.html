@@ -9,24 +9,32 @@
   <div id="content" style="display: none;">
     <!-- Your page content goes here -->
     <h1>Welcome to My Website</h1>
-    <p>This is a sample paragraph.</p>
+    <p>This is a sample paragraph with some additional text to make it larger and more significant for the LCP.</p>
+    <!-- Larger text element -->
+    <p style="font-size: 24px;">This is a larger text element to contribute to the LCP.</p>
+    <!-- Image -->
     <img id="large-image" src="" alt="Large Image">
   </div>
 
   <script>
-    // Delay for FCP (3 seconds)
+    // Delay for FCP (650 milliseconds)
     setTimeout(() => {
       console.log('First Contentful Paint');
       // You can perform any FCP-related tasks here
-    }, 3000);
+    }, 650);
 
-    // Delay for LCP (6 seconds)
+    // Delay for LCP (3 seconds)
     setTimeout(() => {
       document.getElementById('content').style.display = 'block';
-      document.getElementById('large-image').src = "https://raw.githubusercontent.com/playwright-karthik/qatesting/main/favicon5050.png";
+      // Create the image element
+      const image = new Image();
+      // Set the source of the image
+      image.src = "https://raw.githubusercontent.com/playwright-karthik/qatesting/main/favicon5050.png";
+      // Add the image to the container
+      document.getElementById('large-image').src = image.src;
       console.log('Largest Contentful Paint');
       // You can perform any LCP-related tasks here
-    }, 6000); // Adjust the delay time here to simulate different LCP values
+    }, 3000); // Adjust the delay time here to simulate different LCP values
   </script>
 </body>
 </html>
