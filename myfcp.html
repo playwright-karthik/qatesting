@@ -3,50 +3,20 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>FCP Test</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      margin: 0;
-      padding: 0;
-    }
-    .container {
-      max-width: 800px;
-      margin: 0 auto;
-      padding: 20px;
-    }
-  </style>
+  <title>Manual FCP Test</title>
 </head>
 <body>
-  <div class="container">
-    <h1>FCP Test</h1>
-    <p>This is a simple HTML page to test the First Contentful Paint (FCP).</p>
-    <p>You can modify the content below to see how it affects the FCP measurement.</p>
-    
-    <!-- Start of content that you can modify -->
-    <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
-    <p>Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
-    <p>Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.</p>
-    <p>Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
-    <!-- End of content that you can modify -->
+  <div id="content" style="display: none;">
+    <!-- Your page content goes here -->
+    <h1>Welcome to My Website</h1>
+    <p>This is a sample paragraph.</p>
   </div>
 
   <script>
-    // Log the current time before the delay
-    console.log('Before delay:', performance.now());
-    
-    // Delay to simulate FCP of 7 seconds
+    // Simulate FCP of 3 seconds (3000 milliseconds)
     setTimeout(() => {
-      // Log the time after the delay
-      console.log('After delay:', performance.now());
-      
-      // Measure and display First Contentful Paint (FCP)
-      const time = performance.now();
-      console.log('First Contentful Paint:', time);
-      document.getElementById('fcp').textContent = `First Contentful Paint: ${time.toFixed(2)} ms`;
-    }, 7000); // Set the delay to 7000 milliseconds for 7 seconds FCP
+      document.getElementById('content').style.display = 'block';
+    }, 7000); // Adjust the delay time here to simulate different FCP values
   </script>
-  
-  <div id="fcp" style="position: fixed; bottom: 10px; left: 10px; background-color: #fff; padding: 5px;"></div>
 </body>
 </html>
