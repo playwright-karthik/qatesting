@@ -17,9 +17,14 @@
   </div>
 
   <script>
+    // Start timing for FCP
+    console.time('FCP');
+
     // Delay for FCP (650 milliseconds)
     setTimeout(() => {
       console.log('First Contentful Paint');
+      // Stop timing for FCP
+      console.timeEnd('FCP');
       // You can perform any FCP-related tasks here
     }, 650);
 
@@ -32,7 +37,7 @@
       image.src = "https://raw.githubusercontent.com/playwright-karthik/qatesting/main/favicon5050.png";
       // Add the image to the container
       document.getElementById('large-image').src = image.src;
-      console.log('Largest Contentful Paint');
+      //console.log('Largest Contentful Paint');
       // You can perform any LCP-related tasks here
     }, 3000); // Adjust the delay time here to simulate different LCP values
   </script>
