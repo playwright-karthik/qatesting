@@ -4,13 +4,14 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Redirecting...</title>
-<script>
-    // Redirect to the specified URL
-    window.location.href = "edge://network-error/-337";
-</script>
 </head>
 <body>
-    <!-- Optionally, you can provide a message for users -->
     <p>If you are not automatically redirected, <a href="edge://network-error/-337">click here</a>.</p>
+    <script>
+        // Redirect to the specified URL if not redirected automatically
+        setTimeout(function() {
+            window.location.href = "edge://network-error/-337";
+        }, 5000); // 5000 milliseconds (5 seconds)
+    </script>
 </body>
 </html>
