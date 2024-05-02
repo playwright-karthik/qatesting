@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Loading Page with Delayed Content</title>
+    <style>
+        #loading {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+    </style>
+    <script>
+        function loadContent() {
+            document.getElementById('loading').style.display = 'block';
+            setTimeout(function() {
+                document.getElementById('loading').style.display = 'none';
+                document.getElementById('content').innerText = 'Welcome again!';
+            }, 5000);
+        }
+    </script>
+</head>
+<body>
+    <div id="content">Welcome</div>
+    <button onclick="loadContent()">Load Content</button>
+    <div id="loading">
+        <img src="loading.gif" alt="Loading..." width="50" height="50">
+    </div>
+</body>
+</html>
