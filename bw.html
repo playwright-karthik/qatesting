@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bandwidth Limitation Test</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin-top: 50px;
+        }
+        #results {
+            margin-top: 20px;
+        }
+        .result {
+            margin: 10px 0;
+        }
+    </style>
+</head>
+<body>
+    <h1>Bandwidth Limitation Test</h1>
+    <button id="startTest">Start Test</button>
+    <div id="results"></div>
+
+    <script>
+        document.getElementById('startTest').addEventListener('click', () => {
+            const resources = [
+                'https://example.com/image1.jpg',
+                'https://example.com/image2.jpg',
+                'https://example.com/script.js',
+                'https://example.com/style.css'
+            ];
+
+            const resultsContainer = document.getElementById('results');
+            resultsContainer.innerHTML = '';
+
+            resources.forEach(resource => {
+                const startTime = performance.now();
+                fetch(resource)
+                    .then(response => response.blob())
+                    .then(() => {
+                        const endTime = performance.now();
+                        const timeTaken = endTime - startTime;
+                        const result = document.createElement('div');
+                        result.classList.add('result');
+                        result.textContent = `Resource: ${resource} - Time taken: ${timeTaken.toFixed(2)} ms`;
+                        resultsContainer.appendChild(result);
+                    })
+                    .catch(error => {
+                        const result = document.createElement('div');
+                        result.classList.add('result');
+                        result.textContent = `Resource: ${resource} - Error: ${error.message}`;
+                        resultsContainer.appendChild(result);
+                    });
+            });
+        });
+    </script>
+</body>
+</html>
