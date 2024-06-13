@@ -10,25 +10,20 @@
     </style>
 </head>
 <body>
-<div id="counter"></div>
+    <div id="counter"></div>
 
-<script>
-// Counter script
-var ctr = document.getElementById("counter");
-setInterval(() => {
-    var dt = new Date();
-    ctr.innerHTML = `${dt.toString()}.${dt.getMilliseconds()}`;  
-}, 50);
+    <script>
+    // Function to initialize the counter script
+    function initializeCounter() {
+        var ctr = document.getElementById("counter");
+        setInterval(() => {
+            var dt = new Date();
+            ctr.innerHTML = `${dt.toString()}.${dt.getMilliseconds()}`;  
+        }, 50);
+    }
 
-// Function to add the button after 5 seconds
-setTimeout(() => {
-    var button = document.createElement("button");
-    button.innerHTML = "Click Me";
-    button.onclick = () => {
-        alert("Button Clicked!");
-    };
-    document.body.appendChild(button);
-}, 5000);
-</script>
+    // Delay the initialization by 5 seconds
+    setTimeout(initializeCounter, 5000);
+    </script>
 </body>
 </html>
