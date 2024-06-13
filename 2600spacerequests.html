@@ -18,7 +18,7 @@ async function makeRequests() {
   const responseContainer = document.getElementById("response-container");
 
   try {
-    for (let i = 0; i < 2600; i++) {
+    for (let i = 0; i < 500; i++) {
       await sendRequest(i + 1, responseContainer);
       await delay(1); // Adjust delay as needed to prevent resource exhaustion
     }
