@@ -1,23 +1,40 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Two Iframes Example</title>
-    <style>
-        .container {
-            display: flex;
-            width: 100%;
-            height: 100vh;
-        }
-        iframe {
-            flex: 1;
-            border: none;
-        }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Load URL and Child Requests</title>
+<style>
+    .iframe-container {
+        display: flex;
+        flex-wrap: wrap;
+    }
+    .iframe-container iframe {
+        border: none;
+        margin: 10px; /* Optional: Add some space between iframes */
+    }
+    .iframe-small {
+        width: 50%;
+        height: 50px;
+    }
+    .iframe-large {
+        width: 50%;
+        height: 500px;
+    }
+</style>
 </head>
 <body>
-    <div class="container">
-        <iframe src="https://github.com/playwright-karthik/qatesting"></iframe>
-        <iframe src="https://playwright-karthik.github.io/qatesting/filmstrip.html"></iframe>
-    </div>
+
+<h1>Load URL and Child Requests</h1>
+
+<!-- Container for iframes -->
+<div class="iframe-container">
+    <!-- First iframe with smaller height -->
+    <iframe src="https://investing.thisismoney.co.uk/companies/" class="iframe-small"></iframe>
+    
+    <!-- Second iframe with larger height -->
+    <iframe src="https://playwright-karthik.github.io/qatesting/filmstrip.html" class="iframe-large"></iframe>
+</div>
+
 </body>
 </html>
