@@ -1,29 +1,23 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Counter Example</title>
+    <title>Two Iframes Example</title>
     <style>
-        #counter {
-            font-size: 100px;
-            color: red;
+        .container {
+            display: flex;
+            width: 100%;
+            height: 100vh;
+        }
+        iframe {
+            flex: 1;
+            border: none;
         }
     </style>
 </head>
 <body>
-    <div id="counter"></div>
-
-    <script>
-    // Function to initialize the counter script
-    function initializeCounter() {
-        var ctr = document.getElementById("counter");
-        setInterval(() => {
-            var dt = new Date();
-            ctr.innerHTML = `${dt.toString()}.${dt.getMilliseconds()}`;  
-        }, 50);
-    }
-
-    // Delay the initialization by 5 seconds
-    setTimeout(initializeCounter, 5000);
-    </script>
+    <div class="container">
+        <iframe src="https://github.com/playwright-karthik/qatesting"></iframe>
+        <iframe src="https://playwright-karthik.github.io/qatesting/filmstrip.html"></iframe>
+    </div>
 </body>
 </html>
