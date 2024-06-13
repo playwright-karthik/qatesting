@@ -5,21 +5,24 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Load URL and Child Requests</title>
 <style>
+    body {
+        margin: 0;
+        font-family: Arial, sans-serif;
+    }
     .iframe-container {
         display: flex;
         flex-wrap: wrap;
     }
     .iframe-container iframe {
         border: none;
-        margin: 10px; /* Optional: Add some space between iframes */
+        margin: 10px;
+        flex: 1; /* Make iframes flexible to occupy available space */
     }
     .iframe-small {
-        width: 50%;
         height: 50px;
     }
     .iframe-large {
-        width: 50%;
-        height: 500px;
+        height: 600px; /* Adjust the height of the larger iframe */
     }
 </style>
 </head>
