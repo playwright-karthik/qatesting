@@ -11,18 +11,18 @@
     }
     .iframe-container {
         display: flex;
-        flex-wrap: wrap;
     }
     .iframe-container iframe {
         border: none;
-        margin: 5px;
-        flex: 1; /* Make iframes flexible to occupy available space */
+        margin: 10px;
     }
     .iframe-small {
-        height: 100px;
+        width: 50px;
+        height: 50px;
     }
     .iframe-large {
-        height: 300px; /* Adjust the height of the larger iframe */
+        width: 200px;
+        height: 200px;
     }
 </style>
 </head>
@@ -32,11 +32,11 @@
 
 <!-- Container for iframes -->
 <div class="iframe-container">
-    <!-- First iframe with smaller height -->
-    <iframe src="https://investing.thisismoney.co.uk/companies/" class="iframe-small"></iframe>
+    <!-- First iframe with smaller dimensions -->
+    <iframe src="https://playwright-karthik.github.io/qatesting/filmstrip.html" class="iframe-small"></iframe>
     
-    <!-- Second iframe with larger height -->
-    <iframe src="https://playwright-karthik.github.io/qatesting/filmstrip.html" class="iframe-large"></iframe>
+    <!-- Second iframe with larger dimensions -->
+    <iframe src="https://investing.thisismoney.co.uk/companies/" class="iframe-large"></iframe>
 </div>
 
 </body>
