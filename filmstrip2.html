@@ -1,38 +1,34 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Delayed Element</title>
-  <style>
-    #delayedElement {
-      display: none; /* Initially hide the element */
-    }
-  </style>
+    <title>Counter Example</title>
+    <style>
+        #counter {
+            font-size: 100px;
+            color: red;
+        }
+    </style>
 </head>
 <body>
+<div id="counter"></div>
 
-  <!-- Your content before the delayed element -->
-
-  <div id="delayedElement">
-    <div id="counter" style="font-size: 100px; font-color: red;"></div>
 <script>
+// Counter script
 var ctr = document.getElementById("counter");
 setInterval(() => {
     var dt = new Date();
-    ctr.innerHTML =`${dt.toString()}.${dt.getMilliseconds()}`;  
+    ctr.innerHTML = `${dt.toString()}.${dt.getMilliseconds()}`;  
 }, 50);
+
+// Function to add the button after 5 seconds
+setTimeout(() => {
+    var button = document.createElement("button");
+    button.innerHTML = "Click Me";
+    button.onclick = () => {
+        alert("Button Clicked!");
+    };
+    document.body.appendChild(button);
+}, 5000);
 </script>
-    <p>This element is delayed and will appear after about 5 seconds.</p>
-  </div>
-
-  <!-- Your content after the delayed element -->
-
-  <script>
-    // Use JavaScript to show the delayed element after 5 seconds
-    setTimeout(function() {
-      document.getElementById('delayedElement').style.display = 'block';
-    }, 5000); // 5000 milliseconds = 5 seconds
-  </script>
 </body>
 </html>
