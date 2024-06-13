@@ -11,18 +11,20 @@
     }
     .iframe-container {
         display: flex;
+        flex-direction: column; /* Arrange iframes vertically */
+        align-items: center; /* Center align iframes horizontally */
     }
     .iframe-container iframe {
         border: none;
-        margin: 10px;
+        margin: 5px;
     }
     .iframe-small {
-        width: 50px;
+        width: 100px;
         height: 50px;
     }
     .iframe-large {
-        width: 600px;
-        height: 600px;
+        width: 1000px;
+        height: 8000px;
     }
 </style>
 </head>
@@ -32,11 +34,11 @@
 
 <!-- Container for iframes -->
 <div class="iframe-container">
-    <!-- First iframe with smaller dimensions -->
+    <!-- First iframe with larger dimensions -->
     <iframe src="https://playwright-karthik.github.io/qatesting/filmstrip.html" class="iframe-large"></iframe>
     
-    <!-- Second iframe with larger dimensions -->
-    <iframe src="https://www.airtel.com" class="iframe-small"></iframe>
+    <!-- Second iframe with smaller dimensions -->
+    <iframe src="https://www.airtel.com/" class="iframe-small"></iframe>
 </div>
 
 </body>
