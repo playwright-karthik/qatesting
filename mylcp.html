@@ -3,43 +3,97 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Manual FCP and LCP Test</title>
+  <title>Total Blocking Time (TBT) Test</title>
+  <style>
+    #timer {
+      font-size: 24px;
+      font-weight: bold;
+      margin-left: 20px;
+    }
+    #lcp-element {
+      width: 600px;
+      height: 200px;
+      background-color: lightblue;
+      margin: 20px auto;
+      font-size: 24px;
+      text-align: center;
+      line-height: 200px;
+      display: none; /* Initially hidden */
+    }
+  </style>
 </head>
 <body>
-  <div id="content" style="display: none;">
-    <!-- Your page content goes here -->
-    <h1>Welcome to My Website</h1>
-    <p>This is a sample paragraph with some additional text to make it larger and more significant for the LCP.</p>
-    <!-- Larger text element -->
-    <p style="font-size: 24px;">This is a larger text element to contribute to the LCP.</p>
-    <!-- Image -->
-    <img id="large-image" src="" alt="Large Image">
+  <h1>Total Blocking Time (TBT) Test</h1>
+  <p>This page contains JavaScript code to simulate long tasks and measure Total Blocking Time (TBT).</p>
+  <button id="start">Start Long Task</button>
+  <span id="timer">00:00:00</span>
+  <p id="result"></p>
+
+  <!-- LCP Element -->
+  <div id="lcp-element">
+    This is the Largest Contentful Paint (LCP) element with some characters!
   </div>
 
   <script>
-    // Start timing for FCP
-    console.time('FCP');
+    // Helper function to simulate long tasks
+    function simulateLongTask(duration) {
+      const start = performance.now();
+      while (performance.now() - start < duration) {
+        // Busy loop for 'duration' milliseconds
+      }
+    }
 
-    // Delay for FCP (2000 milliseconds)
-    setTimeout(() => {
-      console.log('First Contentful Paint');
-      // Stop timing for FCP
-      console.timeEnd('FCP');
-      // You can perform any FCP-related tasks here
-    }, 2000);
+    // Measure TBT
+    let totalBlockingTime = 0;
+    const observer = new PerformanceObserver((list) => {
+      list.getEntries().forEach((entry) => {
+        const blockingTime = entry.duration - 50;
+        if (blockingTime > 0) {
+          totalBlockingTime += blockingTime;
+        }
+      });
+    });
 
-    // Delay for LCP (5000 milliseconds)
-    setTimeout(() => {
-      document.getElementById('content').style.display = 'block';
-      // Create the image element
-      const image = new Image();
-      // Set the source of the image
-      image.src = "https://raw.githubusercontent.com/playwright-karthik/qatesting/main/favicon5050.png";
-      // Add the image to the container
-      document.getElementById('large-image').src = image.src;
-      console.log('Largest Contentful Paint');
-      // You can perform any LCP-related tasks here
-    }, 5000); // Adjust the delay time here to simulate different LCP values
+    observer.observe({ type: 'longtask', buffered: true });
+
+    // Stopwatch timer
+    let startTime = Date.now();
+    let timer;
+    function startStopwatch() {
+      timer = setInterval(() => {
+        let elapsedTime = Date.now() - startTime;
+        let seconds = Math.floor((elapsedTime % 60000) / 1000);
+        let minutes = Math.floor((elapsedTime % 3600000) / 60000);
+        let milliseconds = elapsedTime % 1000;
+
+        document.getElementById('timer').innerText = 
+          `${minutes < 10 ? '0' : ''}${minutes}:` +
+          `${seconds < 10 ? '0' : ''}${seconds}:` +
+          `${milliseconds < 100 ? '0' : ''}${Math.floor(milliseconds / 10)}`;
+      }, 10);
+    }
+
+    // Start the stopwatch when the page loads
+    window.addEventListener('load', () => {
+      startStopwatch();
+      performance.mark('fcp');
+      
+      // Load the LCP element after 3 seconds
+      setTimeout(() => {
+        document.getElementById('lcp-element').style.display = 'block';
+      }, 3000);
+    });
+
+    // Event listener to start a long task
+    document.getElementById('start').addEventListener('click', () => {
+      clearInterval(timer); // Stop the stopwatch
+      simulateLongTask(200); // Simulate a 200ms long task
+      setTimeout(() => {
+        simulateLongTask(300); // Simulate a 300ms long task
+        simulateLongTask(150); // Simulate a 150ms long task
+        document.getElementById('result').innerText = `Total Blocking Time: ${totalBlockingTime.toFixed(2)} ms`;
+      }, 1000);
+    });
   </script>
 </body>
 </html>
