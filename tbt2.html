@@ -14,13 +14,24 @@
         }
 
         window.addEventListener('load', () => {
-            // Simulate First Contentful Paint (FCP)
-            document.getElementById('content').innerText = 'Content Loaded';
+            // Simulate First Contentful Paint (FCP) at 2 seconds
+            setTimeout(() => {
+                document.getElementById('content').innerText = 'Content Loaded';
+                
+                // Simulate long tasks
+                setTimeout(() => simulateLongTask(60), 1000); // Task A: 60 ms at 3s
+                setTimeout(() => simulateLongTask(80), 2000); // Task B: 80 ms at 4s
+                setTimeout(() => simulateLongTask(55), 3000); // Task C: 55 ms at 5s
 
-            // Simulate long tasks
-            setTimeout(() => simulateLongTask(60), 1000); // Task A: 60 ms at 1s
-            setTimeout(() => simulateLongTask(80), 2000); // Task B: 80 ms at 2s
-            setTimeout(() => simulateLongTask(55), 3000); // Task C: 55 ms at 3s
+                // Simulate Largest Contentful Paint (LCP) at 5 seconds
+                setTimeout(() => {
+                    const lcpContent = document.createElement('div');
+                    lcpContent.id = 'lcp-content';
+                    lcpContent.innerText = 'Larger Content Loaded';
+                    lcpContent.style.fontSize = '48px';
+                    document.body.appendChild(lcpContent);
+                }, 3000); // 3 seconds after FCP (5 seconds from page load)
+            }, 2000); // 2 seconds after page load
         });
     </script>
 </head>
