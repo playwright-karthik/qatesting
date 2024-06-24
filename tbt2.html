@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test TBT</title>
+    <script>
+        // Function to simulate a long task
+        function simulateLongTask(duration) {
+            const start = performance.now();
+            while (performance.now() - start < duration) {
+                // Busy-wait loop to simulate blocking
+            }
+        }
+
+        window.addEventListener('load', () => {
+            // Simulate First Contentful Paint (FCP)
+            document.getElementById('content').innerText = 'Content Loaded';
+
+            // Simulate long tasks
+            setTimeout(() => simulateLongTask(60), 1000); // Task A: 60 ms at 1s
+            setTimeout(() => simulateLongTask(80), 2000); // Task B: 80 ms at 2s
+            setTimeout(() => simulateLongTask(55), 3000); // Task C: 55 ms at 3s
+        });
+    </script>
+</head>
+<body>
+    <h1>Testing Total Blocking Time (TBT)</h1>
+    <div id="content">Loading...</div>
+</body>
+</html>
