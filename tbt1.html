@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Total Blocking Time (TBT) Test</title>
+</head>
+<body>
+  <h1>Total Blocking Time (TBT) Test</h1>
+  <p>This page contains JavaScript code to simulate long tasks and measure Total Blocking Time (TBT).</p>
+  <button id="start">Start Long Task</button>
+  <p id="result"></p>
+  
+  <script>
+    // Helper function to simulate long tasks
+    function simulateLongTask(duration) {
+      const start = performance.now();
+      while (performance.now() - start < duration) {
+        // Busy loop for 'duration' milliseconds
+      }
+    }
+
+    // Measure TBT
+    let totalBlockingTime = 0;
+    const observer = new PerformanceObserver((list) => {
+      list.getEntries().forEach((entry) => {
+        const blockingTime = entry.duration - 50;
+        if (blockingTime > 0) {
+          totalBlockingTime += blockingTime;
+        }
+      });
+    });
+
+    observer.observe({ type: 'longtask', buffered: true });
+
+    // Event listener to start a long task
+    document.getElementById('start').addEventListener('click', () => {
+      simulateLongTask(200); // Simulate a 200ms long task
+      document.getElementById('result').innerText = `Total Blocking Time: ${totalBlockingTime.toFixed(2)} ms`;
+    });
+
+    // Simulate First Contentful Paint (FCP)
+    window.addEventListener('load', () => {
+      performance.mark('fcp');
+    });
+
+    // Simulate more long tasks after FCP
+    setTimeout(() => {
+      simulateLongTask(300); // Simulate a 300ms long task
+      simulateLongTask(150); // Simulate a 150ms long task
+    }, 1000);
+  </script>
+</body>
+</html>
