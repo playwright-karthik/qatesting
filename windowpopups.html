@@ -10,7 +10,8 @@
         }
         
         function openDelayedContentWindow(url, delay) {
-            const newWindow = window.open('', '_blank', 'width=800,height=600');
+            const newWindow = window.open('about:blank', '_blank', 'width=800,height=600');
+            newWindow.document.write("<p>Loading...</p>"); // Initial content to keep the window open
             setTimeout(() => {
                 newWindow.location.href = url;
             }, delay);
