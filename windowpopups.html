@@ -8,6 +8,11 @@
         function openNewWindow(url) {
             window.open(url, '_blank', 'width=500,height=400');
         }
+        function openDelayedWindow(url, delay) {
+            setTimeout(() => {
+                window.open(url, '_blank', 'width=800,height=600');
+            }, delay);
+        }
     </script>
 </head>
 <body>
@@ -15,5 +20,6 @@
     <button onclick="openNewWindow('https://the-internet.herokuapp.com/')">Open Script testing</button>
     <button onclick="openNewWindow('https://httpbin.org')">Open HTTPBin</button>
     <button onclick="openNewWindow('https://badssl.com')">Open BadSSL</button>
+    <button onclick="openDelayedWindow('https://www.airtel.com', 20000)">Open Airtel (20s Delay)</button>
 </body>
 </html>
