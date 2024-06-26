@@ -3,16 +3,27 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Popup Example</title>
+<title>Popup Example with Content</title>
 <script>
     window.onload = function() {
-        var url = "https://www.google.com";
-        var options = "width=800,height=600,scrollbars=yes,resizable=yes";
-        window.open(url, "_blank", options);
+        // Function to open the popup window
+        function openPopup() {
+            var url = "https://www.google.com";
+            var options = "width=800,height=600,scrollbars=yes,resizable=yes";
+            window.open(url, "_blank", options);
+        }
+
+        // Attach an event listener to a button (or any other element)
+        var button = document.getElementById("openPopupBtn");
+        button.addEventListener("click", openPopup);
     };
 </script>
 </head>
 <body>
-<!-- No content needed for this example -->
+<div style="text-align: center; margin-top: 50px;">
+    <h2>Welcome to the Parent Window</h2>
+    <p>Click the button below to open a popup window with Google:</p>
+    <button id="openPopupBtn">Open Google</button>
+</div>
 </body>
 </html>
