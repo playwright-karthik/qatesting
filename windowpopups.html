@@ -5,12 +5,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Window Popup Example</title>
     <script>
-        function openNewWindow() {
-            window.open('https://www.google.com', '_blank', 'width=500,height=300');
+        function openNewWindow(url) {
+            window.open(url, '_blank', 'width=500,height=400');
         }
     </script>
 </head>
 <body>
-    <button onclick="openNewWindow()">Open Google</button>
+    <button onclick="openNewWindow('https://www.google.com')">Open Google</button>
+    <button onclick="openNewWindow('https://httpbin.org')">Open HTTPBin</button>
+    <button onclick="openNewWindow('https://badssl.com')">Open BadSSL</button>
 </body>
 </html>
