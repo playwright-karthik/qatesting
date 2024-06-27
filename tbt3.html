@@ -33,7 +33,7 @@
             setTimeout(() => {
                 document.getElementById('content').innerText = 'Content Loaded';
 
-                // Start simulating long tasks 1 second after FCP (3 seconds from page load)
+                // Start simulating long tasks 2 second after FCP (2+2=4 seconds from page load)
                 setTimeout(() => {
                     simulateLongTask(60); // Task A: 60 ms
                     setTimeout(() => {
@@ -51,8 +51,8 @@
                             }, 0); // LCP after the last task
                         }, 80); // Start Task C after Task B
                     }, 60); // Start Task B after Task A
-                }, 2000); // 1 second after FCP
-            }, 1000); // 1 second after page load
+                }, 2000); // 2 second after FCP
+            }, 2000); // 2 second after page load
         });
     </script>
 </head>
