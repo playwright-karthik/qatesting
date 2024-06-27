@@ -33,7 +33,7 @@
         <button type="submit">Get Metrics</button>
     </form>
     <div id="metrics"></div>
-    <iframe id="iframe" sandbox="allow-scripts allow-same-origin"></iframe>
+    <iframe id="iframe" sandbox="allow-scripts"></iframe>
 
     <script>
         document.getElementById('urlForm').addEventListener('submit', function(event) {
@@ -44,7 +44,7 @@
 
         document.getElementById('iframe').addEventListener('load', function() {
             let iframeWindow = document.getElementById('iframe').contentWindow;
-            setTimeout(function() { // Delay to allow for metrics collection
+            try {
                 let navigationTiming = iframeWindow.performance.getEntriesByType('navigation')[0];
                 let resources = iframeWindow.performance.getEntriesByType('resource');
                 let lcp, cls = 0, fcp, tti, visuallyComplete;
@@ -90,7 +90,13 @@
                     <p><strong>Visually Complete (ms):</strong> ${visuallyComplete}</p>
                     <p><strong>Time To Interactive (ms):</strong> ${tti}</p>
                 `;
-            }, 5000); // Adjust the timeout as needed
+            } catch (e) {
+                console.error('Cross-origin access error:', e);
+                document.getElementById('metrics').innerHTML = `
+                    <h2>Error</h2>
+                    <p>Unable to access performance metrics for ${iframeWindow.location.href} due to cross-origin restrictions.</p>
+                `;
+            }
         });
     </script>
 </body>
