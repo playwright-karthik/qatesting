@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Page Metrics</title>
+<script>
+function fetchPageMetrics() {
+    var url = document.getElementById('urlInput').value;
+
+    // Validate URL
+    if (!url) {
+        alert('Please enter a valid URL.');
+        return;
+    }
+
+    // Create an invisible iframe to load the URL
+    var iframe = document.createElement('iframe');
+    iframe.style.display = 'none';
+    document.body.appendChild(iframe);
+
+    // Load the URL in the iframe
+    iframe.src = url;
+
+    // Wait for the iframe to load
+    iframe.onload = function() {
+        // Access metrics from the iframe's console
+        var iframeConsole = iframe.contentWindow.console;
+
+        // Check if console is available
+        if (!iframeConsole) {
+            alert('Failed to load page metrics.');
+            return;
+        }
+
+        // Log performance metrics
+        iframeConsole.log('DOMContentLoaded:', iframeConsole.timeStamp);
+        iframeConsole.log('Load event:', iframeConsole.timeStamp + iframeConsole.timeToInteractive);
+        iframeConsole.log('Document complete:', iframeConsole.timeStamp + iframeConsole.loadEventEnd);
+    };
+}
+</script>
+</head>
+<body>
+<h1>Page Metrics</h1>
+<p>Enter a URL to fetch page metrics:</p>
+<input type="text" id="urlInput" placeholder="Enter URL">
+<button onclick="fetchPageMetrics()">Fetch Metrics</button>
+</body>
+</html>
