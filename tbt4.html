@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test TBT</title>
+    <script>
+        let totalBlockingTime = 0;
+
+        // Function to simulate a long task
+        function simulateLongTask(duration) {
+            const start = performance.now();
+            while (performance.now() - start < duration) {
+                // Busy-wait loop to simulate blocking
+            }
+        }
+
+        // Set up a PerformanceObserver to measure long tasks
+        const observer = new PerformanceObserver((list) => {
+            list.getEntries().forEach((entry) => {
+                const blockingTime = entry.duration - 50;
+                if (blockingTime > 0) {
+                    totalBlockingTime += blockingTime;
+                }
+            });
+            document.getElementById('tbt').innerText = `Total Blocking Time (TBT): ${totalBlockingTime.toFixed(2)} ms`;
+        });
+
+        observer.observe({ type: 'longtask', buffered: true });
+
+        window.addEventListener('load', () => {
+            // Simulate First Contentful Paint (FCP) immediately
+            document.getElementById('content').innerText = 'Content Loaded';
+
+            // Start simulating long tasks immediately after FCP
+            setTimeout(() => {
+                simulateLongTask(60); // Task A: 60 ms
+
+                // Start Task B after 20 miliseconds from Task A
+                setTimeout(() => {
+                    simulateLongTask(80); // Task B: 80 ms
+
+                    // Start Task C after 20 miliseconds from Task B
+                    setTimeout(() => {
+                        simulateLongTask(55); // Task C: 55 ms
+
+                        // Simulate Largest Contentful Paint (LCP) after all long tasks are finished
+                        setTimeout(() => {
+                            const lcpContent = document.createElement('div');
+                            lcpContent.id = 'lcp-content';
+                            lcpContent.innerText = 'Larger Content Loaded';
+                            lcpContent.style.fontSize = '48px';
+                            document.body.appendChild(lcpContent);
+                        }, 0); // LCP after the last task
+                    }, 20); // Wait 20 miliseconds after Task C
+                }, 20); // Wait 20 miliseconds after Task B
+            }, 0); // Start long tasks immediately after FCP
+        });
+    </script>
+</head>
+<body>
+    <h1>Testing Total Blocking Time (TBT)</h1>
+    <div id="content">Loading...</div>
+    <div id="tbt">Total Blocking Time (TBT): 0 ms</div>
+</body>
+</html>
