@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Webpage Performance Metrics</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        input, button {
+            margin: 10px 0;
+            padding: 10px;
+            font-size: 16px;
+        }
+        iframe {
+            width: 100%;
+            height: 500px;
+            border: 1px solid #ccc;
+            margin-top: 20px;
+        }
+        #metrics {
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Webpage Performance Metrics</h1>
+    <form id="urlForm">
+        <label for="urlInput">Enter URL:</label>
+        <input type="text" id="urlInput" placeholder="https://example.com" required>
+        <button type="submit">Get Metrics</button>
+    </form>
+    <div id="metrics"></div>
+    <iframe id="iframe" sandbox="allow-scripts allow-same-origin"></iframe>
+
+    <script>
+        document.getElementById('urlForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+            let url = document.getElementById('urlInput').value;
+            document.getElementById('iframe').src = url;
+        });
+
+        document.getElementById('iframe').addEventListener('load', function() {
+            let iframeWindow = document.getElementById('iframe').contentWindow;
+            iframeWindow.addEventListener('load', function() {
+                let navigationTiming = iframeWindow.performance.getEntriesByType('navigation')[0];
+                let resources = iframeWindow.performance.getEntriesByType('resource');
+                let lcp, cls = 0, fcp, tti, visuallyComplete;
+
+                // Calculate metrics
+                let webpageResponse = navigationTiming.responseEnd - navigationTiming.fetchStart;
+                let requests = resources.length;
+                let failedRequests = resources.filter(request => request.responseEnd === 0).length;
+                let hosts = new Set(resources.map(request => new URL(request.name).host)).size;
+                let totalDownloadedBytes = resources.reduce((total, request) => total + request.transferSize, 0);
+                let jsFailures = 0;
+                let visuallyComplete = lcp;
+
+                new iframeWindow.PerformanceObserver((entryList) => {
+                    for (const entry of entryList.getEntries()) {
+                        if (entry.entryType === 'largest-contentful-paint') {
+                            lcp = entry.startTime;
+                        } else if (entry.entryType === 'layout-shift' && !entry.hadRecentInput) {
+                            cls += entry.value;
+                        } else if (entry.entryType === 'paint' && entry.name === 'first-contentful-paint') {
+                            fcp = entry.startTime;
+                        } else if (entry.entryType === 'longtask') {
+                            tti = entry.startTime;
+                        }
+                    }
+                }).observe({ type: ['largest-contentful-paint', 'layout-shift', 'paint', 'longtask'], buffered: true });
+
+                visuallyComplete = lcp;
+
+                // Display metrics
+                document.getElementById('metrics').innerHTML = `
+                    <h2>Metrics for ${iframeWindow.location.href}</h2>
+                    <p><strong>Webpage Response (ms):</strong> ${webpageResponse}</p>
+                    <p><strong>Number of Requests:</strong> ${requests}</p>
+                    <p><strong>Number of Failed Requests:</strong> ${failedRequests}</p>
+                    <p><strong>Number of Hosts:</strong> ${hosts}</p>
+                    <p><strong>Total Downloaded Bytes:</strong> ${totalDownloadedBytes}</p>
+                    <p><strong>Number of JS Failures:</strong> ${jsFailures}</p>
+                    <p><strong>Largest Contentful Paint (ms):</strong> ${lcp}</p>
+                    <p><strong>Cumulative Layout Shift:</strong> ${cls}</p>
+                    <p><strong>First Contentful Paint (ms):</strong> ${fcp}</p>
+                    <p><strong>Visually Complete (ms):</strong> ${visuallyComplete}</p>
+                    <p><strong>Time To Interactive (ms):</strong> ${tti}</p>
+                `;
+            });
+        });
+    </script>
+</body>
+</html>
