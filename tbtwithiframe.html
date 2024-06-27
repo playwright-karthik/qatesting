@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test TBT</title>
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+        }
+        .iframe-container {
+            display: flex;
+            flex-direction: column; /* Arrange iframes vertically */
+            align-items: center; /* Center align iframes horizontally */
+        }
+        .iframe-container iframe {
+            border: none;
+            margin: 5px;
+        }
+        .iframe-small {
+            width: 1000px;
+            height: 200px;
+        }
+        .iframe-large {
+            width: 1000px;
+            height: 600px;
+        }
+    </style>
+    <script>
+        let totalBlockingTime = 0;
+
+        // Function to simulate a long task
+        function simulateLongTask(duration) {
+            const start = performance.now();
+            while (performance.now() - start < duration) {
+                // Busy-wait loop to simulate blocking
+            }
+        }
+
+        // Set up a PerformanceObserver to measure long tasks
+        const observer = new PerformanceObserver((list) => {
+            list.getEntries().forEach((entry) => {
+                const blockingTime = entry.duration - 50;
+                if (blockingTime > 0) {
+                    totalBlockingTime += blockingTime;
+                }
+            });
+            document.getElementById('tbt').innerText = `Total Blocking Time (TBT): ${totalBlockingTime.toFixed(2)} ms`;
+        });
+
+        observer.observe({ type: 'longtask', buffered: true });
+
+        window.addEventListener('load', () => {
+            // Simulate First Contentful Paint (FCP) at 1 second
+            setTimeout(() => {
+                document.getElementById('content').innerText = 'Content Loaded';
+
+                // Start simulating long tasks 1 second after FCP (2 seconds from page load)
+                setTimeout(() => {
+                    simulateLongTask(60); // Task A: 60 ms
+                    setTimeout(() => {
+                        simulateLongTask(80); // Task B: 80 ms
+                        setTimeout(() => {
+                            simulateLongTask(55); // Task C: 55 ms
+
+                            // Simulate Largest Contentful Paint (LCP) after all long tasks are finished
+                            setTimeout(() => {
+                                const lcpContent = document.createElement('div');
+                                lcpContent.id = 'lcp-content';
+                                lcpContent.innerText = 'Larger Content Loaded';
+                                lcpContent.style.fontSize = '48px';
+                                document.body.appendChild(lcpContent);
+                            }, 2000); // LCP after 2 seconds from Task C
+                        }, 2000); // Wait 2 seconds after Task B
+                    }, 2000); // Wait 2 seconds after Task A
+                }, 2000); // 2 seconds after FCP
+            }, 1000); // 1 second after page load
+        });
+    </script>
+</head>
+<body>
+    <h1>Testing Total Blocking Time (TBT)</h1>
+    <div id="content">Loading...</div>
+    <div id="tbt">Total Blocking Time (TBT): 0 ms</div>
+
+    <!-- iframe added below -->
+    <div class="iframe-container">
+        <iframe src="https://playwright-karthik.github.io/qatesting/2600spacerequests.html" class="iframe-small"></iframe>
+    </div>
+</body>
+</html>
