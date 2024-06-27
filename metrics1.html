@@ -44,7 +44,7 @@
 
         document.getElementById('iframe').addEventListener('load', function() {
             let iframeWindow = document.getElementById('iframe').contentWindow;
-            iframeWindow.addEventListener('load', function() {
+            setTimeout(function() { // Delay to allow for metrics collection
                 let navigationTiming = iframeWindow.performance.getEntriesByType('navigation')[0];
                 let resources = iframeWindow.performance.getEntriesByType('resource');
                 let lcp, cls = 0, fcp, tti, visuallyComplete;
@@ -58,7 +58,7 @@
                 let jsFailures = 0;
                 let visuallyComplete = lcp;
 
-                new iframeWindow.PerformanceObserver((entryList) => {
+                let observer = new iframeWindow.PerformanceObserver((entryList) => {
                     for (const entry of entryList.getEntries()) {
                         if (entry.entryType === 'largest-contentful-paint') {
                             lcp = entry.startTime;
@@ -70,7 +70,8 @@
                             tti = entry.startTime;
                         }
                     }
-                }).observe({ type: ['largest-contentful-paint', 'layout-shift', 'paint', 'longtask'], buffered: true });
+                });
+                observer.observe({ type: ['largest-contentful-paint', 'layout-shift', 'paint', 'longtask'], buffered: true });
 
                 visuallyComplete = lcp;
 
@@ -89,7 +90,7 @@
                     <p><strong>Visually Complete (ms):</strong> ${visuallyComplete}</p>
                     <p><strong>Time To Interactive (ms):</strong> ${tti}</p>
                 `;
-            });
+            }, 5000); // Adjust the timeout as needed
         });
     </script>
 </body>
