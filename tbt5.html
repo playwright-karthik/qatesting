@@ -20,17 +20,6 @@
   <p id="result"></p>
   
   <script>
-    // Helper function to simulate long tasks
-    function simulateLongTask(duration) {
-      const start = performance.now();
-      console.log(`Long task started at ${start.toFixed(2)} ms`);
-      while (performance.now() - start < duration) {
-        // Busy loop for 'duration' milliseconds
-      }
-      const end = performance.now();
-      console.log(`Long task ended at ${end.toFixed(2)} ms`);
-    }
-
     // Measure TBT
     let totalBlockingTime = 0;
     const observer = new PerformanceObserver((list) => {
@@ -39,6 +28,7 @@
         if (blockingTime > 0) {
           totalBlockingTime += blockingTime;
           console.log(`Long task detected: Duration = ${entry.duration.toFixed(2)} ms, Blocking time = ${blockingTime.toFixed(2)} ms`);
+          document.getElementById('result').innerText = `Total Blocking Time: ${totalBlockingTime.toFixed(2)} ms`;
         }
       });
     });
@@ -68,11 +58,26 @@
       performance.mark('fcp');
     });
 
+    // Helper function to simulate long tasks
+    function simulateLongTask(duration) {
+      const start = performance.now();
+      console.log(`Long task started at ${start.toFixed(2)} ms`);
+      while (performance.now() - start < duration) {
+        // Busy loop for 'duration' milliseconds
+      }
+      const end = performance.now();
+      console.log(`Long task ended at ${end.toFixed(2)} ms`);
+
+      // Update total blocking time here
+      totalBlockingTime += duration - 50;
+      console.log(`Blocking time calculated: ${totalBlockingTime.toFixed(2)} ms`);
+      document.getElementById('result').innerText = `Total Blocking Time: ${totalBlockingTime.toFixed(2)} ms`;
+    }
+
     // Event listener to start a long task
     document.getElementById('start').addEventListener('click', () => {
       clearInterval(timer); // Stop the stopwatch
       simulateLongTask(200); // Simulate a 200ms long task
-      document.getElementById('result').innerText = `Total Blocking Time: ${totalBlockingTime.toFixed(2)} ms`;
     });
   </script>
 </body>
