@@ -67,7 +67,8 @@
     // Event listener to start a long task
     document.getElementById('start').addEventListener('click', () => {
       clearInterval(timer); // Stop the stopwatch
-      simulateLongTask(300); // Simulate a 300ms long task
+      //simulateLongTask(300); // Simulate a 300ms long task [Poop page responsiveness Error]
+      simulateLongTask(150); // Simulate a 150ms long task
       document.getElementById('result').innerText = `Total Blocking Time: ${totalBlockingTime.toFixed(2)} ms`;
     });
   </script>
