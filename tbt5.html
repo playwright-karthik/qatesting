@@ -60,18 +60,15 @@
 
     // Helper function to simulate long tasks
     function simulateLongTask(duration) {
-      const start = performance.now();
-      console.log(`Long task started at ${start.toFixed(2)} ms`);
-      while (performance.now() - start < duration) {
-        // Busy loop for 'duration' milliseconds
-      }
-      const end = performance.now();
-      console.log(`Long task ended at ${end.toFixed(2)} ms`);
-
-      // Update total blocking time here
-      totalBlockingTime += duration - 50;
-      console.log(`Blocking time calculated: ${totalBlockingTime.toFixed(2)} ms`);
-      document.getElementById('result').innerText = `Total Blocking Time: ${totalBlockingTime.toFixed(2)} ms`;
+      setTimeout(() => {
+        const start = performance.now();
+        console.log(`Long task started at ${start.toFixed(2)} ms`);
+        while (performance.now() - start < duration) {
+          // Simulating work
+        }
+        const end = performance.now();
+        console.log(`Long task ended at ${end.toFixed(2)} ms`);
+      }, 0);
     }
 
     // Event listener to start a long task
