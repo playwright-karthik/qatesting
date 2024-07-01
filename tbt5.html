@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Total Blocking Time (TBT) Test</title>
+  <style>
+    #timer {
+      font-size: 24px;
+      font-weight: bold;
+      margin-left: 20px;
+    }
+  </style>
+</head>
+<body>
+  <h1>Total Blocking Time (TBT) Test</h1>
+  <p>This page contains JavaScript code to simulate long tasks and measure Total Blocking Time (TBT).</p>
+  <button id="start">Start Long Task</button>
+  <span id="timer">00:00:00</span>
+  <p id="result"></p>
+  
+  <script>
+    // Helper function to simulate long tasks
+    function simulateLongTask(duration) {
+      const start = performance.now();
+      while (performance.now() - start < duration) {
+        // Busy loop for 'duration' milliseconds
+      }
+    }
+
+    // Measure TBT
+    let totalBlockingTime = 0;
+    const observer = new PerformanceObserver((list) => {
+      list.getEntries().forEach((entry) => {
+        const blockingTime = entry.duration - 50;
+        if (blockingTime > 0) {
+          totalBlockingTime += blockingTime;
+        }
+      });
+    });
+
+    observer.observe({ type: 'longtask', buffered: true });
+
+    // Stopwatch timer
+    let startTime = Date.now();
+    let timer;
+    function startStopwatch() {
+      timer = setInterval(() => {
+        let elapsedTime = Date.now() - startTime;
+        let seconds = Math.floor((elapsedTime % 60000) / 1000);
+        let minutes = Math.floor((elapsedTime % 3600000) / 60000);
+        let milliseconds = elapsedTime % 1000;
+
+        document.getElementById('timer').innerText = 
+          `${minutes < 10 ? '0' : ''}${minutes}:` +
+          `${seconds < 10 ? '0' : ''}${seconds}:` +
+          `${milliseconds < 100 ? '0' : ''}${Math.floor(milliseconds / 10)}`;
+      }, 10);
+    }
+
+    // Start the stopwatch when the page loads
+    window.addEventListener('load', () => {
+      startStopwatch();
+      performance.mark('fcp');
+    });
+
+    // Event listener to start a long task
+    document.getElementById('start').addEventListener('click', () => {
+      clearInterval(timer); // Stop the stopwatch
+      simulateLongTask(300); // Simulate a 300ms long task
+      document.getElementById('result').innerText = `Total Blocking Time: ${totalBlockingTime.toFixed(2)} ms`;
+    });
+  </script>
+</body>
+</html>
