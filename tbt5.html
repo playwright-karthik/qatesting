@@ -23,12 +23,12 @@
     // Helper function to simulate long tasks
     function simulateLongTask(duration) {
       const start = performance.now();
-      console.log(`Long task started at ${start} ms`);
+      console.log(`Long task started at ${start.toFixed(2)} ms`);
       while (performance.now() - start < duration) {
         // Busy loop for 'duration' milliseconds
       }
       const end = performance.now();
-      console.log(`Long task ended at ${end} ms`);
+      console.log(`Long task ended at ${end.toFixed(2)} ms`);
     }
 
     // Measure TBT
@@ -38,7 +38,7 @@
         const blockingTime = entry.duration - 50;
         if (blockingTime > 0) {
           totalBlockingTime += blockingTime;
-          console.log(`Long task detected: Duration = ${entry.duration} ms, Blocking time = ${blockingTime} ms`);
+          console.log(`Long task detected: Duration = ${entry.duration.toFixed(2)} ms, Blocking time = ${blockingTime.toFixed(2)} ms`);
         }
       });
     });
