@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Total Blocking Time (TBT) Test</title>
+  <style>
+    #timer {
+      font-size: 24px;
+      font-weight: bold;
+      margin-left: 20px;
+    }
+  </style>
+</head>
+<body>
+  <h1>Total Blocking Time (TBT) Test</h1>
+  <p>This page contains JavaScript code to simulate long tasks and measure Total Blocking Time (TBT).</p>
+  <span id="timer">00:00:00</span>
+  <p id="result"></p>
+  
+  <script>
+    // Measure TBT
+    let totalBlockingTime = 0;
+    const observer = new PerformanceObserver((list) => {
+      list.getEntries().forEach((entry) => {
+        const blockingTime = entry.duration - 50;
+        if (blockingTime > 0) {
+          totalBlockingTime += blockingTime;
+          console.log(`Long task detected: Duration = ${entry.duration.toFixed(2)} ms, Blocking time = ${blockingTime.toFixed(2)} ms`);
+          document.getElementById('result').innerText = `Total Blocking Time: ${totalBlockingTime.toFixed(2)} ms`;
+        }
+      });
+    });
+
+    observer.observe({ type: 'longtask', buffered: true });
+
+    // Stopwatch timer
+    let startTime = Date.now();
+    let timer;
+    function startStopwatch() {
+      timer = setInterval(() => {
+        let elapsedTime = Date.now() - startTime;
+        let seconds = Math.floor((elapsedTime % 60000) / 1000);
+        let minutes = Math.floor((elapsedTime % 3600000) / 60000);
+        let milliseconds = elapsedTime % 1000;
+
+        document.getElementById('timer').innerText = 
+          `${minutes < 10 ? '0' : ''}${minutes}:` +
+          `${seconds < 10 ? '0' : ''}${seconds}:` +
+          `${milliseconds < 100 ? '0' : ''}${Math.floor(milliseconds / 10)}`;
+      }, 10);
+    }
+
+    // Start the stopwatch when the page loads
+    window.addEventListener('load', () => {
+      startStopwatch();
+      performance.mark('fcp');
+    });
+
+    // Simulate long tasks to measure TBT
+    function simulateLongTasks() {
+      setTimeout(() => simulateLongTask(200), 100); // Simulate a 200ms long task after 100ms
+      setTimeout(() => simulateLongTask(150), 500); // Simulate a 150ms long task after 500ms
+      setTimeout(() => simulateLongTask(300), 1000); // Simulate a 300ms long task after 1000ms
+    }
+
+    // Helper function to simulate a long task
+    function simulateLongTask(duration) {
+      const start = performance.now();
+      console.log(`Long task started at ${start.toFixed(2)} ms`);
+      while (performance.now() - start < duration) {
+        // Simulating work
+      }
+      const end = performance.now();
+      console.log(`Long task ended at ${end.toFixed(2)} ms`);
+    }
+
+    // Start simulating long tasks after the page loads
+    window.addEventListener('load', () => {
+      simulateLongTasks();
+    });
+  </script>
+</body>
+</html>
