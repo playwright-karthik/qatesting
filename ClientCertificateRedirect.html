@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Redirect Script</title>
+</head>
+<body>
+    <script>
+        // Function to handle redirects
+        function handleRedirects() {
+            // Check the number of redirects from localStorage
+            let redirects = localStorage.getItem('redirects') || 0;
+            
+            // Convert to an integer
+            redirects = parseInt(redirects, 10);
+            
+            // If less than 2 redirects, increment the counter and redirect
+            if (redirects < 2) {
+                redirects++;
+                localStorage.setItem('redirects', redirects);
+                window.location.href = 'redirect.html'; // Change this to your intermediate URL
+            } else {
+                // Reset the counter and redirect to the final URL
+                localStorage.removeItem('redirects');
+                window.location.href = 'https://expired.badssl.com/';
+            }
+        }
+
+        // Call the function to handle redirects
+        handleRedirects();
+    </script>
+</body>
+</html>
