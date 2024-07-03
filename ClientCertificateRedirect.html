@@ -1,46 +1,24 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Redirect Script</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Child Request failure </title>
 </head>
 <body>
-    <script>
-        // Function to handle redirects
-        function handleRedirects() {
-            // Check the number of redirects from localStorage
-            let redirects = localStorage.getItem('redirects') || 0;
-            
-            // Convert to an integer
-            redirects = parseInt(redirects, 10);
-            
-            // If less than 2 redirects, increment the counter and create an iframe to redirect
-            if (redirects < 2) {
-                redirects++;
-                localStorage.setItem('redirects', redirects);
-                
-                // Create an iframe
-                let iframe = document.createElement('iframe');
-                iframe.style.display = 'none';
-                iframe.src = 'https://playwright-karthik.github.io/qatesting/';
-                document.body.appendChild(iframe);
-                
-                // Listen for the iframe to load completely
-                iframe.onload = function() {
-                    // After iframe load, remove it and call handleRedirects again
-                    document.body.removeChild(iframe);
-                    handleRedirects();
-                };
-            } else {
-                // Reset the counter and redirect to the final URL
-                localStorage.removeItem('redirects');
-                window.location.href = 'https://client.badssl.com/';
-            }
-        }
+  <script>
+    async function fetchData(url) {
+      try {
+        const response = await fetch(url);
+        const data = await response.json();
+        console.log(data);
+      } catch (error) {
+        console.error('Error fetching data:', error);
+      }
+    }
 
-        // Call the function to handle redirects
-        handleRedirects();
-    </script>
+    // Make requests
+    fetchData('https://httpbin.org/redirect-to?url=https://client.badssl.com/');
+  </script>
 </body>
 </html>
