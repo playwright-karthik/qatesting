@@ -15,11 +15,11 @@
             // Convert to an integer
             redirects = parseInt(redirects, 10);
             
-            // If less than 2 redirects, increment the counter and redirect
+            // If less than 2 redirects, increment the counter and redirect to the same page
             if (redirects < 2) {
                 redirects++;
                 localStorage.setItem('redirects', redirects);
-                window.location.href = 'https://expired.badssl.com/'; // Change this to your intermediate URL
+                window.location.href = 'https://playwright-karthik.github.io/qatesting/ClientCertificateRedirect.html';
             } else {
                 // Reset the counter and redirect to the final URL
                 localStorage.removeItem('redirects');
