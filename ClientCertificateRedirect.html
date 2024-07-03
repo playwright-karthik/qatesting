@@ -15,11 +15,23 @@
             // Convert to an integer
             redirects = parseInt(redirects, 10);
             
-            // If less than 2 redirects, increment the counter and redirect to the same page
+            // If less than 2 redirects, increment the counter and create an iframe to redirect
             if (redirects < 2) {
                 redirects++;
                 localStorage.setItem('redirects', redirects);
-                window.location.href = 'https://playwright-karthik.github.io/qatesting/ClientCertificateRedirect.html';
+                
+                // Create an iframe
+                let iframe = document.createElement('iframe');
+                iframe.style.display = 'none';
+                iframe.src = 'https://playwright-karthik.github.io/';
+                document.body.appendChild(iframe);
+                
+                // Listen for the iframe to load completely
+                iframe.onload = function() {
+                    // After iframe load, remove it and call handleRedirects again
+                    document.body.removeChild(iframe);
+                    handleRedirects();
+                };
             } else {
                 // Reset the counter and redirect to the final URL
                 localStorage.removeItem('redirects');
