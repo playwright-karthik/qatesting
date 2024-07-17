@@ -1,1 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Performance Timing Metrics</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        iframe {
+            width: 100%;
+            height: 500px;
+            border: 1px solid #ccc;
+        }
+        pre {
+            background: #f9f9f9;
+            border: 1px solid #ccc;
+            padding: 10px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Performance Timing Metrics</h1>
+    <p>Enter the URL of the site you want to visit and measure:</p>
+    <input type="text" id="urlInput" placeholder="Enter URL here" />
+    <button onclick="loadSite()">Visit and Measure</button>
+    <h2>Performance Timing Values</h2>
+    <pre id="timingValues">Click the button to display performance timing values.</pre>
+    <iframe id="siteFrame" sandbox="allow-same-origin allow-scripts"></iframe>
 
+    <script>
+        function loadSite() {
+            const url = document.getElementById('urlInput').value;
+            if (!url) {
+                alert('Please enter a URL.');
+                return;
+            }
+            const iframe = document.getElementById('siteFrame');
+            iframe.src = url;
+
+            iframe.onload = function() {
+                setTimeout(() => {
+                    const timing = iframe.contentWindow.performance.timing;
+                    const timingValues = {
+                        navigationStart: timing.navigationStart,
+                        unloadEventStart: timing.unloadEventStart,
+                        unloadEventEnd: timing.unloadEventEnd,
+                        redirectStart: timing.redirectStart,
+                        redirectEnd: timing.redirectEnd,
+                        fetchStart: timing.fetchStart,
+                        domainLookupStart: timing.domainLookupStart,
+                        domainLookupEnd: timing.domainLookupEnd,
+                        connectStart: timing.connectStart,
+                        connectEnd: timing.connectEnd,
+                        secureConnectionStart: timing.secureConnectionStart,
+                        requestStart: timing.requestStart,
+                        responseStart: timing.responseStart,
+                        responseEnd: timing.responseEnd,
+                        domLoading: timing.domLoading,
+                        domInteractive: timing.domInteractive,
+                        domContentLoadedEventStart: timing.domContentLoadedEventStart,
+                        domContentLoadedEventEnd: timing.domContentLoadedEventEnd,
+                        domComplete: timing.domComplete,
+                        loadEventStart: timing.loadEventStart,
+                        loadEventEnd: timing.loadEventEnd
+                    };
+                    document.getElementById('timingValues').innerText = JSON.stringify(timingValues, null, 4);
+                }, 1000); // Delay to ensure timings are captured
+            };
+        }
+    </script>
+</body>
+</html>
