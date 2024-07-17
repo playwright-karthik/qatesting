@@ -28,7 +28,7 @@
     <button onclick="loadSite()">Visit and Measure</button>
     <h2>Performance Timing Values</h2>
     <pre id="timingValues">Click the button to display performance timing values.</pre>
-    <iframe id="siteFrame" sandbox="allow-same-origin allow-scripts"></iframe>
+    <iframe id="siteFrame"></iframe>
 
     <script>
         function loadSite() {
@@ -42,31 +42,35 @@
 
             iframe.onload = function() {
                 setTimeout(() => {
-                    const timing = iframe.contentWindow.performance.timing;
-                    const timingValues = {
-                        navigationStart: timing.navigationStart,
-                        unloadEventStart: timing.unloadEventStart,
-                        unloadEventEnd: timing.unloadEventEnd,
-                        redirectStart: timing.redirectStart,
-                        redirectEnd: timing.redirectEnd,
-                        fetchStart: timing.fetchStart,
-                        domainLookupStart: timing.domainLookupStart,
-                        domainLookupEnd: timing.domainLookupEnd,
-                        connectStart: timing.connectStart,
-                        connectEnd: timing.connectEnd,
-                        secureConnectionStart: timing.secureConnectionStart,
-                        requestStart: timing.requestStart,
-                        responseStart: timing.responseStart,
-                        responseEnd: timing.responseEnd,
-                        domLoading: timing.domLoading,
-                        domInteractive: timing.domInteractive,
-                        domContentLoadedEventStart: timing.domContentLoadedEventStart,
-                        domContentLoadedEventEnd: timing.domContentLoadedEventEnd,
-                        domComplete: timing.domComplete,
-                        loadEventStart: timing.loadEventStart,
-                        loadEventEnd: timing.loadEventEnd
-                    };
-                    document.getElementById('timingValues').innerText = JSON.stringify(timingValues, null, 4);
+                    const performanceEntries = iframe.contentWindow.performance.getEntriesByType("navigation");
+                    if (performanceEntries.length > 0) {
+                        const timing = performanceEntries[0];
+                        const timingValues = {
+                            startTime: timing.startTime,
+                            unloadEventStart: timing.unloadEventStart,
+                            unloadEventEnd: timing.unloadEventEnd,
+                            redirectStart: timing.redirectStart,
+                            redirectEnd: timing.redirectEnd,
+                            fetchStart: timing.fetchStart,
+                            domainLookupStart: timing.domainLookupStart,
+                            domainLookupEnd: timing.domainLookupEnd,
+                            connectStart: timing.connectStart,
+                            connectEnd: timing.connectEnd,
+                            secureConnectionStart: timing.secureConnectionStart,
+                            requestStart: timing.requestStart,
+                            responseStart: timing.responseStart,
+                            responseEnd: timing.responseEnd,
+                            domInteractive: timing.domInteractive,
+                            domContentLoadedEventStart: timing.domContentLoadedEventStart,
+                            domContentLoadedEventEnd: timing.domContentLoadedEventEnd,
+                            domComplete: timing.domComplete,
+                            loadEventStart: timing.loadEventStart,
+                            loadEventEnd: timing.loadEventEnd
+                        };
+                        document.getElementById('timingValues').innerText = JSON.stringify(timingValues, null, 4);
+                    } else {
+                        document.getElementById('timingValues').innerText = "No performance timing data available.";
+                    }
                 }, 1000); // Delay to ensure timings are captured
             };
         }
