@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Performance Timing Metrics</title>
+    <title>Detailed Performance Metrics</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -17,42 +17,73 @@
     </style>
 </head>
 <body>
-    <h1>Performance Timing Metrics</h1>
-    <button onclick="displayTiming()">Display Current Page Performance Timing</button>
-    <h2>Performance Timing Values</h2>
-    <pre id="timingValues">Click the button to display performance timing values.</pre>
+    <h1>Detailed Performance Metrics</h1>
+    <button onclick="displayMetrics()">Display Performance Metrics</button>
+    <h2>Performance Metrics Values</h2>
+    <pre id="metricsValues">Click the button to display performance metrics values.</pre>
 
     <script>
-        function displayTiming() {
+        function displayMetrics() {
             const timing = window.performance.timing;
             const navigationStart = timing.navigationStart;
-            const timingValues = {
-                navigationStart: timing.navigationStart - navigationStart,
-                unloadEventStart: timing.unloadEventStart - navigationStart,
-                unloadEventEnd: timing.unloadEventEnd - navigationStart,
-                redirectStart: timing.redirectStart - navigationStart,
-                redirectEnd: timing.redirectEnd - navigationStart,
-                fetchStart: timing.fetchStart - navigationStart,
-                domainLookupStart: timing.domainLookupStart - navigationStart,
-                domainLookupEnd: timing.domainLookupEnd - navigationStart,
-                connectStart: timing.connectStart - navigationStart,
-                connectEnd: timing.connectEnd - navigationStart,
-                secureConnectionStart: timing.secureConnectionStart - navigationStart,
-                requestStart: timing.requestStart - navigationStart,
-                responseStart: timing.responseStart - navigationStart,
-                responseEnd: timing.responseEnd - navigationStart,
-                domLoading: timing.domLoading - navigationStart,
-                domInteractive: timing.domInteractive - navigationStart,
-                domContentLoadedEventStart: timing.domContentLoadedEventStart - navigationStart,
-                domContentLoadedEventEnd: timing.domContentLoadedEventEnd - navigationStart,
-                domComplete: timing.domComplete - navigationStart,
-                loadEventStart: timing.loadEventStart - navigationStart,
-                loadEventEnd: timing.loadEventEnd - navigationStart
+
+            const dnsTime = timing.domainLookupEnd - timing.domainLookupStart;
+            const connectTime = timing.connectEnd - timing.connectStart;
+            const sslTime = timing.secureConnectionStart > 0 ? timing.connectEnd - timing.secureConnectionStart : 0;
+            const waitTime = timing.responseStart - timing.requestStart;
+            const sendTime = timing.responseEnd - timing.responseStart;
+            const responseTime = timing.responseEnd - timing.fetchStart;
+            const domContentLoadedTime = timing.domContentLoadedEventEnd - navigationStart;
+            const domCompleteTime = timing.domComplete - navigationStart;
+            const loadTime = timing.loadEventEnd - navigationStart;
+
+            // Calculate throughput
+            const totalDownloadedBytes = window.performance.getEntriesByType("resource").reduce((sum, resource) => sum + resource.transferSize, 0);
+
+            // Get Paint timings
+            const paintEntries = window.performance.getEntriesByType("paint");
+            let firstContentfulPaint = 0;
+            let largestContentfulPaint = 0;
+            paintEntries.forEach((entry) => {
+                if (entry.name === 'first-contentful-paint') {
+                    firstContentfulPaint = entry.startTime;
+                }
+            });
+
+            const lcpEntries = window.performance.getEntriesByType('largest-contentful-paint');
+            if (lcpEntries.length > 0) {
+                largestContentfulPaint = lcpEntries[lcpEntries.length - 1].startTime;
+            }
+
+            // Get Cumulative Layout Shift
+            let cumulativeLayoutShift = 0;
+            const clsEntries = window.performance.getEntriesByType('layout-shift');
+            clsEntries.forEach((entry) => {
+                if (!entry.hadRecentInput) {
+                    cumulativeLayoutShift += entry.value;
+                }
+            });
+
+            const metricsValues = {
+                dnsTime: `${dnsTime} ms`,
+                connectTime: `${connectTime} ms`,
+                sslTime: `${sslTime} ms`,
+                waitTime: `${waitTime} ms`,
+                sendTime: `${sendTime} ms`,
+                responseTime: `${responseTime} ms`,
+                domContentLoadedTime: `${domContentLoadedTime} ms`,
+                domCompleteTime: `${domCompleteTime} ms`,
+                loadTime: `${loadTime} ms`,
+                firstContentfulPaint: `${firstContentfulPaint} ms`,
+                largestContentfulPaint: `${largestContentfulPaint} ms`,
+                cumulativeLayoutShift: `${cumulativeLayoutShift}`,
+                totalDownloadedBytes: `${totalDownloadedBytes} bytes`
             };
-            document.getElementById('timingValues').innerText = JSON.stringify(timingValues, null, 4);
+
+            document.getElementById('metricsValues').innerText = JSON.stringify(metricsValues, null, 4);
         }
 
-        window.onload = displayTiming; // Automatically display timing on page load
+        window.onload = displayMetrics; // Automatically display metrics on page load
     </script>
 </body>
 </html>
