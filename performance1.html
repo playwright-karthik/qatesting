@@ -9,11 +9,6 @@
             font-family: Arial, sans-serif;
             margin: 20px;
         }
-        iframe {
-            width: 100%;
-            height: 300px; /* Smaller height for the iframe */
-            border: 1px solid #ccc;
-        }
         pre {
             background: #f9f9f9;
             border: 1px solid #ccc;
@@ -23,60 +18,40 @@
 </head>
 <body>
     <h1>Performance Timing Metrics</h1>
-    <p>Enter the URL of the site you want to visit and measure:</p>
-    <input type="text" id="urlInput" placeholder="Enter URL here" />
-    <button onclick="loadSite()">Visit and Measure</button>
+    <button onclick="displayTiming()">Display Current Page Performance Timing</button>
     <h2>Performance Timing Values</h2>
     <pre id="timingValues">Click the button to display performance timing values.</pre>
-    <iframe id="siteFrame"></iframe>
 
     <script>
-        function loadSite() {
-            const url = document.getElementById('urlInput').value;
-            if (!url) {
-                alert('Please enter a URL.');
-                return;
-            }
-            const iframe = document.getElementById('siteFrame');
-            iframe.src = url;
-
-            iframe.onload = function() {
-                setTimeout(() => {
-                    let timingValues = "No performance timing data available.";
-                    try {
-                        const performanceEntries = iframe.contentWindow.performance.getEntriesByType("navigation");
-                        if (performanceEntries.length > 0) {
-                            const timing = performanceEntries[0];
-                            timingValues = {
-                                startTime: timing.startTime,
-                                unloadEventStart: timing.unloadEventStart,
-                                unloadEventEnd: timing.unloadEventEnd,
-                                redirectStart: timing.redirectStart,
-                                redirectEnd: timing.redirectEnd,
-                                fetchStart: timing.fetchStart,
-                                domainLookupStart: timing.domainLookupStart,
-                                domainLookupEnd: timing.domainLookupEnd,
-                                connectStart: timing.connectStart,
-                                connectEnd: timing.connectEnd,
-                                secureConnectionStart: timing.secureConnectionStart,
-                                requestStart: timing.requestStart,
-                                responseStart: timing.responseStart,
-                                responseEnd: timing.responseEnd,
-                                domInteractive: timing.domInteractive,
-                                domContentLoadedEventStart: timing.domContentLoadedEventStart,
-                                domContentLoadedEventEnd: timing.domContentLoadedEventEnd,
-                                domComplete: timing.domComplete,
-                                loadEventStart: timing.loadEventStart,
-                                loadEventEnd: timing.loadEventEnd
-                            };
-                        }
-                    } catch (e) {
-                        timingValues = "Unable to access performance timing data due to cross-origin restrictions.";
-                    }
-                    document.getElementById('timingValues').innerText = JSON.stringify(timingValues, null, 4);
-                }, 1000); // Delay to ensure timings are captured
+        function displayTiming() {
+            const timing = window.performance.timing;
+            const timingValues = {
+                navigationStart: timing.navigationStart,
+                unloadEventStart: timing.unloadEventStart,
+                unloadEventEnd: timing.unloadEventEnd,
+                redirectStart: timing.redirectStart,
+                redirectEnd: timing.redirectEnd,
+                fetchStart: timing.fetchStart,
+                domainLookupStart: timing.domainLookupStart,
+                domainLookupEnd: timing.domainLookupEnd,
+                connectStart: timing.connectStart,
+                connectEnd: timing.connectEnd,
+                secureConnectionStart: timing.secureConnectionStart,
+                requestStart: timing.requestStart,
+                responseStart: timing.responseStart,
+                responseEnd: timing.responseEnd,
+                domLoading: timing.domLoading,
+                domInteractive: timing.domInteractive,
+                domContentLoadedEventStart: timing.domContentLoadedEventStart,
+                domContentLoadedEventEnd: timing.domContentLoadedEventEnd,
+                domComplete: timing.domComplete,
+                loadEventStart: timing.loadEventStart,
+                loadEventEnd: timing.loadEventEnd
             };
+            document.getElementById('timingValues').innerText = JSON.stringify(timingValues, null, 4);
         }
+
+        window.onload = displayTiming; // Automatically display timing on page load
     </script>
 </body>
 </html>
