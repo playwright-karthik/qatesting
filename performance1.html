@@ -25,28 +25,29 @@
     <script>
         function displayTiming() {
             const timing = window.performance.timing;
+            const navigationStart = timing.navigationStart;
             const timingValues = {
-                navigationStart: timing.navigationStart,
-                unloadEventStart: timing.unloadEventStart,
-                unloadEventEnd: timing.unloadEventEnd,
-                redirectStart: timing.redirectStart,
-                redirectEnd: timing.redirectEnd,
-                fetchStart: timing.fetchStart,
-                domainLookupStart: timing.domainLookupStart,
-                domainLookupEnd: timing.domainLookupEnd,
-                connectStart: timing.connectStart,
-                connectEnd: timing.connectEnd,
-                secureConnectionStart: timing.secureConnectionStart,
-                requestStart: timing.requestStart,
-                responseStart: timing.responseStart,
-                responseEnd: timing.responseEnd,
-                domLoading: timing.domLoading,
-                domInteractive: timing.domInteractive,
-                domContentLoadedEventStart: timing.domContentLoadedEventStart,
-                domContentLoadedEventEnd: timing.domContentLoadedEventEnd,
-                domComplete: timing.domComplete,
-                loadEventStart: timing.loadEventStart,
-                loadEventEnd: timing.loadEventEnd
+                navigationStart: timing.navigationStart - navigationStart,
+                unloadEventStart: timing.unloadEventStart - navigationStart,
+                unloadEventEnd: timing.unloadEventEnd - navigationStart,
+                redirectStart: timing.redirectStart - navigationStart,
+                redirectEnd: timing.redirectEnd - navigationStart,
+                fetchStart: timing.fetchStart - navigationStart,
+                domainLookupStart: timing.domainLookupStart - navigationStart,
+                domainLookupEnd: timing.domainLookupEnd - navigationStart,
+                connectStart: timing.connectStart - navigationStart,
+                connectEnd: timing.connectEnd - navigationStart,
+                secureConnectionStart: timing.secureConnectionStart - navigationStart,
+                requestStart: timing.requestStart - navigationStart,
+                responseStart: timing.responseStart - navigationStart,
+                responseEnd: timing.responseEnd - navigationStart,
+                domLoading: timing.domLoading - navigationStart,
+                domInteractive: timing.domInteractive - navigationStart,
+                domContentLoadedEventStart: timing.domContentLoadedEventStart - navigationStart,
+                domContentLoadedEventEnd: timing.domContentLoadedEventEnd - navigationStart,
+                domComplete: timing.domComplete - navigationStart,
+                loadEventStart: timing.loadEventStart - navigationStart,
+                loadEventEnd: timing.loadEventEnd - navigationStart
             };
             document.getElementById('timingValues').innerText = JSON.stringify(timingValues, null, 4);
         }
