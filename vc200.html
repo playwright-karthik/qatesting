@@ -6,13 +6,14 @@
     <title>Visually Complete Example</title>
     <style>
         body {
-            display: none;
+            visibility: hidden;
         }
     </style>
     <script>
         document.addEventListener('DOMContentLoaded', function() {
+            // Set a timeout to make the content visible exactly at 200ms
             setTimeout(function() {
-                document.body.style.display = 'block';
+                document.body.style.visibility = 'visible';
                 console.log('Visually Complete: 200ms');
             }, 200);
         });
@@ -20,6 +21,6 @@
 </head>
 <body>
     <h1>Visually Complete Test</h1>
-    <p>This content will appear after 200ms.</p>
+    <p>This content will appear exactly after 200ms.</p>
 </body>
 </html>
