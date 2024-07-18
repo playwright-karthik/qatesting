@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Render Start Example</title>
+    <style>
+        body {
+            visibility: hidden;
+        }
+    </style>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Set a timeout to make the content visible exactly at 250ms
+            setTimeout(function() {
+                document.body.style.visibility = 'visible';
+                console.log('Render Start: 250ms');
+            }, 250);
+        });
+    </script>
+</head>
+<body>
+    <h1>Render Start Test</h1>
+    <p>This content will appear exactly after 250ms.</p>
+</body>
+</html>
