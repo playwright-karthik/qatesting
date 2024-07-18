@@ -3,31 +3,23 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Large Resource Test</title>
-
-    <!-- Intentionally large image -->
+    <title>Visually Complete Example</title>
     <style>
-        #largeImage {
-            width: 1000px; /* Adjust as needed */
-            height: 800px; /* Adjust as needed */
+        body {
+            display: none;
         }
     </style>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            setTimeout(function() {
+                document.body.style.display = 'block';
+                console.log('Visually Complete: 200ms');
+            }, 200);
+        });
+    </script>
 </head>
 <body>
-
-    <h1>Large Resource Test</h1>
-
-    <!-- Intentionally large image -->
-    <img id="largeImage" src="https://via.placeholder.com/1000x800" alt="Large Image">
-
-    <!-- Intentionally large script -->
-    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
-    <script>
-        // Simulate heavy processing
-        for (let i = 0; i < 1000000; i++) {
-            console.log('Heavy processing simulation');
-        }
-    </script>
-
+    <h1>Visually Complete Test</h1>
+    <p>This content will appear after 200ms.</p>
 </body>
 </html>
