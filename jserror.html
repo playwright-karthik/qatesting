@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JavaScript Multiple Failures Test</title>
+</head>
+<body>
+    <h1>JavaScript Multiple Failures Test Page</h1>
+    <p>This page includes multiple deliberate JavaScript errors for testing purposes.</p>
+    
+    <script>
+        // Function with deliberate errors
+        function triggerErrors() {
+            // Intentional ReferenceError
+            try {
+                nonExistentFunction1();
+            } catch (error) {
+                console.error('Caught the first deliberate error:', error);
+                // Optionally, send the error to a monitoring service
+                // Example: sendErrorToMonitoringService(error);
+            }
+            
+            // Intentional TypeError
+            try {
+                null.faultyFunction();
+            } catch (error) {
+                console.error('Caught the second deliberate error:', error);
+                // Optionally, send the error to a monitoring service
+                // Example: sendErrorToMonitoringService(error);
+            }
+            
+            // Intentional SyntaxError
+            try {
+                eval('var a = ;'); // Invalid JavaScript syntax
+            } catch (error) {
+                console.error('Caught the third deliberate error:', error);
+                // Optionally, send the error to a monitoring service
+                // Example: sendErrorToMonitoringService(error);
+            }
+        }
+
+        // Execute the function with errors on page load
+        window.onload = function() {
+            triggerErrors();
+        };
+    </script>
+</body>
+</html>
