@@ -45,21 +45,23 @@
   </div>
 
 <div>
-  <h2> Testing Proxy woth PAC files </h2>
-  <h3> .243 is Authenticated, and .241 is Non-Authenticated</h3>
+  <h2> Testing Proxy with PAC files </h2>
   <p>
     How to use this?</br>
-    Run the below commands as it is in the Agent machine </br>
+    Run the below commands as it is in the Agent machine, change PAC-filenames in URL, Credentials are dependent </br>
     1. To Configure</br>
     catchpoint proxy --type=PAC --host=https://playwright-karthik.github.io/qatesting/p1.pac --user=proxyuser --password=cpuser123 </br>
     2. To Remove</br>
     catchpoint proxy --type=DIRECT</br>
     catchpoint restart</br>
   </p>
-  <a href="p1.pac"> PAC with .243 [No-Bypass] </a> </br>
-  <a href="p2.pac"> PAC with .243 [with-Bypass] </a> </br>
-  <a href="p3.pac"> PAC with .243 [with Regex-Bypass] </a> </br>
+  <h3> Proxy servers .241 is Without Authentication </h3>
+  <a href="p1.pac"> PAC with .241 [No-Bypass] </a> </br>
+  <a href="p2.pac"> PAC with .241 [with-Bypass] </a> </br>
+  <a href="p3.pac"> PAC with .241 [with Regex-Bypass] </a> </br>
+  <h3> Proxy servers .243 is With Authentication </h3>
   <a href="p4.pac"> PAC with .243 [No Bypass] </a> </br>
+  <a href="p4.pac"> PAC with .243 [With Bypass] </a> </br>
 </div>
 
   
