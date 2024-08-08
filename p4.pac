@@ -1,6 +1,7 @@
 function FindProxyForURL(url, host) {
-    // Bypass proxy for domains
-    if (shExpMatch(host, "web-assets.zendesk.com")) {
+    // Bypass proxy for the specific domain or IP
+    if (shExpMatch(host, "web-assets.zendesk.com") || 
+        isInNet(host, "104.18.31.99", "255.255.255.255")) {
         return "DIRECT";
     }
     
