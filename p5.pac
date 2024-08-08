@@ -4,11 +4,6 @@ function FindProxyForURL(url, host) {
     if (regex.test(host) {
         return "DIRECT";
     }
-
-    // Bypass proxy for domains starting with *.*
-    if (/^\*\.\*/.test(host)) {
-        return "DIRECT";
-    }
     
     // Use proxy for all other requests
     return "PROXY 192.168.128.243:50000";
