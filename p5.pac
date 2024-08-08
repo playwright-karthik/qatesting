@@ -1,7 +1,7 @@
 function FindProxyForURL(url, host) {
     // Bypass proxy for domains matching using regex
     var regex = /^web-assets\.zendesk\.com$/;
-    if (regex.test(host) {
+    if (regex.test(host)) {
         return "DIRECT";
     }
     
