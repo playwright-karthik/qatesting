@@ -1,3 +1,4 @@
+function FindProxyForURL(url, host)
 {
     //use your Agent node IP in second condition to bypass
     if (isInNet(host, "192.168.128.242", "255.255.255.255") ||
