@@ -1,3 +1,4 @@
+function FindProxyForURL(url, host)
 {
     //use DNS resolver example:8.8.8.8/127.0.0.0 in Third condition to bypass
     if (isInNet(host, "192.168.128.242", "255.255.255.255") ||
