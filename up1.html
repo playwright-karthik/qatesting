@@ -43,16 +43,6 @@
         .login-form input[type="submit"]:hover {
             background-color: #45a049;
         }
-        .message {
-            margin-top: 20px;
-            font-weight: bold;
-        }
-        .error-message {
-            color: red;
-        }
-        .success-message {
-            color: green;
-        }
     </style>
 </head>
 <body>
@@ -67,16 +57,15 @@
 
             <input type="submit" value="Login">
         </form>
-        <div id="message" class="message"></div>
     </div>
 
     <script>
         // Valid usernames and passwords
         const validCredentials = [
-            // Previous credentials
             { username: "user1", password: "P@ssw0rd1!" },
             { username: "user2", password: "MyP@ssw0rd@" },
             { username: "user3", password: "S3cr3tP@ss$" },
+            { username: "user123", password: "password123" },
             { username: "user123", password: "C#asasasasasasas123" },
             { username: "user123", password: "C$asasasasasas123" },
             { username: "user123", password: "C%asadasadsasa123" },
@@ -105,7 +94,6 @@
             { username: "user123", password: "C\"*!@\\$\\&:\\\"catchpoint123" },
 
             // Unicode passwords
-            //Task 196786: SDET: Test with multiple combination of passwords
             { username: "userUnicode1", password: "😀🔒123Secure" },
             { username: "userUnicode2", password: "Pässwörd123" },
             { username: "userUnicode3", password: "Σecrεt🔑" },
@@ -124,17 +112,14 @@
             const username = document.getElementById('username').value;
             const password = document.getElementById('password').value;
 
-            // Check if the entered username and password match any valid credentials
+            // Authentication logic
             const isValid = validCredentials.some(cred => cred.username === username && cred.password === password);
 
-            // Display result
-            const messageDiv = document.getElementById('message');
             if (isValid) {
-                messageDiv.textContent = "Success: Authentication Successful";
-                messageDiv.className = "message success-message";
+                document.body.innerHTML = "<h1>Success: Authentication Successful</h1>";
             } else {
-                messageDiv.textContent = "401 Unauthorized: Invalid Credentials";
-                messageDiv.className = "message error-message";
+                document.body.innerHTML = "<h1>401 Unauthorized: Invalid Credentials</h1>";
+                document.body.style.color = "red";
             }
         });
     </script>
