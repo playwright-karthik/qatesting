@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Authentication Test</title>
+</head>
+<body>
+    <script>
+        // Predefined valid credentials
+        const validCredentials = [
+            { username: "admin1", password: "admin123" },
+            { username: "user1", password: "user123" },
+            { username: "user2", password: "user234" }
+        ];
+
+        // Prompt the user for username and password
+        const username = prompt("Enter your username:");
+        const password = prompt("Enter your password:");
+
+        // Check if the entered credentials are valid
+        const isValid = validCredentials.some(
+            credentials => credentials.username === username && credentials.password === password
+        );
+
+        // Authentication result
+        if (isValid) {
+            document.body.innerHTML = "<h1>Success: Authentication Successful</h1>";
+        } else {
+            document.body.innerHTML = "<h1>401 Unauthorized: Invalid Credentials</h1>";
+            document.body.style.color = "red";
+        }
+    </script>
+</body>
+</html>
