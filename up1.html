@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Special Characters Authentication Test</title>
+    <title>Special Characters & Unicode Authentication Test</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -77,8 +77,6 @@
             { username: "user1", password: "P@ssw0rd1!" },
             { username: "user2", password: "MyP@ssw0rd@" },
             { username: "user3", password: "S3cr3tP@ss$" },
-
-            // Special character tests
             { username: "user123", password: "C#asasasasasasas123" },
             { username: "user123", password: "C$asasasasasas123" },
             { username: "user123", password: "C%asadasadsasa123" },
@@ -104,7 +102,20 @@
             { username: "user123", password: "$Y-$M-$D_$H$N$S" },
             { username: "user123", password: "C~!@#$%^&*()" },
             { username: "user123", password: "C\"asdasdasd123" },
-            { username: "user123", password: "C\"*!@\\$\\&:\\\"catchpoint123" }
+            { username: "user123", password: "C\"*!@\\$\\&:\\\"catchpoint123" },
+
+            // Unicode passwords
+            //Task 196786: SDET: Test with multiple combination of passwords
+            { username: "userUnicode1", password: "😀🔒123Secure" },
+            { username: "userUnicode2", password: "Pässwörd123" },
+            { username: "userUnicode3", password: "Σecrεt🔑" },
+            { username: "userUnicode4", password: "密码🔑123" },
+            { username: "userUnicode5", password: "セキュリティ🔒" },
+            { username: "userUnicode6", password: "סיסמא🔐123" },
+            { username: "userUnicode7", password: "كلمهالسر🔐123" },
+            { username: "userUnicode8", password: "✨🌟Secure123" },
+            { username: "userUnicode9", password: "Securité密码123" },
+            { username: "userUnicode10", password: "P@sswørd🌍🔒" }
         ];
 
         document.getElementById('authForm').addEventListener('submit', function(event) {
