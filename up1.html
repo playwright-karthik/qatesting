@@ -3,33 +3,95 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Authentication Test</title>
+    <title>Special Characters Authentication Test</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        .login-form, .result-message {
+            background-color: #f2f2f2;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+            width: 300px;
+            text-align: center;
+        }
+        .login-form h2, .result-message h1 {
+            margin-bottom: 20px;
+        }
+        .login-form input[type="text"], .login-form input[type="password"] {
+            width: 100%;
+            padding: 10px;
+            margin: 5px 0 15px 0;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        .login-form input[type="submit"] {
+            width: 100%;
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        .login-form input[type="submit"]:hover {
+            background-color: #45a049;
+        }
+        .error-message {
+            color: red;
+            font-weight: bold;
+        }
+    </style>
 </head>
 <body>
+    <div class="login-form">
+        <h2>Login</h2>
+        <form id="authForm">
+            <label for="username">Username:</label>
+            <input type="text" id="username" name="username" required>
+
+            <label for="password">Password:</label>
+            <input type="password" id="password" name="password" required>
+
+            <input type="submit" value="Login">
+        </form>
+        <div id="error" class="error-message"></div>
+    </div>
+
     <script>
-        // Predefined valid credentials
+        // Predefined valid credentials with special characters
         const validCredentials = [
-            { username: "admin1", password: "admin123" },
-            { username: "user1", password: "user123" },
-            { username: "user2", password: "user234" }
+            { username: "admin", password: "P@ssw0rd!" },
+            { username: "user1", password: "P@ssw0rd#2023" },
+            { username: "user2", password: "user$12345" },
+            { username: "specialUser", password: "sP#c!@lCh@r$" },
+            { username: "userk", password: "passwordk" },
         ];
 
-        // Prompt the user for username and password
-        const username = prompt("Enter your username:");
-        const password = prompt("Enter your password:");
+        document.getElementById('authForm').addEventListener('submit', function(event) {
+            event.preventDefault(); // Prevent form submission
 
-        // Check if the entered credentials are valid
-        const isValid = validCredentials.some(
-            credentials => credentials.username === username && credentials.password === password
-        );
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
 
-        // Authentication result
-        if (isValid) {
-            document.body.innerHTML = "<h1>Success: Authentication Successful</h1>";
-        } else {
-            document.body.innerHTML = "<h1>401 Unauthorized: Invalid Credentials</h1>";
-            document.body.style.color = "red";
-        }
+            // Check if the entered credentials are valid
+            const isValid = validCredentials.some(
+                credentials => credentials.username === username && credentials.password === password
+            );
+
+            // Authentication result
+            if (isValid) {
+                document.body.innerHTML = "<div class='result-message'><h1>Success: Authentication Successful</h1></div>";
+            } else {
+                document.getElementById('error').textContent = "401 Unauthorized: Invalid Credentials";
+            }
+        });
     </script>
 </body>
 </html>
