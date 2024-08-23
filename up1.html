@@ -43,9 +43,15 @@
         .login-form input[type="submit"]:hover {
             background-color: #45a049;
         }
+        .result-message, .error-message {
+            margin-top: 20px;
+            font-weight: bold;
+        }
         .error-message {
             color: red;
-            font-weight: bold;
+        }
+        .result-message {
+            color: green;
         }
     </style>
 </head>
@@ -61,6 +67,7 @@
 
             <input type="submit" value="Login">
         </form>
+        <div id="result" class="result-message"></div>
         <div id="error" class="error-message"></div>
     </div>
 
@@ -70,17 +77,17 @@
 
         // Multiple valid passwords with special characters
         const validPasswords = [
-            "\"P@ss\"w0rd'",  // Quotation Marks
-            "P@ssw\\0rd\\\\",  // Backslash
-            "P@ss&word&",      // Ampersand
-            "P@ss>word<",      // Greater Than / Less Than
-            "P@ss{word}[2023]", // Brackets
-            "P@ss^word^123",   // Caret
-            "P@ss|word|",      // Pipe
-            "P@ss%word%",      // Percentage
-            "P@ss*word*2023",  // Asterisk
-            "P@ss~word~",       // Tilde
-            "password123"       //Normal
+            '"P@ss"w0rd\'',  // Quotation Marks
+            'P@ssw\\0rd\\\\',  // Backslash
+            'P@ss&word&',      // Ampersand
+            'P@ss>word<',      // Greater Than / Less Than
+            'P@ss{word}[2023]', // Brackets
+            'P@ss^word^123',   // Caret
+            'P@ss|word|',      // Pipe
+            'P@ss%word%',      // Percentage
+            'P@ss*word*2023',  // Asterisk
+            'P@ss~word~',       // Tilde
+            'password123'
         ];
 
         document.getElementById('authForm').addEventListener('submit', function(event) {
@@ -89,12 +96,16 @@
             const username = document.getElementById('username').value;
             const password = document.getElementById('password').value;
 
+            // Reset messages
+            document.getElementById('result').textContent = '';
+            document.getElementById('error').textContent = '';
+
             // Check if the entered username and password are valid
             const isValid = (username === validUsername) && validPasswords.includes(password);
 
             // Authentication result
             if (isValid) {
-                document.body.innerHTML = "<div class='result-message'><h1>Success: Authentication Successful</h1></div>";
+                document.getElementById('result').textContent = "Success: Authentication Successful";
             } else {
                 document.getElementById('error').textContent = "401 Unauthorized: Invalid Credentials";
             }
