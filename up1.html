@@ -71,20 +71,40 @@
     </div>
 
     <script>
-        // Valid usernames and passwords with special characters
+        // Valid usernames and passwords
         const validCredentials = [
-            { username: "user!\"", password: "P@ssw0rd1!" }, // Username with ! and " and a complex password
-            { username: "user\\", password: "MyP@ssw0rd@" }, // Username with \ and a complex password
-            { username: "user&", password: "S3cr3tP@ss$" },  // Username with & and a complex password
-            { username: "user<", password: "P@ss>word<" },    // Username with < and > in username and password
-            { username: "user{", password: "P@ss{word}2023" }, // Username with { and } and a complex password
-            { username: "user^", password: "P@ss^word^" },    // Username with ^ and a complex password
-            { username: "user|", password: "P@ss|word|" },    // Username with | and a complex password
-            { username: "user%", password: "P@ss%word%" },    // Username with % and a complex password
-            { username: "user*", password: "P@ss*word*2023" }, // Username with * and a complex password
-            { username: "user~", password: "P@ss~word~" },    // Username with ~ and a complex password
-            { username: "user||", password: "P@ss||word||" },  // Username with || and a complex password
-            { username: "user123", password: "pass123" }
+            // Previous credentials
+            { username: "user1", password: "P@ssw0rd1!" },
+            { username: "user2", password: "MyP@ssw0rd@" },
+            { username: "user3", password: "S3cr3tP@ss$" },
+
+            // Special character tests
+            { username: "user123", password: "C#asasasasasasas123" },
+            { username: "user123", password: "C$asasasasasas123" },
+            { username: "user123", password: "C%asadasadsasa123" },
+            { username: "user123", password: "C^asdasdasdasd123" },
+            { username: "user123", password: "C&asdasdasd123" },
+            { username: "user123", password: "C(asdasdasdasd123" },
+            { username: "user123", password: "C(asdasdasdasd)123" },
+            { username: "user123", password: "C,asdasdasdasd123" },
+            { username: "user123", password: "C;asdasdasdasd123" },
+            { username: "user123", password: "C:asdasdasdasd123" },
+            { username: "user123", password: "C'asdasdasdasd123" },
+            { username: "user123", password: "C{asdasdasdasd123" },
+            { username: "user123", password: "C}asdasdasdasd123" },
+            { username: "user123", password: "C:\\asdasdasdasd123" },
+            { username: "user123", password: "C|asdasdasdad123" },
+            { username: "user123", password: "C]asdasdasdad123" },
+            { username: "user123", password: "C[asdasdasdasd123" },
+            { username: "user123", password: "C&^asdasd123" },
+            { username: "user123", password: "C{asd}(asd)[asd]#asd#123" },
+            { username: "user123", password: "C*asdasdasdasd123" },
+            { username: "user123", password: "C~!@#$%^&*()123" },
+            { username: "user123", password: "\\*!@\\$\\&:\\catchpoint123" },
+            { username: "user123", password: "$Y-$M-$D_$H$N$S" },
+            { username: "user123", password: "C~!@#$%^&*()" },
+            { username: "user123", password: "C\"asdasdasd123" },
+            { username: "user123", password: "C\"*!@\\$\\&:\\\"catchpoint123" }
         ];
 
         document.getElementById('authForm').addEventListener('submit', function(event) {
