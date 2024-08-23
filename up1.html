@@ -66,21 +66,21 @@
 
     <script>
         // Single valid username
-        const validUsername = "admin123";
+        const validUsername = "admin";
 
         // Multiple valid passwords with special characters
         const validPasswords = [
-            `"P@ss"w0rd'`,
-            `P@ssw\\0rd\\\\`,
-            `P@ss&word&`,
-            `P@ss>word<`,
-            `P@ss{word}[2023]`,
-            `P@ss^word^123`,
-            `P@ss|word|`,
-            `P@ss%word%`,
-            `P@ss*word*2023`,
-            `P@ss~word~`,
-            password123
+            "\"P@ss\"w0rd'",  // Quotation Marks
+            "P@ssw\\0rd\\\\",  // Backslash
+            "P@ss&word&",      // Ampersand
+            "P@ss>word<",      // Greater Than / Less Than
+            "P@ss{word}[2023]", // Brackets
+            "P@ss^word^123",   // Caret
+            "P@ss|word|",      // Pipe
+            "P@ss%word%",      // Percentage
+            "P@ss*word*2023",  // Asterisk
+            "P@ss~word~",       // Tilde
+            "password123"       //Normal
         ];
 
         document.getElementById('authForm').addEventListener('submit', function(event) {
