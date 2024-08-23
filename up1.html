@@ -43,14 +43,14 @@
         .login-form input[type="submit"]:hover {
             background-color: #45a049;
         }
-        .result-message, .error-message {
+        .message {
             margin-top: 20px;
             font-weight: bold;
         }
         .error-message {
             color: red;
         }
-        .result-message {
+        .success-message {
             color: green;
         }
     </style>
@@ -67,27 +67,24 @@
 
             <input type="submit" value="Login">
         </form>
-        <div id="result" class="result-message"></div>
-        <div id="error" class="error-message"></div>
+        <div id="message" class="message"></div>
     </div>
 
     <script>
-        // Single valid username
-        const validUsername = "admin123";
-
-        // Multiple valid passwords with special characters
-        const validPasswords = [
-            '"P@ss"w0rd\'',  // Quotation Marks
-            'P@ssw\\0rd\\\\',  // Backslash
-            'P@ss&word&',      // Ampersand
-            'P@ss>word<',      // Greater Than / Less Than
-            'P@ss{word}[2023]', // Brackets
-            'P@ss^word^123',   // Caret
-            'P@ss|word|',      // Pipe
-            'P@ss%word%',      // Percentage
-            'P@ss*word*2023',  // Asterisk
-            'P@ss~word~',       // Tilde
-            'password123'
+        // Valid usernames and passwords with special characters
+        const validCredentials = [
+            { username: "user!\"", password: "P@ssw0rd1!" }, // Username with ! and " and a complex password
+            { username: "user\\", password: "MyP@ssw0rd@" }, // Username with \ and a complex password
+            { username: "user&", password: "S3cr3tP@ss$" },  // Username with & and a complex password
+            { username: "user<", password: "P@ss>word<" },    // Username with < and > in username and password
+            { username: "user{", password: "P@ss{word}2023" }, // Username with { and } and a complex password
+            { username: "user^", password: "P@ss^word^" },    // Username with ^ and a complex password
+            { username: "user|", password: "P@ss|word|" },    // Username with | and a complex password
+            { username: "user%", password: "P@ss%word%" },    // Username with % and a complex password
+            { username: "user*", password: "P@ss*word*2023" }, // Username with * and a complex password
+            { username: "user~", password: "P@ss~word~" },    // Username with ~ and a complex password
+            { username: "user||", password: "P@ss||word||" },  // Username with || and a complex password
+            { username: "user123", password: "pass123" }
         ];
 
         document.getElementById('authForm').addEventListener('submit', function(event) {
@@ -96,18 +93,17 @@
             const username = document.getElementById('username').value;
             const password = document.getElementById('password').value;
 
-            // Reset messages
-            document.getElementById('result').textContent = '';
-            document.getElementById('error').textContent = '';
+            // Check if the entered username and password match any valid credentials
+            const isValid = validCredentials.some(cred => cred.username === username && cred.password === password);
 
-            // Check if the entered username and password are valid
-            const isValid = (username === validUsername) && validPasswords.includes(password);
-
-            // Authentication result
+            // Display result
+            const messageDiv = document.getElementById('message');
             if (isValid) {
-                document.getElementById('result').textContent = "Success: Authentication Successful";
+                messageDiv.textContent = "Success: Authentication Successful";
+                messageDiv.className = "message success-message";
             } else {
-                document.getElementById('error').textContent = "401 Unauthorized: Invalid Credentials";
+                messageDiv.textContent = "401 Unauthorized: Invalid Credentials";
+                messageDiv.className = "message error-message";
             }
         });
     </script>
