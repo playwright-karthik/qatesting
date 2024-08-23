@@ -13,7 +13,7 @@
             height: 100vh;
             margin: 0;
         }
-        .login-form, .result-message {
+        .login-form {
             background-color: #f2f2f2;
             padding: 20px;
             border-radius: 5px;
@@ -21,7 +21,7 @@
             width: 300px;
             text-align: center;
         }
-        .login-form h2, .result-message h1 {
+        .login-form h2 {
             margin-bottom: 20px;
         }
         .login-form input[type="text"], .login-form input[type="password"] {
@@ -65,13 +65,22 @@
     </div>
 
     <script>
-        // Predefined valid credentials with special characters
-        const validCredentials = [
-            { username: "admin", password: "P@ssw0rd!" },
-            { username: "user1", password: "P@ssw0rd#2023" },
-            { username: "user2", password: "user$12345" },
-            { username: "specialUser", password: "sP#c!@lCh@r$" },
-            { username: "userk", password: "passwordk" },
+        // Single valid username
+        const validUsername = "admin123";
+
+        // Multiple valid passwords with special characters
+        const validPasswords = [
+            `"P@ss"w0rd'`,
+            `P@ssw\\0rd\\\\`,
+            `P@ss&word&`,
+            `P@ss>word<`,
+            `P@ss{word}[2023]`,
+            `P@ss^word^123`,
+            `P@ss|word|`,
+            `P@ss%word%`,
+            `P@ss*word*2023`,
+            `P@ss~word~`,
+            password123
         ];
 
         document.getElementById('authForm').addEventListener('submit', function(event) {
@@ -80,10 +89,8 @@
             const username = document.getElementById('username').value;
             const password = document.getElementById('password').value;
 
-            // Check if the entered credentials are valid
-            const isValid = validCredentials.some(
-                credentials => credentials.username === username && credentials.password === password
-            );
+            // Check if the entered username and password are valid
+            const isValid = (username === validUsername) && validPasswords.includes(password);
 
             // Authentication result
             if (isValid) {
