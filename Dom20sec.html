@@ -40,29 +40,27 @@
             }, 1000);
         }
 
-        // Simulate a delay in the DOMContentLoaded event
-        function delayDOMContentLoaded(duration) {
-            return new Promise(resolve => {
-                setTimeout(() => {
-                    document.dispatchEvent(new Event('DOMContentLoaded'));
-                    resolve();
-                }, duration);
-            });
+        function simulateHeavyOperation(duration) {
+            const endTime = Date.now() + duration;
+            while (Date.now() < endTime) {
+                // Simulate heavy processing
+            }
         }
 
         document.addEventListener('DOMContentLoaded', function () {
-            console.log('DOMContentLoaded event fired after 20 seconds delay');
+            console.log('DOMContentLoaded event fired after delay');
             document.getElementById('timer').textContent = 'DOM Loaded';
         });
 
-        // Get the timer display element
+        // Start the timer
         const display = document.getElementById('timer');
-
-        // Start the 20 seconds timer
         startTimer(20, display);
 
-        // Simulate the 20 seconds delay before DOMContentLoaded event
-        delayDOMContentLoaded(20000);
+        // Simulate a 20-second delay with heavy processing
+        setTimeout(() => {
+            simulateHeavyOperation(20000); // 20 seconds of heavy processing
+            document.dispatchEvent(new Event('DOMContentLoaded'));
+        }, 20000); // Delay 20 seconds before firing DOMContentLoaded
 
         // Add a load event listener
         window.addEventListener('load', function () {
