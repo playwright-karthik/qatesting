@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simulate Connection Failure</title>
+</head>
+<body>
+    <h1>Testing Connection Failure on 2nd Child Request</h1>
+    <script>
+        function simulateRequest(url, successCallback, failureCallback) {
+            const xhr = new XMLHttpRequest();
+            xhr.open('GET', url, true);
+
+            xhr.onload = function () {
+                if (xhr.status >= 200 && xhr.status < 300) {
+                    successCallback(xhr.responseText);
+                } else {
+                    failureCallback(xhr.status);
+                }
+            };
+
+            xhr.onerror = function () {
+                failureCallback(xhr.status);
+            };
+
+            xhr.ontimeout = function () {
+                failureCallback('timeout');
+            };
+
+            xhr.timeout = 30000; // 30 seconds timeout
+
+            xhr.send();
+        }
+
+        // First child request (success)
+        simulateRequest('https://httpbin.org/get', 
+            function (response) {
+                console.log('First request success:', response);
+            }, 
+            function (status) {
+                console.log('First request failed with status:', status);
+            }
+        );
+
+        // Second child request (simulated failure)
+        setTimeout(function() {
+            simulateRequest('https://example.com/nonexistent', 
+                function (response) {
+                    console.log('Second request success:', response);
+                }, 
+                function (status) {
+                    console.log('Second request failed with status:', status);
+                }
+            );
+        }, 30000); // 30 seconds delay before the second request
+    </script>
+</body>
+</html>
