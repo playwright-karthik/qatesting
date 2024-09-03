@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Locator Method Test</title>
+    <style>
+        .hidden { display: none; }
+        .visible { display: block; }
+        .hover-highlight { background-color: yellow; }
+    </style>
+</head>
+<body>
+    <h1>Testing Puppeteer Locator Methods</h1>
+    <button id="click-me">Click Me</button>
+    <input type="text" id="input-field" placeholder="Type here">
+    <div class="scrollable" style="width: 100px; height: 100px; overflow: scroll;">
+        <p>Scrollable Content</p>
+        <p>More Content</p>
+        <p>Even More Content</p>
+    </div>
+    <div class="hidden" id="hidden-element">I am hidden</div>
+    <div class="visible" id="visible-element">I am visible</div>
+    <script>
+        document.getElementById('click-me').addEventListener('click', () => {
+            document.getElementById('click-me').innerText = 'Clicked!';
+        });
+    </script>
+</body>
+</html>
