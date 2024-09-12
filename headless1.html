@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Headless Detection Test</title>
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            // Detect headless user-agent
+            const userAgent = navigator.userAgent.toLowerCase();
+            const isHeadless = userAgent.includes("headless");
+
+            // Detect web driver presence
+            const isWebDriver = navigator.webdriver;
+
+            // Detect specific headless features or properties
+            const isHeadlessFeatures = !(navigator.languages) || navigator.languages.length === 0;
+
+            // Display results
+            document.getElementById("user-agent").innerText = userAgent;
+            document.getElementById("headless-detection").innerText = isHeadless ? "Headless detected" : "Not detected";
+            document.getElementById("webdriver-detection").innerText = isWebDriver ? "WebDriver detected" : "Not detected";
+            document.getElementById("features-detection").innerText = isHeadlessFeatures ? "Possible headless features detected" : "No headless features detected";
+        });
+    </script>
+</head>
+<body>
+    <h1>Headless Browser Detection Test</h1>
+    <p><strong>User-Agent:</strong> <span id="user-agent"></span></p>
+    <p><strong>Headless Detection by User-Agent:</strong> <span id="headless-detection"></span></p>
+    <p><strong>WebDriver Detection:</strong> <span id="webdriver-detection"></span></p>
+    <p><strong>Headless Features Detection:</strong> <span id="features-detection"></span></p>
+</body>
+</html>
