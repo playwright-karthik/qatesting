@@ -1,0 +1,1 @@
+--boundary\nContent-Type: text/plain\n\nThis is plain text.\n--boundary\nContent-Type: text/html\n\n<html><body>This is HTML.</body></html>\n--boundary--
