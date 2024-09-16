@@ -4,18 +4,91 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>MIME Type Testing</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f0f0f0;
+      margin: 20px;
+    }
+    h1 {
+      color: #333;
+    }
+    ul {
+      list-style-type: none;
+      padding: 0;
+    }
+    li {
+      margin: 10px 0;
+    }
+    a {
+      text-decoration: none;
+      color: #0066cc;
+    }
+    a:hover {
+      text-decoration: underline;
+    }
+  </style>
 </head>
 <body>
   <h1>MIME Type Testing</h1>
+  <p>Select a file to view or download, based on its MIME type:</p>
+  
   <ul>
-    <li><a href="text/sample.html">Text MIME Type</a></li>
-    <li><a href="image/sample.jpg">Image MIME Type (JPG)</a></li>
-    <li><a href="image/sample.png">Image MIME Type (PNG)</a></li>
-    <li><a href="audio/sample.mp3">Audio MIME Type (MP3)</a></li>
-    <li><a href="video/sample.mp4">Video MIME Type (MP4)</a></li>
-    <li><a href="application/sample.json">Application MIME Type (JSON)</a></li>
-    <li><a href="multipart/sample.txt">Multipart MIME Type</a></li>
-    <li><a href="font/sample.woff">Font MIME Type (WOFF)</a></li>
+    <li><strong>Text MIME Types:</strong></li>
+    <ul>
+      <li><a href="text/plain.txt">Plain Text File</a></li>
+      <li><a href="text/sample.html">HTML File</a></li>
+      <li><a href="text/sample.css">CSS File</a></li>
+      <li><a href="text/sample.js">JavaScript File</a></li>
+    </ul>
+    
+    <li><strong>Image MIME Types:</strong></li>
+    <ul>
+      <li><a href="image/sample.jpg">JPEG Image</a></li>
+      <li><a href="image/sample.png">PNG Image</a></li>
+      <li><a href="image/sample.gif">GIF Image</a></li>
+      <li><a href="image/sample.svg">SVG Image</a></li>
+    </ul>
+
+    <li><strong>Audio MIME Types:</strong></li>
+    <ul>
+      <li><a href="audio/sample.mp3">MP3 Audio</a></li>
+      <li><a href="audio/sample.ogg">OGG Audio</a></li>
+      <li><a href="audio/sample.wav">WAV Audio</a></li>
+    </ul>
+
+    <li><strong>Video MIME Types:</strong></li>
+    <ul>
+      <li><a href="video/sample.mp4">MP4 Video</a></li>
+      <li><a href="video/sample.webm">WebM Video</a></li>
+      <li><a href="video/sample.ogv">OGV Video</a></li>
+    </ul>
+
+    <li><strong>Application MIME Types:</strong></li>
+    <ul>
+      <li><a href="application/sample.json">JSON File</a></li>
+      <li><a href="application/sample.xml">XML File</a></li>
+      <li><a href="application/sample.pdf">PDF File</a></li>
+      <li><a href="application/sample.zip">ZIP Archive</a></li>
+      <li><a href="application/sample.txt">Form URL Encoded Data</a></li>
+    </ul>
+
+    <li><strong>Multipart MIME Types:</strong></li>
+    <ul>
+      <li><a href="multipart/sample.txt">Multipart Form Data</a></li>
+    </ul>
+
+    <li><strong>Font MIME Types:</strong></li>
+    <ul>
+      <li><a href="font/sample.woff">WOFF Font</a></li>
+      <li><a href="font/sample.woff2">WOFF2 Font</a></li>
+    </ul>
+
+    <li><strong>Other MIME Types:</strong></li>
+    <ul>
+      <li><a href="other/sample.bin">Binary File</a></li>
+      <li><a href="other/sample.json">Other JSON File</a></li>
+    </ul>
   </ul>
 </body>
 </html>
