@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MIME Types Child Requests</title>
+</head>
+<body>
+    <h1>MIME Types Child Requests</h1>
+    <script>
+        // Array of MIME type file URLs
+        const urls = [
+            "https://github.com/playwright-karthik/qatesting/raw/main/mimeTextFiles/text/1d-interleaved-parityfec",
+            "https://github.com/playwright-karthik/qatesting/raw/main/mimeTextFiles/text/cache-manifest",
+            "https://github.com/playwright-karthik/qatesting/raw/main/mimeTextFiles/text/calendar",
+            "https://github.com/playwright-karthik/qatesting/raw/main/mimeTextFiles/text/cql",
+            "https://github.com/playwright-karthik/qatesting/raw/main/mimeTextFiles/text/cql-expression",
+            "https://github.com/playwright-karthik/qatesting/raw/main/mimeTextFiles/text/cql-identifier",
+            "https://github.com/playwright-karthik/qatesting/raw/main/mimeTextFiles/text/css",
+            "https://github.com/playwright-karthik/qatesting/raw/main/mimeTextFiles/text/csv",
+            "https://github.com/playwright-karthik/qatesting/raw/main/mimeTextFiles/text/csv-schema",
+            "https://github.com/playwright-karthik/qatesting/raw/main/mimeTextFiles/text/directory",
+            "https://github.com/playwright-karthik/qatesting/raw/main/mimeTextFiles/text/dns",
+            "https://github.com/playwright-karthik/qatesting/raw/main/mimeTextFiles/text/ecmascript",
+            "https://github.com/playwright-karthik/qatesting/raw/main/mimeTextFiles/text/encaprtp",
+            "https://github.com/playwright-karthik/qatesting/raw/main/mimeTextFiles/text/enriched",
+            "https://github.com/playwright-karthik/qatesting/raw/main/mimeTextFiles/text/example",
+            "https://github.com/playwright-karthik/qatesting/raw/main/mimeTextFiles/text/fhirpath",
+            "https://github.com/playwright-karthik/qatesting/raw/main/mimeTextFiles/text/flexfec",
+            "https://github.com/playwright-karthik/qatesting/raw/main/mimeTextFiles/text/fwdred",
+            "https://github.com/playwright-karthik/qatesting/raw/main/mimeTextFiles/text/gff3",
+            "https://github.com/playwright-karthik/qatesting/raw/main/mimeTextFiles/text/grammar-ref-list",
+            "https://github.com/playwright-karthik/qatesting/raw/main/mimeTextFiles/text/hl7v2",
+            "https://github.com/playwright-karthik/qatesting/raw/main/mimeTextFiles/text/html",
+            "https://github.com/playwright-karthik/qatesting/raw/main/mimeTextFiles/text/javascript",
+            "https://github.com/playwright-karthik/qatesting/raw/main/mimeTextFiles/text/jcr-cnd",
+            "https://github.com/playwright-karthik/qatesting/raw/main/mimeTextFiles/text/markdown",
+            "https://github.com/playwright-karthik/qatesting/raw/main/mimeTextFiles/text/mizar",
+            "https://github.com/playwright-karthik/qatesting/raw/main/mimeTextFiles/text/n3",
+            "https://github.com/playwright-karthik/qatesting/raw/main/mimeTextFiles/text/parameters",
+            "https://github.com/playwright-karthik/qatesting/raw/main/mimeTextFiles/text/parityfec",
+            "https://github.com/playwright-karthik/qatesting/raw/main/mimeTextFiles/text/plain",
+            "https://github.com/playwright-karthik/qatesting/raw/main/mimeTextFiles/text/provenance-notation",
+            "https://github.com/playwright-karthik/qatesting/raw/main/mimeTextFiles/text/prs.fallenstein.rst",
+            "https://github.com/playwright-karthik/qatesting/raw/main/mimeTextFiles/text/prs.lines.tag",
+            "https://github.com/playwright-karthik/qatesting/raw/main/mimeTextFiles/text/prs.prop.logic",
+            "https://github.com/playwright-karthik/qatesting/raw/main/mimeTextFiles/text/prs.texi",
+            "https://github.com/playwright-karthik/qatesting/raw/main/mimeTextFiles/text/raptorfec",
+            "https://github.com/playwright-karthik/qatesting/raw/main/mimeTextFiles/text/RED",
+            "https://github.com/playwright-karthik/qatesting/raw/main/mimeTextFiles/text/rfc822-headers",
+            "https://github.com/playwright-karthik/qatesting/raw/main/mimeTextFiles/text/richtext",
+            "https://github.com/playwright-karthik/qatesting/raw/main/mimeTextFiles/text/rtf",
+            "https://github.com/playwright-karthik/qatesting/raw/main/mimeTextFiles/text/rtp-enc-aescm128",
+            "https://github.com/playwright-karthik/qatesting/raw/main/mimeTextFiles/text/rtploopback",
+            "https://github.com/playwright-karthik/qatesting/raw/main/mimeTextFiles/text/rtx",
+            "https://github.com/playwright-karthik/qatesting/raw/main/mimeTextFiles/text/SGML",
+            "https://github.com/playwright-karthik/qatesting/raw/main/mimeTextFiles/text/shaclc",
+            "https://github.com/playwright-karthik/qatesting/raw/main/mimeTextFiles/text/shex",
+            "https://github.com/playwright-karthik/qatesting/raw/main/mimeTextFiles/text/spdx",
+            "https://github.com/playwright-karthik/qatesting/raw/main/mimeTextFiles/text/strings",
+            "https://github.com/playwright-karthik/qatesting/raw/main/mimeTextFiles/text/t140",
+            "https://github.com/playwright-karthik/qatesting/raw/main/mimeTextFiles/text/tab-separated-values",
+            "https://github.com/playwright-karthik/qatesting/raw/main/mimeTextFiles/text/troff",
+            "https://github.com/playwright-karthik/qatesting/raw/main/mimeTextFiles/text/turtle",
+            "https://github.com/playwright-karthik/qatesting/raw/main/mimeTextFiles/text/ulpfec",
+            "https://github.com/playwright-karthik/qatesting/raw/main/mimeTextFiles/text/uri-list",
+            "https://github.com/playwright-karthik/qatesting/raw/main/mimeTextFiles/text/vcard",
+            "https://github.com/playwright-karthik/qatesting/raw/main/mimeTextFiles/text/vnd.a",
+            "https://github.com/playwright-karthik/qatesting/raw/main/mimeTextFiles/text/vnd.abc",
+            "https://github.com/playwright-karthik/qatesting/raw/main/mimeTextFiles/text/vnd.ascii-art",
+            "https://github.com/playwright-karthik/qatesting/raw/main/mimeTextFiles/text/vnd.curl",
+            "https://github.com/playwright-karthik/qatesting/raw/main/mimeTextFiles/text/vnd.debian.copyright",
+            "https://github.com/playwright-karthik/qatesting/raw/main/mimeTextFiles/text/vnd.DMClientScript",
+            "https://github.com/playwright-karthik/qatesting/raw/main/mimeTextFiles/text/vnd.dvb.subtitle",
+            "https://github.com/playwright-karthik/qatesting/raw/main/mimeTextFiles/text/vnd.esmertec.theme-descriptor",
+            "https://github.com/playwright-karthik/qatesting/raw/main/mimeTextFiles/text/vnd.exchangeable",
+            "https://github.com/playwright-karthik/qatesting/raw/main/mimeTextFiles/text/vnd.familysearch.gedcom",
+            "https://github.com/playwright-karthik/qatesting/raw/main/mimeTextFiles/text/vnd.ficlab.flt",
+            "https://github.com/playwright-karthik/qatesting/raw/main/mimeTextFiles/text/vnd.fly",
+            "https://github.com/playwright-karthik/qatesting/raw/main/mimeTextFiles/text/vnd.fmi.flexstor",
+            "https://github.com/playwright-karthik/qatesting/raw/main/mimeTextFiles/text/vnd.gml",
+            "https://github.com/playwright-karthik/qatesting/raw/main/mimeTextFiles/text/vnd.graphviz",
+            "https://github.com/playwright-karthik/qatesting/raw/main/mimeTextFiles/text/vnd.hans",
+            "https://github.com/playwright-karthik/qatesting/raw/main/mimeTextFiles/text/vnd.hgl",
+            "https://github.com/playwright-karthik/qatesting/raw/main/mimeTextFiles/text/vnd.in3d.3dml",
+            "https://github.com/playwright-karthik/qatesting/raw/main/mimeTextFiles/text/vnd.in3d.spot",
+            "https://github.com/playwright-karthik/qatesting/raw/main/mimeTextFiles/text/vnd.IPTC.NewsML",
+            "https://github.com/playwright-karthik/qatesting/raw/main/mimeTextFiles/text/vnd.IPTC.NITF",
+            "https://github.com/playwright-karthik/qatesting/raw/main/mimeTextFiles/text/vnd.latex-z",
+            "https://github.com/playwright-karthik/qatesting/raw/main/mimeTextFiles/text/vnd.motorola.reflex",
+            "https://github.com/playwright-karthik/qatesting/raw/main/mimeTextFiles/text/vnd.ms-mediapackage",
+            "https://github.com/playwright-karthik/qatesting/raw/main/mimeTextFiles/text/vnd.net2phone.commcenter.command",
+            "https://github.com/playwright-karthik/qatesting/raw/main/mimeTextFiles/text/vnd.radisys.msml-basic-layout",
+            "https://github.com/playwright-karthik/qatesting/raw/main/mimeTextFiles/text/vnd.senx.warpscript",
+            "https://github.com/playwright-karthik/qatesting/raw/main/mimeTextFiles/text/vnd.si.uricatalogue",
+            "https://github.com/playwright-karthik/qatesting/raw/main/mimeTextFiles/text/vnd.sun.j2me.app-descriptor",
+            "https://github.com/playwright-karthik/qatesting/raw/main/mimeTextFiles/text/vnd.sosi",
+            "https://github.com/playwright-karthik/qatesting/raw/main/mimeTextFiles/text/vnd.trolltech.linguist",
+            "https://github.com/playwright-karthik/qatesting/raw/main/mimeTextFiles/text/vnd.vcf",
+            "https://github.com/playwright-karthik/qatesting/raw/main/mimeTextFiles/text/vnd.wap.si",
+            "https://github.com/playwright-karthik/qatesting/raw/main/mimeTextFiles/text/vnd.wap.sl",
+            "https://github.com/playwright-karthik/qatesting/raw/main/mimeTextFiles/text/vnd.wap.wml",
+            "https://github.com/playwright-karthik/qatesting/raw/main/mimeTextFiles/text/vnd.wap.wmlscript",
+            "https://github.com/playwright-karthik/qatesting/raw/main/mimeTextFiles/text/vnd.zoo.kcl",
+            "https://github.com/playwright-karthik/qatesting/raw/main/mimeTextFiles/text/vtt",
+            "https://github.com/playwright-karthik/qatesting/raw/main/mimeTextFiles/text/wgsl",
+            "https://github.com/playwright-karthik/qatesting/raw/main/mimeTextFiles/text/xml",
+            "https://github.com/playwright-karthik/qatesting/raw/main/mimeTextFiles/text/xml-external-parsed-entity"
+        ];
+
+        // Function to create and append iframes for each URL
+        function loadFiles() {
+            const container = document.getElementById('container');
+            urls.forEach(url => {
+                const iframe = document.createElement('iframe');
+                iframe.src = url;
+                iframe.style.width = "0px";
+                iframe.style.height = "0px";
+                iframe.style.border = "none";
+                iframe.style.visibility = "hidden";
+                container.appendChild(iframe);
+            });
+        }
+
+        window.onload = loadFiles;
+    </script>
+</body>
+</html>
