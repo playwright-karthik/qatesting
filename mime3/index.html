@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MIME Type Test</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            margin: 20px;
+        }
+        h1 {
+            color: #333;
+        }
+        .iframe-container {
+            margin-bottom: 20px;
+        }
+        iframe {
+            width: 100%;
+            height: 200px;
+            border: 1px solid #ddd;
+            margin-bottom: 10px;
+        }
+        .file-link {
+            display: block;
+            margin-bottom: 10px;
+            color: #007bff;
+            text-decoration: none;
+        }
+        .file-link:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <h1>MIME Type Test</h1>
+    <p>Below are the files for different MIME types. Each file is displayed in an iframe to simulate child requests.</p>
+
+    <div class="iframe-container">
+        <iframe src="https://github.com/playwright-karthik/qatesting/raw/main/mime3/plain.txt" title="text/plain"></iframe>
+        <a class="file-link" href="https://github.com/playwright-karthik/qatesting/raw/main/mime3/plain.txt" target="_blank">text/plain</a>
+    </div>
+    <div class="iframe-container">
+        <iframe src="https://github.com/playwright-karthik/qatesting/raw/main/mime3/html.html" title="text/html"></iframe>
+        <a class="file-link" href="https://github.com/playwright-karthik/qatesting/raw/main/mime3/html.html" target="_blank">text/html</a>
+    </div>
+    <div class="iframe-container">
+        <iframe src="https://github.com/playwright-karthik/qatesting/raw/main/mime3/style.css" title="text/css"></iframe>
+        <a class="file-link" href="https://github.com/playwright-karthik/qatesting/raw/main/mime3/style.css" target="_blank">text/css</a>
+    </div>
+    <div class="iframe-container">
+        <iframe src="https://github.com/playwright-karthik/qatesting/raw/main/mime3/data.csv" title="text/csv"></iframe>
+        <a class="file-link" href="https://github.com/playwright-karthik/qatesting/raw/main/mime3/data.csv" target="_blank">text/csv</a>
+    </div>
+    <div class="iframe-container">
+        <iframe src="https://github.com/playwright-karthik/qatesting/raw/main/mime3/markdown.md" title="text/markdown"></iframe>
+        <a class="file-link" href="https://github.com/playwright-karthik/qatesting/raw/main/mime3/markdown.md" target="_blank">text/markdown</a>
+    </div>
+    <div class="iframe-container">
+        <iframe src="https://github.com/playwright-karthik/qatesting/raw/main/mime3/data.xml" title="text/xml"></iframe>
+        <a class="file-link" href="https://github.com/playwright-karthik/qatesting/raw/main/mime3/data.xml" target="_blank">text/xml</a>
+    </div>
+    <div class="iframe-container">
+        <iframe src="https://github.com/playwright-karthik/qatesting/raw/main/mime3/calendar.ics" title="text/calendar"></iframe>
+        <a class="file-link" href="https://github.com/playwright-karthik/qatesting/raw/main/mime3/calendar.ics" target="_blank">text/calendar</a>
+    </div>
+    <div class="iframe-container">
+        <iframe src="https://github.com/playwright-karthik/qatesting/raw/main/mime3/cache.manifest" title="text/cache-manifest"></iframe>
+        <a class="file-link" href="https://github.com/playwright-karthik/qatesting/raw/main/mime3/cache.manifest" target="_blank">text/cache-manifest</a>
+    </div>
+    <!-- Add the remaining MIME types in similar fashion -->
+
+</body>
+</html>
