@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TBT and TTI Test</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 50px;
+    }
+    .content {
+      opacity: 0;
+      transition: opacity 1s ease-in-out;
+    }
+    .content.loaded {
+      opacity: 1;
+    }
+  </style>
+</head>
+<body>
+
+<h1>Test TBT and TTI Metrics</h1>
+<div class="content" id="content">
+  <p>Content has loaded!</p>
+  <button id="testButton">Click Me!</button>
+</div>
+
+<script>
+  // Simulate First Contentful Paint (FCP)
+  let fcpTime = performance.now();
+  console.log(`FCP: ${fcpTime} ms`);
+
+  // Simulate heavy tasks after FCP (long blocking tasks)
+  function simulateLongTasks() {
+    console.log("Simulating long tasks...");
+    let start = performance.now();
+
+    // Long task 1: 200ms
+    while (performance.now() - start < 200) { }
+    
+    // Short delay before next long task
+    setTimeout(() => {
+      let start2 = performance.now();
+      
+      // Long task 2: 300ms
+      while (performance.now() - start2 < 300) { }
+
+      console.log("Long tasks finished. Page should now be interactive.");
+      
+      // Simulate page becoming interactive (TTI)
+      let ttiTime = performance.now();
+      console.log(`TTI: ${ttiTime} ms`);
+      
+      // Calculate Total Blocking Time (TBT)
+      let totalBlockingTime = (200 + 300) - 100; // subtract 100ms as the "safe" threshold
+      console.log(`Total Blocking Time: ${totalBlockingTime} ms`);
+      
+      // Show content after tasks
+      document.getElementById('content').classList.add('loaded');
+    }, 50); // Simulate some waiting between tasks
+  }
+
+  // Start long tasks after a short delay (to simulate page load)
+  window.addEventListener('load', () => {
+    setTimeout(simulateLongTasks, 500); // Start simulating after FCP
+  });
+
+  // Simulate user interaction after the page is interactive
+  document.getElementById('testButton').addEventListener('click', () => {
+    console.log("User clicked the button! Simulated interaction.");
+  });
+
+</script>
+
+</body>
+</html>
