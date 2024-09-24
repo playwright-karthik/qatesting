@@ -16,6 +16,17 @@
     .content.loaded {
       opacity: 1;
     }
+    .message {
+      margin-top: 20px;
+      font-size: 18px;
+      color: green;
+    }
+    .tbt-value {
+      margin-top: 20px;
+      font-size: 20px;
+      font-weight: bold;
+      color: red;
+    }
   </style>
 </head>
 <body>
@@ -24,6 +35,8 @@
 <div class="content" id="content">
   <p>Content has loaded!</p>
   <button id="testButton">Click Me!</button>
+  <div class="message" id="message"></div>
+  <div class="tbt-value" id="tbtValue"></div>
 </div>
 
 <script>
@@ -53,9 +66,12 @@
       console.log(`TTI: ${ttiTime} ms`);
       
       // Calculate Total Blocking Time (TBT)
-      let totalBlockingTime = (200 + 300) - 100; // subtract 100ms as the "safe" threshold
+      let totalBlockingTime = (200 + 300) - 100; // subtract 100ms (50ms for each task) as the "safe" threshold
       console.log(`Total Blocking Time: ${totalBlockingTime} ms`);
-      
+
+      // Display the TBT value on the page
+      document.getElementById('tbtValue').textContent = `Total Blocking Time (TBT): ${totalBlockingTime} ms`;
+
       // Show content after tasks
       document.getElementById('content').classList.add('loaded');
     }, 50); // Simulate some waiting between tasks
@@ -68,6 +84,8 @@
 
   // Simulate user interaction after the page is interactive
   document.getElementById('testButton').addEventListener('click', () => {
+    // Display the click message on the page
+    document.getElementById('message').textContent = "User clicked the button! Simulated interaction.";
     console.log("User clicked the button! Simulated interaction.");
   });
 
