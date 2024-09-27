@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Playwright Test Page</title>
+    <style>
+        /* Example style for Playwright addStyleTag */
+        body {
+            font-family: Arial, sans-serif;
+        }
+
+        #drag-source, #drop-target {
+            width: 100px;
+            height: 100px;
+            background-color: lightblue;
+            margin: 20px;
+            text-align: center;
+            line-height: 100px;
+            border: 2px solid #000;
+        }
+
+        #drop-target {
+            background-color: lightgreen;
+        }
+    </style>
+</head>
+<body>
+    <h1>Playwright Interaction Page</h1>
+
+    <form>
+        <label for="name-input">Name: </label>
+        <input type="text" id="name-input" placeholder="Enter your name"><br><br>
+
+        <label for="role-select">Role: </label>
+        <select id="role-select">
+            <option value="user">User</option>
+            <option value="admin">Admin</option>
+        </select><br><br>
+
+        <label for="checkbox-input">Accept Terms: </label>
+        <input type="checkbox" id="checkbox-input" label="terms"><br><br>
+
+        <input type="submit" value="Submit">
+    </form>
+
+    <h2>Images</h2>
+    <img id="image1" src="https://via.placeholder.com/150" alt="Placeholder Image 1">
+    <img id="image2" src="https://via.placeholder.com/200" alt="Placeholder Image 2">
+
+    <h2>Drag and Drop</h2>
+    <div id="drag-source" draggable="true">Drag Me</div>
+    <div id="drop-target">Drop Here</div>
+
+    <script>
+        // Example of dynamically adding a script via Playwright addScriptTag
+        function exampleFunction() {
+            console.log("Script added via Playwright");
+        }
+    </script>
+</body>
+</html>
