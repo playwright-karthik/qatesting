@@ -1,0 +1,53 @@
+// Navigate to the hosted HTML page
+    await page.goto('https://playwright-karthik.github.io/qatesting/Playwright_FrameLocator/index.html');
+
+    // 1. first: Get the first element within a container
+    const firstElement = await page.locator('.container').first();
+    await expect(firstElement).toBeVisible(); // Check if the first container is visible
+
+    // 2. frameLocator: Locate a frame (not applicable in this case, just demonstrating)
+    // const frameLocator = page.frameLocator('iframe'); // Example usage if there was an iframe
+
+    // 3. getByAltText: Get element by alt text
+    const imageElementAlt = await page.getByAltText('Placeholder Image');
+    await expect(imageElementAlt).toBeVisible(); // Check if the image is visible
+
+    // 4. getByLabel: Get element by label
+    const nameInput = await page.getByLabel('Name:');
+    await expect(nameInput).toBeVisible(); // Check if the name input is visible
+
+    // 5. getByPlaceholder: Get element by placeholder
+    const placeholderInput = await page.getByPlaceholder('Enter your name');
+    await expect(placeholderInput).toBeVisible(); // Check if the placeholder input is visible
+
+    // 6. getByRole: Get element by role
+    const submitButton = await page.getByRole('button', { name: 'Submit' });
+    await expect(submitButton).toBeVisible(); // Check if the submit button is visible
+
+    // 7. getByTestId: Get element by test ID
+    const testIdElement = await page.getByTestId('fifth-test-id');
+    await expect(testIdElement).toBeVisible(); // Check if the test ID element is visible
+
+    // 8. getByText: Get element by text
+    const headerElement = await page.getByText('First Element');
+    await expect(headerElement).toBeVisible(); // Check if the header is visible
+
+    // 9. getByTitle: Get element by title
+    const imageWithTitle = await page.getByTitle('Placeholder Image 1');
+    await expect(imageWithTitle).toBeVisible(); // Check if the image is visible by title
+
+    // 10. last: Get the last element within a container
+    const lastElement = await page.locator('.container').last();
+    await expect(lastElement).toBeVisible(); // Check if the last container is visible
+
+    // 11. locator: Create a locator for an element
+    const inputLocator = page.locator('#name-input');
+    await expect(inputLocator).toBeVisible(); // Ensure the input is visible
+
+    // 12. nth: Get the nth element (e.g., third container)
+    const nthElement = await page.locator('.container').nth(2); // nth index is 0-based
+    await expect(nthElement).toBeVisible(); // Check if the nth container is visible
+
+    // 13. owner: Get the owner of an element (demonstrating)
+    const owner = await inputLocator.evaluate((el) => el.ownerDocument);
+    expect(owner).not.toBeNull(); // Ensure the owner is not null

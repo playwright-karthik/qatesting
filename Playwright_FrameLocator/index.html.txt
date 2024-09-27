@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Playwright Verbs Example</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            background-color: #f4f4f4;
+        }
+        .container {
+            margin: 10px 0;
+            padding: 10px;
+            border: 1px solid #ccc;
+            background-color: #fff;
+        }
+    </style>
+</head>
+<body>
+    <h1>Playwright Verbs Example</h1>
+
+    <div class="container" id="first-container">
+        <h2>First Element</h2>
+        <p>This is the first paragraph.</p>
+    </div>
+
+    <div class="container" id="second-container">
+        <h2>Second Element</h2>
+        <p>This is the second paragraph.</p>
+        <img src="https://via.placeholder.com/150" alt="Placeholder Image" title="Placeholder Image 1">
+    </div>
+
+    <div class="container" id="third-container">
+        <h2>Third Element</h2>
+        <label for="name-input">Name:</label>
+        <input type="text" id="name-input" placeholder="Enter your name">
+    </div>
+
+    <div class="container" id="fourth-container">
+        <h2>Fourth Element</h2>
+        <button id="submit-button">Submit</button>
+    </div>
+
+    <div class="container" id="fifth-container" data-testid="fifth-test-id">
+        <h2>Fifth Element</h2>
+        <p>This is the fifth paragraph.</p>
+    </div>
+
+    <div class="container" id="sixth-container">
+        <h2>Sixth Element</h2>
+        <p>Last paragraph in the section.</p>
+        <img src="https://via.placeholder.com/150" alt="Another Placeholder Image" title="Placeholder Image 2">
+    </div>
+
+    <script>
+        // Sample script to interact with the elements (can be removed in actual testing)
+        document.getElementById('submit-button').addEventListener('click', function() {
+            alert('Submitted!');
+        });
+    </script>
+</body>
+</html>
