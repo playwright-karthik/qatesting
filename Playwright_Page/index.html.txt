@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Playwright Verbs Example</title>
+    <link rel="stylesheet" href="styles.css">
+    <script>
+        // Custom script for testing exposeFunction and other features
+        window.addEventListener('load', () => {
+            window.customFunction = () => {
+                return 'Hello from the custom function!';
+            };
+        });
+    </script>
+</head>
+<body>
+    <h1>Playwright Verbs Example</h1>
+    
+    <div class="container" id="first-container">
+        <h2>First Element</h2>
+        <p>This is the first element.</p>
+    </div>
+    
+    <div class="container" id="second-container">
+        <h2>Second Element</h2>
+        <p>This is the second element.</p>
+    </div>
+    
+    <input type="text" id="name-input" placeholder="Enter your name" aria-label="Name:">
+    
+    <button id="submit-button">Submit</button>
+    
+    <input type="checkbox" id="check-me"> Check me
+    
+    <select id="color-select">
+        <option value="red">Red</option>
+        <option value="green">Green</option>
+        <option value="blue">Blue</option>
+    </select>
+
+    <button id="focus-button">Focus on Input</button>
+
+    <iframe id="sample-iframe" src="https://example.com" style="display:none;"></iframe>
+    
+    <script src="script.js"></script>
+</body>
+</html>

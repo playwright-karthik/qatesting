@@ -1,0 +1,198 @@
+ // Navigate to the hosted HTML page
+    await page.goto('https://playwright-karthik.github.io/qatesting/Playwright_Page/index.html');
+
+    // 1. addInitScript: Add an initialization script
+    await page.addInitScript(() => {
+        window.globalVar = 'I am a global variable!';
+    });
+
+    // 2. addLocatorHandler: Add a locator handler (demonstration)
+    await page.addLocatorHandler('customLocator', (locator) => locator.locator('.container'));
+
+    // 3. addScriptTag: Add a script tag dynamically
+    await page.addScriptTag({ content: 'console.log("Script tag added")' });
+
+    // 4. addStyleTag: Add a style tag dynamically
+    await page.addStyleTag({ content: 'body { background-color: lightblue; }' });
+
+    // 5. bringToFront: Bring a page to the front (not applicable here)
+    // await page.bringToFront(); // Example usage if applicable
+
+    // 6. close: Close the page
+    await page.close();
+
+    // 7. content: Get the content of the page
+    const content = await page.content();
+    expect(content).toContain('Playwright Page Example'); // Ensure the title is present
+
+    // 8. context: Get the browser context
+    const context = page.context();
+    expect(context).not.toBeNull(); // Ensure the context is not null
+
+    // 9. dragAndDrop: (Demonstration, not applicable here)
+    // await page.locator('#source').dragAndDrop(page.locator('#target')); // Example usage
+
+    // 10. emulateMedia: Emulate media type (screen, print)
+    await page.emulateMedia('screen');
+
+    // 11. evaluate: Evaluate a function in the browser context
+    const title = await page.evaluate(() => document.title);
+    expect(title).toBe('Playwright Page Example'); // Check if the title is correct
+
+    // 12. evaluateHandle: Evaluate a function that returns a handle
+    const inputHandle = await page.locator('#name-input').evaluateHandle(el => el);
+    expect(inputHandle).not.toBeNull(); // Ensure we have a valid handle
+
+    // 13. exposeBinding: Expose a binding to the page context
+    await page.exposeBinding('customBinding', (source) => {
+        return `Binding called with source: ${source}`;
+    });
+
+    // 14. exposeFunction: Expose a function to the page context
+    await page.exposeFunction('customFunction', () => 'Hello from Playwright!');
+
+    // 15. frame: Get the frame (not applicable here, demonstration for iframe)
+    // const frame = page.frame({ url: /example\.com/ }); // Example for locating a frame
+
+    // 16. frameLocator: Locate a frame
+    // const frameLocator = page.frameLocator('iframe#sample-iframe'); // Example usage
+
+    // 17. frames: Get all frames
+    const frames = page.frames();
+    expect(frames.length).toBeGreaterThan(0); // Ensure there is at least one frame
+
+    // 18. getByAltText: Get element by alt text (not applicable here)
+    // const imageElementAlt = await page.getByAltText('Placeholder Image'); // Example usage
+
+    // 19. getByLabel: Get element by label
+    const nameInput = await page.getByLabel('Name:');
+    await expect(nameInput).toBeVisible(); // Check if the name input is visible
+
+    // 20. getByPlaceholder: Get element by placeholder
+    const placeholderInput = await page.getByPlaceholder('Enter your name');
+    await expect(placeholderInput).toBeVisible(); // Check if the placeholder input is visible
+
+    // 21. getByRole: Get element by role
+    const submitButton = await page.getByRole('button', { name: 'Submit' });
+    await expect(submitButton).toBeVisible(); // Check if the submit button is visible
+
+    // 22. getByTestId: Get element by test ID (not applicable here)
+    // const testIdElement = await page.getByTestId('test-id'); // Example usage
+
+    // 23. getByText: Get element by text
+    const headerElement = await page.getByText('First Element');
+    await expect(headerElement).toBeVisible(); // Check if the header is visible
+
+    // 24. getByTitle: Get element by title
+    // const imageWithTitle = await page.getByTitle('Placeholder Image 1'); // Example usage
+
+    // 25. goBack: Navigate back
+    await page.goBack();
+
+    // 26. goForward: Navigate forward
+    await page.goForward();
+
+    // 27. goto: Navigate to a URL
+    await page.goto('https://playwright-karthik.github.io/qatesting/Playwright_Page/index.html');
+
+    // 28. isClosed: Check if the page is closed
+    const isPageClosed = page.isClosed();
+    expect(isPageClosed).toBe(false); // Ensure the page is not closed
+
+    // 29. locator: Create a locator for an element
+    const inputLocator = page.locator('#name-input');
+    await expect(inputLocator).toBeVisible(); // Ensure the input is visible
+
+    // 30. mainFrame: Get the main frame
+    const mainFrame = page.mainFrame();
+    expect(mainFrame).not.toBeNull(); // Ensure we have a valid main frame
+
+    // 31. opener: Get the opener window (not applicable here)
+    // const opener = await page.opener(); // Example usage if applicable
+
+    // 32. pause: Pause the script execution
+    await page.pause();
+
+    // 33. pdf: Generate a PDF of the page (not applicable here)
+    // await page.pdf({ path: 'page.pdf' }); // Example usage
+
+    // 34. reload: Reload the page
+    await page.reload();
+
+    // 35. removeAllListeners: Remove all event listeners
+    // await page.removeAllListeners(); // Example usage
+
+    // 36. removeLocatorHandler: Remove a previously added locator handler
+    await page.removeLocatorHandler('customLocator');
+
+    // 37. route: Intercept network requests
+    await page.route('**/*', (route) => {
+        route.continue();
+    });
+
+    // 38. routeFromHAR: Route requests based on a HAR file (not applicable here)
+    // await page.routeFromHAR('path/to/har/file.har'); // Example usage
+
+    // 39. screenshot: Take a screenshot of the page
+    await page.screenshot({ path: 'page_screenshot.png' });
+
+    // 40. setContent: Set the content of the page
+    await page.setContent('<h1>New Content</h1>');
+
+    // 41. setDefaultNavigationTimeout: Set default navigation timeout
+    await page.setDefaultNavigationTimeout(60000);
+
+    // 42. setDefaultTimeout: Set default timeout
+    await page.setDefaultTimeout(60000);
+
+    // 43. setExtraHTTPHeaders: Set extra HTTP headers
+    await page.setExtraHTTPHeaders({
+        'Custom-Header': 'MyValue'
+    });
+
+    // 44. setViewportSize: Set the viewport size
+    await page.setViewportSize({ width: 1280, height: 720 });
+
+    // 45. title: Get the title of the page
+    const pageTitle = await page.title();
+    expect(pageTitle).toBe('Playwright Page Example'); // Check if the title is correct
+
+    // 46. unroute: Remove a specific route
+    await page.unroute('**/*');
+
+    // 47. unrouteAll: Remove all routes
+    await page.unrouteAll();
+
+    // 48. url: Get the current URL
+    const currentURL = page.url();
+    expect(currentURL).toBe('https://playwright-karthik.github.io/qatesting/Playwright_Page/index.html');
+
+    // 49. video: (Not applicable here, demonstration for video recording)
+    // const video = await page.video; // Example usage if applicable
+
+    // 50. viewportSize: Get the current viewport size
+    const viewportSize = page.viewportSize();
+    expect(viewportSize.width).toBe(1280); // Check if width is correct
+    expect(viewportSize.height).toBe(720); // Check if height is correct
+
+    // 51. waitForEvent: Wait for an event
+    await page.waitForEvent('load');
+
+    // 52. waitForFunction: Wait for a specific function to return true
+    await page.waitForFunction(() => document.title === 'Playwright Page Example');
+
+    // 53. waitForLoadState: Wait for the page to load
+    await page.waitForLoadState('load');
+
+    // 54. waitForRequest: Wait for a specific network request
+    await page.waitForRequest('https://playwright-karthik.github.io/qatesting/Playwright_Page/index.html');
+
+    // 55. waitForResponse: Wait for a specific network response
+    await page.waitForResponse('https://playwright-karthik.github.io/qatesting/Playwright_Page/index.html');
+
+    // 56. waitForURL: Wait for a specific URL to be navigated to
+    await page.waitForURL('https://playwright-karthik.github.io/qatesting/Playwright_Page/index.html');
+
+    // 57. workers: Get the workers associated with the page
+    const workers = await page.workers();
+    expect(workers.length).toBeGreaterThan(0); // Ensure there is at least one worker
