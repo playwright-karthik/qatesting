@@ -1,0 +1,220 @@
+ // Navigate to the hosted HTML page
+    await page.goto('https://playwright-karthik.github.io/qatesting/Playwright_Locator/index.html');
+
+    // 1. all: Get all elements that match a selector
+    const allContainers = await page.locator('.container');
+    await expect(allContainers).toHaveCount(5); // Check if there are 5 containers
+
+    // 2. allInnerTexts: Get all inner texts
+    const allInnerTexts = await allContainers.allInnerTexts();
+    expect(allInnerTexts.length).toBeGreaterThan(0); // Check if there's at least one inner text
+
+    // 3. allTextContents: Get all text contents
+    const allTextContents = await allContainers.allTextContents();
+    expect(allTextContents.length).toBeGreaterThan(0); // Check if there's at least one text content
+
+    // 4. and: Using logical AND in an expression
+    const checkBox = await page.locator('#check-me');
+    await expect(checkBox.isVisible() && !checkBox.isChecked()).toBe(true); // Check if it's visible and not checked
+
+    // 5. blur: Blur an input element
+    await page.locator('#name-input').blur();
+
+    // 6. boundingBox: Get bounding box of an element
+    const box = await page.locator('#name-input').boundingBox();
+    expect(box).not.toBeNull(); // Ensure the bounding box is not null
+
+    // 7. check: Check a checkbox
+    await page.locator('#check-me').check();
+    expect(await page.locator('#check-me').isChecked()).toBe(true); // Ensure the checkbox is checked
+
+    // 8. clear: Clear input value
+    await page.locator('#name-input').fill(''); // Clear the input
+    expect(await page.locator('#name-input').inputValue()).toBe(''); // Ensure the input is empty
+
+    // 9. click: Click a button
+    await page.locator('#submit-button').click();
+
+    // 10. contentFrame: Get the content frame (not applicable here)
+    // const frame = await page.frameLocator('iframe'); // Example usage if there was an iframe
+
+    // 11. count: Count the number of elements matching a locator
+    const count = await page.locator('.container').count();
+    expect(count).toBe(5); // Ensure there are 5 containers
+
+    // 12. dblclick: Double-click an element
+    await page.locator('#submit-button').dblclick();
+
+    // 13. dispatchEvent: Dispatch a custom event
+    await page.locator('#name-input').dispatchEvent('input', { bubbles: true });
+
+    // 14. dragTo: (Demonstration, not applicable here)
+    // await page.locator('#source').dragTo(page.locator('#target')); // Example usage
+
+    // 15. evaluate: Evaluate a function in the browser context
+    const title = await page.evaluate(() => document.title);
+    expect(title).toBe('Playwright Verbs Example'); // Check if the title is correct
+
+    // 16. evaluateAll: Evaluate a function for all elements in a locator
+    const innerTexts = await allContainers.evaluateAll(elements => elements.map(el => el.innerText));
+    expect(innerTexts).toContain('First Element'); // Ensure the first element is present
+
+    // 17. evaluateHandle: Evaluate a function that returns a handle
+    const inputHandle = await page.locator('#name-input').evaluateHandle(el => el);
+    expect(inputHandle).not.toBeNull(); // Ensure we have a valid handle
+
+    // 18. fill: Fill an input with text
+    await page.locator('#name-input').fill('Jane Doe');
+    expect(await page.locator('#name-input').inputValue()).toBe('Jane Doe'); // Check input value
+
+    // 19. filter: Filter elements based on a condition (demonstration)
+    const filteredContainers = await allContainers.filter(async (container) => {
+        return (await container.innerText()).includes('First');
+    });
+    expect(await filteredContainers.count()).toBe(1); // Ensure there is only one matching container
+
+    // 20. first: Get the first element
+    const firstContainer = await allContainers.first();
+    await expect(firstContainer).toBeVisible(); // Check if the first container is visible
+
+    // 21. focus: Focus on an input
+    await page.locator('#name-input').focus();
+    expect(await page.locator('#name-input').isFocused()).toBe(true); // Ensure it's focused
+
+    // 22. frameLocator: Locate a frame (not applicable in this case)
+    // const frameLocator = page.frameLocator('iframe'); // Example usage if there was an iframe
+
+    // 23. getAttribute: Get an attribute of an element
+    const placeholderValue = await page.locator('#name-input').getAttribute('placeholder');
+    expect(placeholderValue).toBe('Enter your name'); // Check placeholder value
+
+    // 24. getByAltText: Get element by alt text
+    const imageElementAlt = await page.getByAltText('Placeholder Image');
+    await expect(imageElementAlt).toBeVisible(); // Check if the image is visible
+
+    // 25. getByLabel: Get element by label
+    const nameInput = await page.getByLabel('Name:');
+    await expect(nameInput).toBeVisible(); // Check if the name input is visible
+
+    // 26. getByPlaceholder: Get element by placeholder
+    const placeholderInput = await page.getByPlaceholder('Enter your name');
+    await expect(placeholderInput).toBeVisible(); // Check if the placeholder input is visible
+
+    // 27. getByRole: Get element by role
+    const submitButton = await page.getByRole('button', { name: 'Submit' });
+    await expect(submitButton).toBeVisible(); // Check if the submit button is visible
+
+    // 28. getByTestId: Get element by test ID
+    const testIdElement = await page.getByTestId('third-test-id');
+    await expect(testIdElement).toBeVisible(); // Check if the test ID element is visible
+
+    // 29. getByText: Get element by text
+    const headerElement = await page.getByText('First Element');
+    await expect(headerElement).toBeVisible(); // Check if the header is visible
+
+    // 30. getByTitle: Get element by title
+    const imageWithTitle = await page.getByTitle('Placeholder Image 1');
+    await expect(imageWithTitle).toBeVisible(); // Check if the image is visible by title
+
+    // 31. highlight: Highlight an element (not applicable here)
+    // await page.locator('#name-input').highlight(); // Example usage if highlight function was implemented
+
+    // 32. hover: Hover over an element
+    await page.locator('#focus-button').hover();
+
+    // 33. innerHTML: Get inner HTML of an element
+    const innerHTML = await page.locator('#first-container').innerHTML();
+    expect(innerHTML).toContain('First Element'); // Ensure inner HTML contains expected content
+
+    // 34. innerText: Get inner text of an element
+    const innerText = await page.locator('#second-container').innerText();
+    expect(innerText).toContain('Second Element'); // Ensure inner text contains expected content
+
+    // 35. inputValue: Get input value
+    const inputValue = await page.locator('#name-input').inputValue();
+    expect(inputValue).toBe('Jane Doe'); // Ensure input value matches expected value
+
+    // 36. isChecked: Check if checkbox is checked
+    const isChecked = await page.locator('#check-me').isChecked();
+    expect(isChecked).toBe(true); // Ensure checkbox is checked
+
+    // 37. isDisabled: Check if an element is disabled
+    const isDisabled = await page.locator('#submit-button').isDisabled();
+    expect(isDisabled).toBe(false); // Ensure button is not disabled
+
+    // 38. isEditable: Check if an element is editable
+    const isEditable = await page.locator('#name-input').isEditable();
+    expect(isEditable).toBe(true); // Ensure input is editable
+
+    // 39. isEnabled: Check if an element is enabled
+    const isEnabled = await page.locator('#submit-button').isEnabled();
+    expect(isEnabled).toBe(true); // Ensure button is enabled
+
+    // 40. isHidden: Check if an element is hidden
+    const isHidden = await page.locator('#fifth-container').isHidden();
+    expect(isHidden).toBe(false); // Ensure fifth container is visible
+
+    // 41. isVisible: Check if an element is visible
+    const isVisible = await page.locator('#first-container').isVisible();
+    expect(isVisible).toBe(true); // Ensure first container is visible
+
+    // 42. last: Get the last element within a container
+    const lastElement = await allContainers.last();
+    await expect(lastElement).toBeVisible(); // Check if the last container is visible
+
+    // 43. locator: Create a locator for an element
+    const inputLocator = page.locator('#name-input');
+    await expect(inputLocator).toBeVisible(); // Ensure the input is visible
+
+    // 44. nth: Get the nth element (e.g., third container)
+    const nthElement = await allContainers.nth(2); // nth index is 0-based
+    await expect(nthElement).toBeVisible(); // Check if the nth container is visible
+
+    // 45. or: (Using logical OR in an expression, demonstrating below)
+    const isVisibleOrChecked = await page.locator('#name-input').isVisible() || await checkBox.isChecked();
+    expect(isVisibleOrChecked).toBe(true); // At least one of them must be true
+
+    // 46. page: Access the current page
+    const currentPage = await page.page();
+    expect(currentPage).not.toBeNull(); // Ensure we have a valid page instance
+
+    // 47. press: Press a key on an element
+    await page.locator('#name-input').press('Enter');
+
+    // 48. pressSequentially: (Not available in Playwright API as of current, demonstrating a workaround)
+    await page.locator('#name-input').press('Control+A'); // Select all text
+
+    // 49. screenshot: Take a screenshot of an element
+    await page.locator('#first-container').screenshot({ path: 'first-container.png' });
+
+    // 50. scrollIntoViewIfNeeded: Scroll the element into view
+    await page.locator('#fourth-container').scrollIntoViewIfNeeded();
+
+    // 51. selectOption: Select an option from a dropdown
+    await page.selectOption('#color-select', 'green');
+    const selectedOption = await page.locator('#color-select').inputValue();
+    expect(selectedOption).toBe('green'); // Ensure the selected option is green
+
+    // 52. selectText: Select text within an input
+    await page.locator('#name-input').selectText();
+
+    // 53. setChecked: Set a checkbox to checked or unchecked
+    await page.locator('#check-me').setChecked(false);
+    expect(await page.locator('#check-me').isChecked()).toBe(false); // Ensure checkbox is unchecked
+
+    // 54. setInputFiles: Set input files (file upload demonstration)
+    await page.locator('#file-input').setInputFiles('./path/to/file.txt');
+
+    // 55. tap: Tap on an element (mobile use case)
+    await page.locator('#submit-button').tap();
+
+    // 56. textContent: Get text content of an element
+    const textContent = await page.locator('#first-container').textContent();
+    expect(textContent).toContain('First Element'); // Check text content
+
+    // 57. uncheck: Uncheck a checkbox
+    await page.locator('#check-me').uncheck();
+    expect(await page.locator('#check-me').isChecked()).toBe(false); // Ensure checkbox is unchecked
+
+    // 58. waitFor: Wait for an element to be visible
+    await page.locator('#fifth-container').waitFor({ state: 'visible' });

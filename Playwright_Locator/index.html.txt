@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Playwright Verbs Example</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            background-color: #f4f4f4;
+        }
+        .container {
+            margin: 10px 0;
+            padding: 10px;
+            border: 1px solid #ccc;
+            background-color: #fff;
+        }
+    </style>
+</head>
+<body>
+    <h1>Playwright Verbs Example</h1>
+
+    <div class="container" id="first-container">
+        <h2>First Element</h2>
+        <p>This is the first paragraph.</p>
+        <button id="focus-button">Focus Input</button>
+    </div>
+
+    <div class="container" id="second-container">
+        <h2>Second Element</h2>
+        <input type="text" id="name-input" placeholder="Enter your name" value="John Doe">
+        <label for="check-me">Check Me:</label>
+        <input type="checkbox" id="check-me">
+        <button id="submit-button">Submit</button>
+    </div>
+
+    <div class="container" id="third-container">
+        <h2>Third Element</h2>
+        <img src="https://via.placeholder.com/150" alt="Placeholder Image" title="Placeholder Image 1">
+        <p data-testid="third-test-id">This is the third paragraph.</p>
+    </div>
+
+    <div class="container" id="fourth-container">
+        <h2>Fourth Element</h2>
+        <select id="color-select">
+            <option value="red">Red</option>
+            <option value="green">Green</option>
+            <option value="blue">Blue</option>
+        </select>
+    </div>
+
+    <div class="container" id="fifth-container">
+        <h2>Fifth Element</h2>
+        <p>This is the fifth paragraph. Last element in the section.</p>
+    </div>
+
+    <script>
+        // Sample script to interact with the elements (can be removed in actual testing)
+        document.getElementById('submit-button').addEventListener('click', function() {
+            alert('Submitted!');
+        });
+        
+        document.getElementById('focus-button').addEventListener('click', function() {
+            document.getElementById('name-input').focus();
+        });
+    </script>
+</body>
+</html>
