@@ -1,0 +1,238 @@
+// Navigate to the HTML page
+    await page.goto('https://playwright-karthik.github.io/qatesting/Puppeteer_Page/index.html');
+
+    // 1. Page.$ - Select the heading element
+    const titleElement = await page.$('h1');
+    
+    // 2. Page.$$ - Select all paragraph elements
+    const paragraphElements = await page.$$('p');
+
+    // 3. Page.$$eval - Get the count of paragraph elements
+    const paragraphCount = await page.$$eval('p', elems => elems.length);
+    
+    // 4. Page.$eval - Get the text content of the heading
+    const headingText = await page.$eval('h1', el => el.textContent);
+    
+    // 5. Page.addScriptTag - Add a script to the page
+    await page.addScriptTag({ content: `console.log('Script added to the page!');` });
+
+    // 6. Page.addStyleTag - Add a style to the page
+    await page.addStyleTag({ content: 'body { background-color: lightyellow; }' });
+
+    // 7. Page.authenticate - Authenticate with a username and password (if needed)
+    // Uncomment and replace 'username' and 'password' with actual credentials if applicable
+    // await page.authenticate({ username: 'username', password: 'password' });
+
+    // 8. Page.bringToFront - Bring the page to the front
+    await page.bringToFront();
+
+    // 9. Page.browser - Get the browser instance
+    const browserInstance = page.browser();
+
+    // 10. Page.browserContext - Get the browser context
+    const context = page.browserContext();
+
+    // 11. Page.click - Click the button to run the Puppeteer script
+    await page.click('#run-button');
+
+    // 12. Page.close - Close the page
+    // Uncomment this if you want to close the page at some point
+    // await page.close();
+
+    // 13. Page.content - Get the full HTML content of the page
+    const content = await page.content();
+
+    // 14. Page.cookies - Get cookies from the page
+    const cookies = await page.cookies();
+
+    // 15. Page.createCDPSession - Create a Chrome DevTools Protocol session
+    const client = await page.target().createCDPSession();
+
+    // 16. Page.createPDFStream - Create a PDF stream (if you want to create a PDF)
+    // Uncomment if you want to create a PDF
+    // const pdfStream = await page.createPDFStream();
+
+    // 17. Page.deleteCookie - Delete a specific cookie (replace with an actual cookie name)
+    await page.deleteCookie({ name: 'testCookie' });
+
+    // 18. Page.emulate - Emulate device settings (example: mobile device)
+    await page.emulate(puppeteer.devices['iPhone 11']);
+
+    // 19. Page.emulateCPUThrottling - Throttle CPU for emulation
+    await page.emulateCPUThrottling(4);
+
+    // 20. Page.emulateIdleState - Emulate idle state
+    await page.emulateIdleState();
+
+    // 21. Page.emulateMediaFeatures - Emulate media features
+    await page.emulateMediaFeatures([{ name: 'prefers-color-scheme', value: 'dark' }]);
+
+    // 22. Page.emulateMediaType - Emulate media type
+    await page.emulateMediaType('screen');
+
+    // 23. Page.emulateNetworkConditions - Emulate network conditions
+    await page.emulateNetworkConditions({
+        offline: false,
+        downloadThroughput: 780 * 1024,
+        uploadThroughput: 330 * 1024,
+        latency: 20
+    });
+
+    // 24. Page.emulateTimezone - Emulate a specific timezone
+    await page.emulateTimezone('America/New_York');
+
+    // 25. Page.emulateVisionDeficiency - Emulate vision deficiency
+    await page.emulateVisionDeficiency('protanopia');
+
+    // 26. Page.evaluate - Evaluate a function in the page context
+    await page.evaluate(() => {
+        console.log('This runs in the page context!');
+    });
+
+    // 27. Page.evaluateHandle - Evaluate and get a handle to an element
+    const handle = await page.evaluateHandle(() => document.getElementById('inputField'));
+
+    // 28. Page.evaluateOnNewDocument - Evaluate a script in a new document context
+    await page.evaluateOnNewDocument(() => {
+        window.isTest = true;
+    });
+
+    // 29. Page.exposeFunction - Expose a function to the page
+    await page.exposeFunction('exposedFunction', () => {
+        alert('Exposed function called!');
+    });
+
+    // 30. Page.focus - Focus on an input field
+    await page.focus('#inputField');
+
+    // 31. Page.frames - Get all frames in the page
+    const frames = page.frames();
+
+    // 32. Page.mainFrame - Get the main frame of the page
+    const mainFrame = page.mainFrame();
+
+    // 33. Page.metrics - Get performance metrics
+    const metrics = await page.metrics();
+
+    // 34. Page.pdf - Create a PDF of the page
+    await page.pdf({ path: 'page.pdf', format: 'A4' });
+
+    // 35. Page.queryObjects - Query for objects in the page context
+    const queryResult = await page.queryObjects('HTMLDivElement'); // Example constructor
+
+    // 36. Page.reload - Reload the page
+    await page.reload();
+
+    // 37. Page.removeExposedFunction - Remove an exposed function
+    await page.removeExposedFunction('exposedFunction');
+
+    // 38. Page.removeScriptToEvaluateOnNewDocument - Remove a script to evaluate on new documents
+    await page.removeScriptToEvaluateOnNewDocument('someScript'); // Replace 'someScript' with an actual script
+
+    // 39. Page.screencast - Start a screencast (if applicable)
+    // Uncomment and set the options if you want to capture screencasts
+    // await page.screencast({ path: 'screencast.mp4' });
+
+    // 40. Page.screenshot - Take a screenshot of the page
+    await page.screenshot({ path: 'screenshot.png' });
+
+    // 41. Page.select - Select an option from a dropdown
+    await page.select('#selectElement', 'option1');
+
+    // 42. Page.setBypassCSP - Set to bypass Content Security Policy
+    await page.setBypassCSP(true);
+
+    // 43. Page.setBypassServiceWorker - Set to bypass service workers
+    await page.setBypassServiceWorker(true);
+
+    // 44. Page.setCacheEnabled - Enable/disable cache
+    await page.setCacheEnabled(false);
+
+    // 45. Page.setContent - Set the HTML content of the page
+    await page.setContent('<h1>New Content</h1>');
+
+    // 46. Page.setCookie - Set a cookie
+    await page.setCookie({ name: 'testCookie', value: '12345' });
+
+    // 47. Page.setDefaultNavigationTimeout - Set default navigation timeout
+    await page.setDefaultNavigationTimeout(30000);
+
+    // 48. Page.setDefaultTimeout - Set default timeout for all operations
+    await page.setDefaultTimeout(30000);
+
+    // 49. Page.setDragInterception - Enable drag interception
+    await page.setDragInterception(true);
+
+    // 50. Page.setExtraHTTPHeaders - Set extra HTTP headers
+    await page.setExtraHTTPHeaders({ 'X-Test': 'value' });
+
+    // 51. Page.setGeolocation - Set geolocation
+    await page.setGeolocation({ longitude: -122.4194, latitude: 37.7749 });
+
+    // 52. Page.setJavaScriptEnabled - Enable/disable JavaScript
+    await page.setJavaScriptEnabled(true);
+
+    // 53. Page.setOfflineMode - Set offline mode
+    await page.setOfflineMode(false);
+
+    // 54. Page.setRequestInterception - Enable request interception
+    await page.setRequestInterception(true);
+
+    // 55. Page.setUserAgent - Set user agent
+    await page.setUserAgent('MyUserAgent/1.0');
+
+    // 56. Page.setViewport - Set the viewport size
+    await page.setViewport({ width: 1280, height: 800 });
+
+    // 57. Page.tap - Tap on an element
+    await page.tap('#tapElement');
+
+    // 58. Page.target - Get the target of the page
+    const target = page.target();
+
+    // 59. Page.title - Get the title of the page
+    const pageTitle = await page.title();
+
+    // 60. Page.type - Type into the input field
+    await page.type('#inputField', 'Hello, Puppeteer!');
+
+    // 61. Page.url - Get the current URL of the page
+    const currentUrl = page.url();
+
+    // 62. Page.viewport - Get the current viewport settings
+    const viewportSize = page.viewport();
+
+    // 63. Page.waitForDevicePrompt - Wait for device prompt (if applicable)
+    // Uncomment if you're expecting a device prompt
+    // await page.waitForDevicePrompt();
+
+    // 64. Page.waitForFileChooser - Wait for a file chooser to appear
+    // Uncomment if applicable
+    // const fileChooser = await page.waitForFileChooser();
+
+    // 65. Page.waitForFrame - Wait for a specific frame to appear
+    // Uncomment and replace with the actual frame selector if applicable
+    // await page.waitForFrame('#frameSelector');
+
+    // 66. Page.waitForFunction - Wait for a function to return true
+    await page.waitForFunction('document.querySelector("h1") !== null');
+
+    // 67. Page.waitForNavigation - Wait for navigation to finish
+    await page.waitForNavigation();
+
+    // 68. Page.waitForNetworkIdle - Wait for network to be idle
+    await page.waitForNetworkIdle();
+
+    // 69. Page.waitForRequest - Wait for a specific request to occur
+    // Uncomment and replace with the actual URL or request pattern if applicable
+    // await page.waitForRequest('https://example.com/api/data');
+
+    // 70. Page.waitForResponse - Wait for a specific response
+    // Uncomment and replace with the actual URL or request pattern if applicable
+    // await page.waitForResponse('https://example.com/api/data');
+
+    // 71. Page.waitForSelector - Wait for a selector to appear
+    await page.waitForSelector('p');
+
+    // 72. Page.workers - Get all workers in the page
+    const workers = page.workers();

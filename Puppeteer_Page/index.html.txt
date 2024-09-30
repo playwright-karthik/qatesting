@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Puppeteer Test Page</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            background-color: #f9f9f9;
+        }
+        h1 {
+            color: #333;
+        }
+        button {
+            padding: 10px 15px;
+            margin-top: 10px;
+            cursor: pointer;
+        }
+        input, select {
+            margin-top: 10px;
+            padding: 5px;
+            width: 100%;
+        }
+        .tap-area {
+            width: 100%;
+            height: 100px;
+            background-color: lightblue;
+            margin-top: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 2px dashed #007BFF;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Puppeteer Test Page</h1>
+    <p>This page is used to demonstrate various Puppeteer methods.</p>
+    <p id="para1">Paragraph 1: Testing paragraph selection.</p>
+    <p id="para2">Paragraph 2: This is another paragraph.</p>
+
+    <button id="run-button">Run Puppeteer Script</button>
+
+    <input type="text" id="inputField" placeholder="Type something...">
+    <select id="selectElement">
+        <option value="">Select an option</option>
+        <option value="option1">Option 1</option>
+        <option value="option2">Option 2</option>
+        <option value="option3">Option 3</option>
+    </select>
+
+    <div class="tap-area" id="tapElement">Tap Me!</div>
+
+    <script>
+        // Expose a function to Puppeteer
+        window.exposedFunction = function() {
+            alert('Exposed function called!');
+        };
+    </script>
+
+</body>
+</html>
