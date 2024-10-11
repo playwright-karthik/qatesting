@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SPA Document Complete Test</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+        .section {
+            display: none;
+            margin: 20px;
+            padding: 20px;
+            border: 1px solid #ccc;
+        }
+        .active {
+            display: block;
+        }
+        button {
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Single Page Application Test</h1>
+    <div id="section1" class="section active">
+        <h2>Step 1: Load Page</h2>
+        <p>This is the first step of the application.</p>
+        <button onclick="loadNextSection('section2')">Next Step</button>
+    </div>
+    
+    <div id="section2" class="section">
+        <h2>Step 2: User Action</h2>
+        <p>This is the second step where a user performs some action.</p>
+        <button onclick="loadNextSection('section3')">Next Step</button>
+    </div>
+    
+    <div id="section3" class="section">
+        <h2>Step 3: Data Loading</h2>
+        <p>This is the third step where data is loaded in the background.</p>
+        <button onclick="loadNextSection('section4')">Next Step</button>
+    </div>
+
+    <div id="section4" class="section">
+        <h2>Step 4: Completion</h2>
+        <p>This is the final step of the application.</p>
+    </div>
+
+    <script>
+        function loadNextSection(nextSectionId) {
+            // Hide all sections
+            const sections = document.querySelectorAll('.section');
+            sections.forEach(section => section.classList.remove('active'));
+
+            // Show the next section
+            const nextSection = document.getElementById(nextSectionId);
+            nextSection.classList.add('active');
+
+            // Log when the document completes loading the next step
+            documentComplete();
+        }
+
+        function documentComplete() {
+            console.log('Document Complete:', new Date().toLocaleTimeString());
+        }
+    </script>
+</body>
+</html>
