@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SPA Document Complete Test</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+        .section {
+            display: none;
+            margin: 20px;
+            padding: 20px;
+            border: 1px solid #ccc;
+        }
+        .active {
+            display: block;
+        }
+        button {
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Single Page Application Test with Specific Document Complete Values</h1>
+
+    <!-- Step 1 -->
+    <div id="section1" class="section active">
+        <h2>Step 1: Load Page</h2>
+        <p>This is the first step of the application.</p>
+        <p id="doc-complete-step1">Document Complete: <span></span></p>
+        <button onclick="loadNextSection('section2')">Next Step</button>
+    </div>
+
+    <!-- Step 2 -->
+    <div id="section2" class="section">
+        <h2>Step 2: User Action</h2>
+        <p>This is the second step where a user performs some action.</p>
+        <p id="doc-complete-step2">Document Complete: <span></span></p>
+        <button onclick="loadNextSection('section3')">Next Step</button>
+    </div>
+
+    <!-- Step 3 -->
+    <div id="section3" class="section">
+        <h2>Step 3: Data Loading</h2>
+        <p>This is the third step where data is loaded in the background.</p>
+        <p id="doc-complete-step3">Document Complete: <span></span></p>
+        <button onclick="loadNextSection('section4')">Next Step</button>
+    </div>
+
+    <!-- Step 4 -->
+    <div id="section4" class="section">
+        <h2>Step 4: Completion</h2>
+        <p>This is the final step of the application.</p>
+        <p id="doc-complete-step4">Document Complete: <span></span></p>
+    </div>
+
+    <script>
+        // Predefined Document Complete times for each step
+        const documentCompleteTimes = {
+            step1: '12:00:05 PM',
+            step2: '12:00:10 PM',
+            step3: '12:00:15 PM',
+            step4: '12:00:20 PM'
+        };
+
+        function loadNextSection(nextSectionId) {
+            // Hide all sections
+            const sections = document.querySelectorAll('.section');
+            sections.forEach(section => section.classList.remove('active'));
+
+            // Show the next section
+            const nextSection = document.getElementById(nextSectionId);
+            nextSection.classList.add('active');
+
+            // Update the Document Complete time for the next section
+            updateDocumentCompleteTime(nextSectionId);
+        }
+
+        function updateDocumentCompleteTime(sectionId) {
+            const step = sectionId.replace('section', 'step');
+            const docCompleteElem = document.querySelector(`#doc-complete-${step} span`);
+            docCompleteElem.textContent = documentCompleteTimes[step] || 'N/A';
+        }
+
+        // Set the initial Document Complete time for the first section
+        updateDocumentCompleteTime('section1');
+    </script>
+</body>
+</html>
