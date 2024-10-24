@@ -3,77 +3,65 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>JavaScript Interaction Demo</title>
+    <title>Run Script Testing Page</title>
     <style>
         #alertBox {
             display: none;
-            padding: 10px;
-            background-color: #f44336;
+            padding: 20px;
+            background-color: red;
             color: white;
-            margin: 20px 0;
         }
-        .visible {
-            display: block;
+        #dynamicElement {
+            display: none;
+            margin-top: 20px;
         }
         #footer {
-            margin-top: 1000px; /* Just to enable scrolling */
+            margin-top: 500px;
         }
     </style>
 </head>
 <body>
+    <h1 id="title">Original Title</h1>
 
-    <h1 id="title">Welcome to Example</h1>
-
+    <!-- Submit Button -->
     <button id="submitButton">Submit</button>
-    <button id="showAlertButton">Show Alert</button>
-    <button id="hideAlertButton">Hide Alert</button>
-    <button id="scrollButton">Scroll to Footer</button>
 
+    <!-- Alert Box -->
     <div id="alertBox">This is an alert box!</div>
 
-    <h2>Form Input</h2>
-    <input type="text" id="username" placeholder="Username">
-    <input type="text" id="email" placeholder="Email">
-    <button id="getDataButton">Get Data</button>
+    <!-- Dynamic Element -->
+    <div id="dynamicElement">I am a dynamic element!</div>
 
-    <h2>Search</h2>
-    <input type="text" id="searchBox" placeholder="Search...">
+    <!-- Form Fields -->
+    <form id="userForm">
+        <label for="username">Username:</label>
+        <input type="text" id="username" name="username">
+        <br>
+        <label for="email">Email:</label>
+        <input type="email" id="email" name="email">
+    </form>
 
-    <h2>Dynamic Element</h2>
-    <div id="dynamicElement" style="display:none;">Dynamic Element</div>
+    <!-- Footer -->
+    <footer id="footer">
+        <p>This is the footer</p>
+    </footer>
 
-    <div id="footer">
-        <h2>Footer Section</h2>
-        <p>This is the footer content.</p>
-    </div>
-
+    <!-- JavaScript to handle button clicks and other interactions -->
     <script>
-        // Show alert box when "Show Alert" button is clicked
-        document.getElementById('showAlertButton').onclick = function() {
-            document.getElementById('alertBox').classList.add('visible');
-        };
+        document.getElementById('submitButton').addEventListener('click', function() {
+            // Simulate form submission or some other event on button click
+            document.getElementById('alertBox').style.display = 'block'; // Show alert box
+            this.disabled = true; // Disable submit button after click
+            console.log('Submit button clicked!');
+        });
 
-        // Hide alert box when "Hide Alert" button is clicked
-        document.getElementById('hideAlertButton').onclick = function() {
-            document.getElementById('alertBox').classList.remove('visible');
-        };
+        document.getElementById('showAlertButton').addEventListener('click', function() {
+            document.getElementById('alertBox').style.display = 'block';
+        });
 
-        // Scroll to footer
-        document.getElementById('scrollButton').onclick = function() {
-            document.getElementById('footer').scrollIntoView({ behavior: 'smooth' });
-        };
-
-        // Get data from form inputs
-        document.getElementById('getDataButton').onclick = function() {
-            const username = document.getElementById('username').value;
-            const email = document.getElementById('email').value;
-            alert(`Username: ${username}\nEmail: ${email}`);
-        };
-
-        // Simulate dynamic content loading after a delay
-        setTimeout(function() {
-            document.getElementById('dynamicElement').style.display = 'block';
-        }, 3000); // Show after 3 seconds
+        document.getElementById('hideAlertButton').addEventListener('click', function() {
+            document.getElementById('alertBox').style.display = 'none';
+        });
     </script>
 </body>
 </html>
