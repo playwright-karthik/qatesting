@@ -10,6 +10,7 @@
             padding: 20px;
             background-color: red;
             color: white;
+            margin-top: 20px;
         }
         #dynamicElement {
             display: none;
@@ -46,21 +47,21 @@
         <p>This is the footer</p>
     </footer>
 
-    <!-- JavaScript to handle button clicks and other interactions -->
+    <!-- JavaScript for button clicks and interactions -->
     <script>
+        // Show alert box on submit button click
         document.getElementById('submitButton').addEventListener('click', function() {
-            // Simulate form submission or some other event on button click
-            document.getElementById('alertBox').style.display = 'block'; // Show alert box
-            this.disabled = true; // Disable submit button after click
-            console.log('Submit button clicked!');
+            document.getElementById('alertBox').style.display = 'block'; // Show the alert box
+            this.disabled = true; // Disable the submit button
         });
 
-        document.getElementById('showAlertButton').addEventListener('click', function() {
-            document.getElementById('alertBox').style.display = 'block';
+        // Show and hide the dynamic element
+        document.getElementById('showDynamic').addEventListener('click', function() {
+            document.getElementById('dynamicElement').style.display = 'block';
         });
 
-        document.getElementById('hideAlertButton').addEventListener('click', function() {
-            document.getElementById('alertBox').style.display = 'none';
+        document.getElementById('hideDynamic').addEventListener('click', function() {
+            document.getElementById('dynamicElement').style.display = 'none';
         });
     </script>
 </body>
