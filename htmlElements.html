@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interactive HTML Elements</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        .container {
+            max-width: 600px;
+            margin: auto;
+        }
+        .section {
+            margin-bottom: 20px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        button {
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Interactive HTML Elements</h1>
+
+        <!-- Text Input -->
+        <div class="section">
+            <label for="name">Text Input</label>
+            <input type="text" id="name" placeholder="Enter your name">
+        </div>
+
+        <!-- Password Input -->
+        <div class="section">
+            <label for="password">Password Input</label>
+            <input type="password" id="password" placeholder="Enter your password">
+        </div>
+
+        <!-- Text Area -->
+        <div class="section">
+            <label for="message">Text Area</label>
+            <textarea id="message" rows="4" placeholder="Enter your message"></textarea>
+        </div>
+
+        <!-- Checkbox -->
+        <div class="section">
+            <label>Checkboxes</label>
+            <input type="checkbox" id="subscribe" name="subscribe">
+            <label for="subscribe">Subscribe to newsletter</label><br>
+            <input type="checkbox" id="terms" name="terms">
+            <label for="terms">Accept terms and conditions</label>
+        </div>
+
+        <!-- Radio Buttons -->
+        <div class="section">
+            <label>Radio Buttons</label>
+            <input type="radio" id="gender_male" name="gender" value="male">
+            <label for="gender_male">Male</label><br>
+            <input type="radio" id="gender_female" name="gender" value="female">
+            <label for="gender_female">Female</label><br>
+            <input type="radio" id="gender_other" name="gender" value="other">
+            <label for="gender_other">Other</label>
+        </div>
+
+        <!-- Dropdown -->
+        <div class="section">
+            <label for="country">Dropdown</label>
+            <select id="country">
+                <option value="">Select your country</option>
+                <option value="us">United States</option>
+                <option value="ca">Canada</option>
+                <option value="uk">United Kingdom</option>
+            </select>
+        </div>
+
+        <!-- Button -->
+        <div class="section">
+            <button onclick="alert('Button clicked!')">Click Me</button>
+        </div>
+
+        <!-- Link -->
+        <div class="section">
+            <a href="https://www.example.com" target="_blank">Visit Example.com</a>
+        </div>
+
+        <!-- File Input -->
+        <div class="section">
+            <label for="file-upload">File Upload</label>
+            <input type="file" id="file-upload">
+        </div>
+
+        <!-- Range Slider -->
+        <div class="section">
+            <label for="volume">Range Slider</label>
+            <input type="range" id="volume" min="0" max="100" value="50">
+        </div>
+
+        <!-- Date Picker -->
+        <div class="section">
+            <label for="date">Date Picker</label>
+            <input type="date" id="date">
+        </div>
+
+        <!-- Color Picker -->
+        <div class="section">
+            <label for="color">Color Picker</label>
+            <input type="color" id="color" value="#ff0000">
+        </div>
+
+        <!-- Number Input -->
+        <div class="section">
+            <label for="quantity">Number Input</label>
+            <input type="number" id="quantity" min="1" max="10" value="1">
+        </div>
+    </div>
+</body>
+</html>
