@@ -90,42 +90,42 @@
     2. To Remove</br>
     catchpoint proxy --type=DIRECT</br>
     catchpoint restart</br>
-  ===============
-  PROXY SETTINGS:
-"Proxy Authentication" support from Agent node
-configuration:
-(Only Basic Auth is verified, No resource for Ntlm/ Digest Proxy) (Puppeteer dont support NTLM)
-
-"PAC proxy" support via Config Key as below,
--Puppeteer test with proxy runs by default.
-
--To run a playwright test, user need to add a config key and set it to TRUE
-PlaywrightTestMonitor_AllowHeadlessNewMode=true
-vi etc/catchpoint.d/TxEng.conf
-
-//otherwise you see below error
-[51042] - A tunnel connection through the proxy could not be established.
-
-Setting BasicProxy:
-1) Non-Authenticated Proxy: [241]
-[forcing all requests to pass through 241]
-
-catchpoint proxy --type=STATIC --host=192.168.128.241 --port=3128
-
-2) Authenticated Proxy: [243]
-[forcing all requests to pass through 243: Needs Uname and Pword]
-
-catchpoint proxy --type=STATIC --host=192.168.128.243 --port=50000 --user=proxyuser --password=cpuser123
-
-3) Setting PAC-Authenticated:
-[forcing all requests to pass through 243]
+  ===============</br>
+  PROXY SETTINGS:</br>
+"Proxy Authentication" support from Agent node</br>
+configuration:</br>
+(Only Basic Auth is verified, No resource for Ntlm/ Digest Proxy) (Puppeteer dont support NTLM)</br>
+</br>
+"PAC proxy" support via Config Key as below,</br>
+-Puppeteer test with proxy runs by default.</br>
+</br>
+-To run a playwright test, user need to add a config key and set it to TRUE</br>
+PlaywrightTestMonitor_AllowHeadlessNewMode=true</br>
+vi etc/catchpoint.d/TxEng.conf</br>
+</br>
+//otherwise you see below error</br>
+[51042] - A tunnel connection through the proxy could not be established.</br>
+</br>
+Setting BasicProxy:</br>
+1) Non-Authenticated Proxy: [241]</br>
+[forcing all requests to pass through 241]</br>
+</br>
+catchpoint proxy --type=STATIC --host=192.168.128.241 --port=3128</br>
+</br>
+2) Authenticated Proxy: [243]</br>
+[forcing all requests to pass through 243: Needs Uname and Pword]</br>
+</br>
+catchpoint proxy --type=STATIC --host=192.168.128.243 --port=50000 --user=proxyuser --password=cpuser123</br>
+</br>
+3) Setting PAC-Authenticated:</br>
+[forcing all requests to pass through 243]</br>
 catchpoint proxy --type=PAC --host=https://playwright-karthik.github.io/qatesting/p6.pac --user=proxyuser --password=cpuser123
-
-3) Setting PAC-Non Authenticated:
-[forcing all requests to pass through 241]
-catchpoint proxy --type=PAC --host=https://playwright-karthik.github.io/qatesting/p7.pac
-
-  ===============
+</br>
+3) Setting PAC-Non Authenticated:</br>
+[forcing all requests to pass through 241]</br>
+catchpoint proxy --type=PAC --host=https://playwright-karthik.github.io/qatesting/p7.pac</br>
+</br>
+  ===============</br>
   </p>
   <h3> Proxy servers .243 is With-Authentication </h3>
   <a href="p1.pac"> P1: PAC with .243 [With Dns resolver-Bypass] </a> </br>
