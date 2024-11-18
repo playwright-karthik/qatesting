@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Type Command Test Page</title>
+  <style>
+    body { font-family: Arial, sans-serif; margin: 20px; }
+    label { display: block; margin-top: 10px; }
+    input[type="text"], input[type="password"], input[readonly] {
+      width: 300px;
+      padding: 5px;
+      margin-top: 5px;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Type Command Test Page</h1>
+
+  <!-- Valid Input Field -->
+  <label for="search">Search Field (Valid):</label>
+  <input type="text" id="search" name="q" placeholder="Enter text here">
+
+  <!-- Invalid Locator Simulation -->
+  <label for="invalid">Non-existent Field (Invalid Locator):</label>
+  <input type="text" id="invalid" placeholder="This field won't be found" style="display:none;">
+
+  <!-- Read-Only Field -->
+  <label for="readonlyField">Read-Only Field:</label>
+  <input type="text" id="readonlyField" value="You can't edit this" readonly>
+
+  <!-- Pre-filled Field -->
+  <label for="prefilled">Pre-filled Field:</label>
+  <input type="text" id="prefilled" value="Existing Text">
+
+  <!-- Dynamic Field (will be added after 3 seconds) -->
+  <label>Dynamic Field (Appears after 3 seconds):</label>
+  <div id="dynamicContainer"></div>
+
+  <script>
+    setTimeout(() => {
+      const dynamicInput = document.createElement('input');
+      dynamicInput.type = 'text';
+      dynamicInput.id = 'dynamicField';
+      dynamicInput.placeholder = 'Dynamic Field';
+      document.getElementById('dynamicContainer').appendChild(dynamicInput);
+    }, 3000);
+  </script>
+
+  <!-- Special Characters Field -->
+  <label for="specialChars">Field for Special Characters:</label>
+  <input type="text" id="specialChars" placeholder="Type special characters here">
+
+  <!-- Large Input Test -->
+  <label for="largeInput">Large Input Test Field:</label>
+  <input type="text" id="largeInput" placeholder="Test performance with large input">
+
+</body>
+</html>
