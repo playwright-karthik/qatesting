@@ -12,19 +12,29 @@
       padding: 5px;
       margin-top: 5px;
     }
+    .spacer {
+      height: 1000px; /* Spacer to simulate below-the-fold content */
+    }
   </style>
 </head>
 <body>
 
   <h1>Type Command Test Page</h1>
 
-  <!-- Valid Input Field -->
+  <!-- Above the Fold Text Box -->
+  <label for="aboveFold">Above the Fold Text Box:</label>
+  <input type="text" id="aboveFold" placeholder="Type here (above the fold)">
+
+  <!-- Other elements before the fold -->
   <label for="search">Search Field (Valid):</label>
   <input type="text" id="search" name="q" placeholder="Enter text here">
 
-  <!-- Invalid Locator Simulation -->
-  <label for="invalid">Non-existent Field (Invalid Locator):</label>
-  <input type="text" id="invalid" placeholder="This field won't be found" style="display:none;">
+  <!-- Spacer to push below-the-fold content -->
+  <div class="spacer"></div>
+
+  <!-- Below the Fold Text Box -->
+  <label for="belowFold">Below the Fold Text Box:</label>
+  <input type="text" id="belowFold" placeholder="Type here (below the fold)">
 
   <!-- Read-Only Field -->
   <label for="readonlyField">Read-Only Field:</label>
