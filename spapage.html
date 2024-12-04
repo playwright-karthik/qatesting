@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SPA Testing Page</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+    }
+    header {
+      background-color: #007bff;
+      color: white;
+      padding: 10px;
+      text-align: center;
+    }
+    nav {
+      display: flex;
+      justify-content: center;
+      background-color: #f4f4f4;
+      padding: 10px;
+    }
+    nav a {
+      margin: 0 15px;
+      text-decoration: none;
+      color: #007bff;
+      font-weight: bold;
+    }
+    nav a.active {
+      color: #ff0000;
+    }
+    .content {
+      padding: 20px;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>SPA Testing Page</h1>
+  </header>
+  <nav>
+    <a href="#home" class="active">Home</a>
+    <a href="#about">About</a>
+    <a href="#contact">Contact</a>
+  </nav>
+  <div id="app" class="content">
+    <!-- Dynamic content will load here -->
+  </div>
+  <script>
+    // Define routes and content
+    const routes = {
+      home: "<h2>Welcome to the Home Page</h2><p>This is the home page content.</p>",
+      about: "<h2>About Us</h2><p>Learn more about our SPA testing page here.</p>",
+      contact: "<h2>Contact Us</h2><p>Reach us at contact@testing.com.</p>"
+    };
+
+    // Function to load content based on the hash
+    function loadContent() {
+      const hash = location.hash.replace("#", "") || "home";
+      document.getElementById("app").innerHTML = routes[hash] || "<h2>404</h2><p>Page not found.</p>";
+      document.querySelectorAll("nav a").forEach(link => {
+        link.classList.toggle("active", link.getAttribute("href") === `#${hash}`);
+      });
+    }
+
+    // Listen for hash change and load content
+    window.addEventListener("hashchange", loadContent);
+
+    // Load initial content
+    loadContent();
+  </script>
+</body>
+</html>
