@@ -17,29 +17,23 @@
         .button {
             margin: 5px;
         }
+        video {
+            max-width: 100%;
+            height: auto;
+            margin: 10px 0;
+        }
     </style>
 </head>
 <body>
     <h1>SPA Test Page</h1>
-    <button id="loadContent" class="button">Load New Content</button>
     <button id="loadImage" class="button">Load Image</button>
     <button id="loadJSON" class="button">Load JSON Data</button>
+    <button id="loadVideo" class="button">Load Video</button>
     <div id="app" class="content">
         <p>Initial content loaded.</p>
     </div>
 
     <script>
-        document.getElementById('loadContent').addEventListener('click', function() {
-            const app = document.getElementById('app');
-            // Simulate loading new content without a full page reload
-            const newContent = document.createElement('div');
-            newContent.classList.add('content');
-            newContent.innerHTML = `
-                <p>New content loaded dynamically at ${new Date().toLocaleTimeString()}</p>
-            `;
-            app.appendChild(newContent);
-        });
-
         document.getElementById('loadImage').addEventListener('click', function() {
             const app = document.getElementById('app');
             fetch('https://sqa.3genlabs.net/hawksyntheticpageserver/Main.ashx?type=img&delay=0&redirect=0&height=200&width=300&label=SampleLabel')
@@ -74,6 +68,24 @@
                 })
                 .catch(error => {
                     console.error('Error fetching JSON data:', error);
+                });
+        });
+
+        document.getElementById('loadVideo').addEventListener('click', function() {
+            const app = document.getElementById('app');
+            fetch('https://video.twimg.com/amplify_video/1848827867045548032/vid/avc1/0/3000/640x352/gAjob0AFhPM2A2Gm.m4s')
+                .then(response => response.blob())
+                .then(videoBlob => {
+                    const videoObjectURL = URL.createObjectURL(videoBlob);
+                    const videoElement = document.createElement('video');
+                    videoElement.src = videoObjectURL;
+                    videoElement.controls = true;
+                    videoElement.classList.add('content');
+                    app.appendChild(videoElement);
+                    console.log('Video loaded and displayed');
+                })
+                .catch(error => {
+                    console.error('Error fetching video:', error);
                 });
         });
     </script>
