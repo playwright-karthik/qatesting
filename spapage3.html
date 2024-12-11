@@ -3,117 +3,46 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SPA Example</title>
+    <title>SPA Test Page</title>
     <style>
-        /* Inline CSS to minimize external dependencies */
         body {
             font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 0;
-            text-align: center;
         }
-        header {
-            background-color: #4CAF50;
-            color: white;
-            padding: 1rem 0;
-        }
-        nav {
-            margin: 20px;
-        }
-        nav a {
-            margin: 0 10px;
-            text-decoration: none;
-            color: #4CAF50;
-        }
-        main {
+        .content {
             padding: 20px;
+            border: 1px solid #ddd;
+            margin: 10px 0;
         }
-        section {
-            display: none;
-        }
-        section.active {
-            display: block;
-        }
-        .info {
-            margin-top: 20px;
-            font-size: 1.2rem;
-            color: #333;
+        .button {
+            margin: 5px;
         }
     </style>
 </head>
 <body>
-    <header>
-        <h1>Single Page Application</h1>
-    </header>
-    <nav>
-        <a href="#" onclick="navigate('home')">Home</a>
-        <a href="#" onclick="navigate('about')">About</a>
-        <a href="#" onclick="navigate('contact')">Contact</a>
-    </nav>
-    <main>
-        <div class="info" id="info"></div>
-        <section id="home" class="active">
-            <h2>Welcome to Home</h2>
-            <p>This is the home section.</p>
-        </section>
-        <section id="about">
-            <h2>About Us</h2>
-            <p>Learn more about our services.</p>
-        </section>
-        <section id="contact">
-            <h2>Contact Us</h2>
-            <p>Get in touch through this section.</p>
-        </section>
-    </main>
+    <h1>SPA Test Page</h1>
+    <button id="loadContent" class="button">Load New Content</button>
+    <div id="app" class="content">
+        <p>Initial content loaded.</p>
+    </div>
+
     <script>
-        // JavaScript to handle SPA navigation and update URL
-        function navigate(sectionId) {
-            // Update the URL in the address bar
-            history.pushState(null, '', `#${sectionId}`);
+        document.getElementById('loadContent').addEventListener('click', function() {
+            const app = document.getElementById('app');
+            // Simulate loading new content without a full page reload
+            const newContent = document.createElement('div');
+            newContent.classList.add('content');
+            newContent.innerHTML = `
+                <p>New content loaded dynamically at ${new Date().toLocaleTimeString()}</p>
+            `;
+            app.appendChild(newContent);
             
-            // Hide all sections and show the selected one
-            document.querySelectorAll('section').forEach(section => {
-                section.classList.remove('active');
-            });
-            document.getElementById(sectionId).classList.add('active');
-            
-            // Display load time and file size based on the section
-            displayInfo(sectionId);
-        }
-
-        // Function to display load time and file size
-        function displayInfo(sectionId) {
-            let loadTime = 0;
-            let fileSize = 0;
-
-            if (sectionId === 'home') {
-                loadTime = 5; // Set specific load time for "home"
-                fileSize = 1550; // Set specific file size for "home"
-            } else if (sectionId === 'about') {
-                loadTime = 7; // Example for "about"
-                fileSize = 1600; // Example for "about"
-            } else if (sectionId === 'contact') {
-                loadTime = 10; // Example for "contact"
-                fileSize = 1700; // Example for "contact"
-            }
-
-            // Update the info section
-            document.getElementById('info').innerText = `Load time: ${loadTime} seconds | File size: ${fileSize} KB`;
-        }
-
-        // Optional: Handle browser back/forward navigation
-        window.addEventListener('popstate', () => {
-            const currentSection = location.hash.replace('#', '');
-            if (currentSection) {
-                navigate(currentSection);
-            }
+            // Simulate a request with fetch (optional)
+            fetch('https://jsonplaceholder.typicode.com/posts/1')
+                .then(response => response.json())
+                .then(data => {
+                    console.log('Data loaded:', data);
+                });
         });
-
-        // Initialize the page with the current URL hash
-        if (location.hash) {
-            const initialSection = location.hash.replace('#', '');
-            navigate(initialSection);
-        }
     </script>
 </body>
 </html>
