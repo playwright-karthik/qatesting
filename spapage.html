@@ -51,11 +51,10 @@
   <script>
     // Define routes and content
     const routes = {
-      home: '<h2 id="home-heading">Welcome to the Home Page</h2><p>This is the home page content.</p>',
-      about: '<h2 id="about-heading">About Us</h2><p>Learn more about our SPA testing page here.</p>',
-      contact: '<h2 id="contact-heading">Contact Us</h2><p>Reach us at contact@testing.com.</p>'
+      home: "<h2>Welcome to the Home Page</h2><p>This is the home page content.</p>",
+      about: "<h2>About Us</h2><p>Learn more about our SPA testing page here.</p>",
+      contact: "<h2>Contact Us</h2><p>Reach us at contact@testing.com.</p>"
     };
-
     // Function to load content based on the hash
     function loadContent() {
       const hash = location.hash.replace("#", "") || "home";
@@ -64,10 +63,8 @@
         link.classList.toggle("active", link.getAttribute("href") === `#${hash}`);
       });
     }
-
     // Listen for hash change and load content
     window.addEventListener("hashchange", loadContent);
-
     // Load initial content
     loadContent();
   </script>
