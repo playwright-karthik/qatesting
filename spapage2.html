@@ -60,12 +60,30 @@
         </section>
     </main>
     <script>
-        // JavaScript to handle SPA navigation
+        // JavaScript to handle SPA navigation and update URL
         function navigate(sectionId) {
+            // Update the URL in the address bar
+            history.pushState(null, '', `#${sectionId}`);
+            
+            // Hide all sections and show the selected one
             document.querySelectorAll('section').forEach(section => {
                 section.classList.remove('active');
             });
             document.getElementById(sectionId).classList.add('active');
+        }
+
+        // Optional: Handle browser back/forward navigation
+        window.addEventListener('popstate', () => {
+            const currentSection = location.hash.replace('#', '');
+            if (currentSection) {
+                navigate(currentSection);
+            }
+        });
+
+        // Initialize the page with the current URL hash
+        if (location.hash) {
+            const initialSection = location.hash.replace('#', '');
+            navigate(initialSection);
         }
     </script>
 </body>
