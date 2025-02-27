@@ -6,7 +6,19 @@
     <title>TTI Simulation Page</title>
     <script>
         let startTime;
-        let simulatedTTI = 0;
+        let clockInterval;
+
+        function startClock() {
+            startTime = performance.now();
+            document.getElementById('clock').innerText = 'Clock: 0 ms';
+            clockInterval = setInterval(() => {
+                document.getElementById('clock').innerText = `Clock: ${Math.round(performance.now() - startTime)} ms`;
+            }, 50);
+        }
+
+        function stopClock() {
+            clearInterval(clockInterval);
+        }
 
         function simulateWork(duration) {
             const start = performance.now();
@@ -24,20 +36,20 @@
         }
 
         async function calculateTTI() {
-            startTime = performance.now();
+            startClock(); // Start clock when calculation begins
             simulateWork(200);
             await simulateNetworkRequest();
             simulateWork(300);
             await simulateNetworkRequest();
             simulateWork(150);
-
-            simulatedTTI = Math.round(performance.now() - startTime);
-            document.getElementById('tti-value').innerText = `TTI: ${simulatedTTI} ms`;
+            const tti = Math.round(performance.now() - startTime);
+            document.getElementById('tti-value').innerText = `TTI: ${tti} ms`;
+            stopClock(); // Stop clock when TTI is displayed
         }
 
-        function introduceExtraDelay() {
+        function handleInteraction(event) {
+            document.getElementById('extra-delay-msg').innerText = `Clicked: ${event.target.innerText}`;
             calculateTTI(); // Recalculate TTI on interaction
-            document.getElementById('extra-delay-msg').innerText = 'New TTI calculated!';
         }
 
         window.onload = () => {
@@ -48,8 +60,11 @@
 <body>
     <h1>TTI Simulation Page</h1>
     <p id="tti-value">Calculating TTI...</p>
+    <p id="clock">Clock: 0 ms</p>
     <p>Hosting URL: <a href="https://playwright-karthik.github.io/qatesting/tti.html" target="_blank">https://playwright-karthik.github.io/qatesting/tti.html</a></p>
-    <button onclick="introduceExtraDelay()">Recalculate TTI</button>
+    <button onclick="handleInteraction(event)">Recalculate TTI</button>
+    <button onclick="handleInteraction(event)">Simulate Heavy Task</button>
+    <button onclick="handleInteraction(event)">Trigger Network Delay</button>
     <p id="extra-delay-msg"></p>
 </body>
 </html>
