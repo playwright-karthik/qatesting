@@ -3,81 +3,58 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TTI Simulation Page</title>
-    <script>
-        let startTime;
-        let clockInterval;
-
-        function startClock() {
-            startTime = performance.now();
-            document.getElementById('clock').innerText = 'Clock: 0 ms';
-            clearInterval(clockInterval); // Clear previous intervals
-            clockInterval = setInterval(() => {
-                document.getElementById('clock').innerText = `Clock: ${Math.round(performance.now() - startTime)} ms`;
-            }, 50);
+    <title>TTI Testing Page</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            padding: 20px;
         }
-
-        function stopClock() {
-            clearInterval(clockInterval);
+        input, button {
+            margin: 10px;
+            padding: 10px;
+            font-size: 16px;
         }
-
-        function simulateWork(duration) {
-            const start = performance.now();
-            while (performance.now() - start < duration) {
-                // Simulating a CPU-heavy task
-            }
+        #log {
+            border: 1px solid #ddd;
+            padding: 10px;
+            margin-top: 20px;
+            width: 80%;
+            margin-left: auto;
+            margin-right: auto;
+            max-height: 200px;
+            overflow-y: auto;
+            text-align: left;
         }
-
-        function simulateNetworkRequest(delay = 2000) {
-            return new Promise(resolve => {
-                setTimeout(() => {
-                    resolve('Network request completed');
-                }, delay);
-            });
-        }
-
-        async function calculateTTI(extraWork = 0, extraNetworkDelay = 0) {
-            startClock(); // Start clock on new calculation
-
-            simulateWork(200);
-            await simulateNetworkRequest();
-            simulateWork(300);
-            await simulateNetworkRequest(1500 + extraNetworkDelay);
-            simulateWork(150 + extraWork);
-
-            const tti = Math.round(performance.now() - startTime);
-            document.getElementById('tti-value').innerText = `TTI: ${tti} ms`;
-            stopClock(); // Stop clock when TTI is displayed
-        }
-
-        function handleInteraction(event) {
-            document.getElementById('extra-delay-msg').innerText = `Clicked: ${event.target.innerText}`;
-
-            // Different interactions trigger different TTI scenarios
-            if (event.target.id === "heavy-task") {
-                calculateTTI(500, 0); // Extra 500ms CPU work
-            } else if (event.target.id === "network-delay") {
-                calculateTTI(0, 2000); // Extra 2 sec network delay
-            } else {
-                calculateTTI(); // Normal recalculation
-            }
-        }
-
-        window.onload = () => {
-            calculateTTI(); // Calculate TTI on page load
-        };
-    </script>
+    </style>
 </head>
 <body>
-    <h1>TTI Simulation Page</h1>
-    <p id="tti-value">Calculating TTI...</p>
-    <p id="clock">Clock: 0 ms</p>
-    <p>Hosting URL: <a href="https://playwright-karthik.github.io/qatesting/tti.html" target="_blank">https://playwright-karthik.github.io/qatesting/tti.html</a></p>
 
-    <button onclick="handleInteraction(event)" id="default-tti">Recalculate TTI</button>
-    <button onclick="handleInteraction(event)" id="heavy-task">Simulate Heavy Task</button>
-    <button onclick="handleInteraction(event)" id="network-delay">Trigger Network Delay</button>
+    <h2>TTI Testing Page</h2>
+    <button id="startButton">Start</button>
+    <input type="text" id="nameInput" placeholder="Enter Name">
+    <button id="submitButton">Submit</button>
 
-    <p id="extra-delay-msg"></p>
+    <h3>Interaction Log</h3>
+    <div id="log"></div>
+
+    <script>
+        document.getElementById("startButton").addEventListener("click", function() {
+            logAction("Start button clicked.");
+        });
+
+        document.getElementById("submitButton").addEventListener("click", function() {
+            let name = document.getElementById("nameInput").value;
+            logAction("Submit button clicked with name: " + name);
+        });
+
+        function logAction(message) {
+            let logDiv = document.getElementById("log");
+            let timeStamp = new Date().toLocaleTimeString();
+            logDiv.innerHTML += `<p>[${timeStamp}] ${message}</p>`;
+            logDiv.scrollTop = logDiv.scrollHeight;
+        }
+    </script>
+
 </body>
 </html>
