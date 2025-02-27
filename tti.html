@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>TTI Simulation Page</title>
     <script>
-        let startTime = performance.now();
+        let startTime;
         let simulatedTTI = 0;
 
         function simulateWork(duration) {
@@ -24,7 +24,7 @@
         }
 
         async function calculateTTI() {
-            // Simulating workload
+            startTime = performance.now();
             simulateWork(200);
             await simulateNetworkRequest();
             simulateWork(300);
@@ -36,14 +36,12 @@
         }
 
         function introduceExtraDelay() {
-            simulateWork(1000);
-            setTimeout(() => {
-                document.getElementById('extra-delay-msg').innerText = 'Extra delay introduced!';
-            }, 1000);
+            calculateTTI(); // Recalculate TTI on interaction
+            document.getElementById('extra-delay-msg').innerText = 'New TTI calculated!';
         }
 
         window.onload = () => {
-            setTimeout(calculateTTI, 500); // Start TTI calculation after a short delay
+            calculateTTI(); // Calculate TTI on page load
         };
     </script>
 </head>
@@ -51,7 +49,7 @@
     <h1>TTI Simulation Page</h1>
     <p id="tti-value">Calculating TTI...</p>
     <p>Hosting URL: <a href="https://playwright-karthik.github.io/qatesting/tti.html" target="_blank">https://playwright-karthik.github.io/qatesting/tti.html</a></p>
-    <button onclick="introduceExtraDelay()">Introduce Extra Delay</button>
+    <button onclick="introduceExtraDelay()">Recalculate TTI</button>
     <p id="extra-delay-msg"></p>
 </body>
 </html>
