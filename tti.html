@@ -3,21 +3,55 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Time to Interactive Test</title>
+    <title>TTI Simulation Page</title>
     <script>
-        function simulateLongTask() {
-            // Simulate a long-running task (e.g., fetching data)
-            const start = Date.now();
-            while (Date.now() - start < 5000) {
-                // Simulate processing time
+        let startTime = performance.now();
+        let simulatedTTI = 0;
+
+        function simulateWork(duration) {
+            const start = performance.now();
+            while (performance.now() - start < duration) {
+                // Simulate long task
             }
-            document.getElementById("result").innerText = "Task completed!";
         }
+
+        function simulateNetworkRequest() {
+            return new Promise(resolve => {
+                setTimeout(() => {
+                    resolve('Network request completed');
+                }, Math.random() * 2000 + 1000); // Random delay between 1-3 seconds
+            });
+        }
+
+        async function calculateTTI() {
+            // Simulating workload
+            simulateWork(200);
+            await simulateNetworkRequest();
+            simulateWork(300);
+            await simulateNetworkRequest();
+            simulateWork(150);
+
+            simulatedTTI = Math.round(performance.now() - startTime);
+            document.getElementById('tti-value').innerText = `TTI: ${simulatedTTI} ms`;
+        }
+
+        function introduceExtraDelay() {
+            simulateWork(1000);
+            setTimeout(() => {
+                document.getElementById('extra-delay-msg').innerText = 'Extra delay introduced!';
+            }, 1000);
+        }
+
+        window.onload = () => {
+            setTimeout(calculateTTI, 500); // Start TTI calculation after a short delay
+        };
     </script>
 </head>
 <body>
-    <h1>Click the button to simulate a long task</h1>
-    <button onclick="simulateLongTask()">Simulate Task</button>
-    <p id="result"></p>
+    <h1>TTI Simulation Page</h1>
+    <p id="tti-value">Calculating TTI...</p>
+    <p>Hosting URL: <a href="https://playwright-karthik.github.io/qatesting/tti.html" target="_blank">https://playwright-karthik.github.io/qatesting/tti.html</a></p>
+    <button onclick="introduceExtraDelay()">Introduce Extra Delay</button>
+    <p id="extra-delay-msg"></p>
 </body>
 </html>
