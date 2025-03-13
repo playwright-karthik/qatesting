@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VCT Iframe Delay Test</title>
+    <script>
+        window.onload = function() {
+            setTimeout(function() {
+                let iframe = document.createElement("iframe");
+                iframe.src = "https://example.com"; // Change to a test page
+                iframe.width = "800";
+                iframe.height = "400";
+                document.getElementById("iframe-container").appendChild(iframe);
+            }, 3000); // 3-second delay before iframe loads
+        };
+    </script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin-top: 50px;
+        }
+        #iframe-container {
+            margin-top: 20px;
+            border: 2px dashed #333;
+            width: 800px;
+            height: 400px;
+            display: inline-block;
+        }
+    </style>
+</head>
+<body>
+    <h1>VCT Iframe Delay Test</h1>
+    <p>The iframe below will load after 3 seconds.</p>
+    <div id="iframe-container">Loading iframe...</div>
+</body>
+</html>
