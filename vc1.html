@@ -8,57 +8,11 @@
         window.onload = function() {
             setTimeout(function() {
                 let iframe = document.createElement("iframe");
-                iframe.srcdoc = `
-                    <!DOCTYPE html>
-                    <html lang="en">
-                    <head>
-                        <meta charset="UTF-8">
-                        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-                        <title>Heavy Content Page</title>
-                        <style>
-                            body {
-                                font-family: Arial, sans-serif;
-                                background: linear-gradient(to bottom, #ffcccc, #ff9999);
-                                text-align: center;
-                                padding: 20px;
-                            }
-                            .image-gallery {
-                                display: flex;
-                                flex-direction: column;
-                                align-items: center;
-                                gap: 20px;
-                            }
-                            img {
-                                width: 100%;
-                                max-width: 1200px;
-                                border: 5px solid black;
-                                box-shadow: 5px 5px 15px rgba(0, 0, 0, 0.3);
-                            }
-                        </style>
-                        <script>
-                            document.addEventListener("DOMContentLoaded", function() {
-                                console.log("Heavy content page loaded!");
-                                let count = 0;
-                                setInterval(() => {
-                                    console.log("Running script... " + count++);
-                                }, 1000);
-                            });
-                        </script>
-                    </head>
-                    <body>
-                        <h1>Welcome to the Heavy Content Page</h1>
-                        <p>This page contains large CSS, JavaScript, and multiple images to test iframe loading times.</p>
-                        <div class="image-gallery">
-                            <img src="https://via.placeholder.com/1200x800" alt="Large Image 1">
-                            <img src="https://via.placeholder.com/1200x800" alt="Large Image 2">
-                            <img src="https://via.placeholder.com/1200x800" alt="Large Image 3">
-                        </div>
-                    </body>
-                    </html>
-                `;
+                iframe.src = "https://www.cnn.com"; // Change to any heavy-content website
                 iframe.width = "1000";
                 iframe.height = "600";
                 iframe.style.border = "2px solid red";
+                iframe.loading = "lazy"; // Improve performance with lazy loading
                 document.getElementById("iframe-container").appendChild(iframe);
             }, 3000); // 3-second delay before iframe loads
         };
@@ -80,7 +34,7 @@
 </head>
 <body>
     <h1>VCT Iframe Heavy Content Test</h1>
-    <p>The iframe below will load after 3 seconds with large content.</p>
+    <p>The iframe below will load after 3 seconds with a real heavy-content website.</p>
     <div id="iframe-container">Loading iframe...</div>
 </body>
 </html>
