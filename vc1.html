@@ -8,8 +8,9 @@
         window.onload = function() {
             setTimeout(function() {
                 let iframe = document.createElement("iframe");
-                iframe.src = "https://sqa.3genlabs.net/hawksyntheticpageserver/main.ashx?type=html&details={"iframe":{"count":2,"rawtext":{"linebreak":100,"asciistart":33,"asciiend":126,"random":true,"bytecount":5000},"image":{"height":300,"width":500},"delay":50,"redirect":0}}
-"; // Change to any heavy-content website
+                iframe.src = "https://sqa.3genlabs.net/hawksyntheticpageserver/main.ashx?type=html&details={\"iframe\":{\"count\":2,\"rawtext\":{\"linebreak\":100,\"asciistart\":33,\"asciiend\":126,\"random\":true,\"bytecount\":5000},\"image\":{\"height\":300,\"width\":500},\"delay\":50,\"redirect\":0}}
+";
+                // Change to any heavy-content website
                 //iframe.src = "https://playwright-karthik.github.io/qatesting/vc3.html";
                 iframe.width = "1000";
                 iframe.height = "600";
