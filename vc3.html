@@ -3,84 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CLS, FCP & LCP Test</title>
-
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            text-align: center;
-            background-color: #f4f4f4;
-            margin: 0;
-            padding: 20px;
-        }
-
-        h1 {
-            font-size: 28px;
-            color: #333;
-        }
-
-        .image-container {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            width: 80%;
-            margin: 20px auto;
-            min-height: 600px; /* Prevents shifting before images load */
-        }
-
-        .placeholder {
-            background-color: #ddd;
-            margin-bottom: 10px;
-            border: 2px solid black;
-            text-align: center;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 18px;
-            font-weight: bold;
-            color: black;
-        }
-
-        .img-1 { width: 200px; height: 150px; }
-        .img-2 { width: 300px; height: 200px; }
-        .img-3 { width: 400px; height: 250px; }
-        .img-4 { width: 500px; height: 300px; }
-        .img-5 { width: 600px; height: 350px; }
-        .img-6 { width: 700px; height: 400px; }
-    </style>
-
+    <title>Redirecting...</title>
     <script>
-        document.addEventListener("DOMContentLoaded", function () {
-            let container = document.querySelector(".image-container");
-            let imageUrls = [
-                { class: "img-1", delay: 3 },
-                { class: "img-2", delay: 6 },
-                { class: "img-3", delay: 9 },
-                { class: "img-4", delay: 12 },
-                { class: "img-5", delay: 15 },
-                { class: "img-6", delay: 18 }
-            ];
-
-            imageUrls.forEach((item, index) => {
-                let placeholder = document.createElement("div");
-                placeholder.classList.add("placeholder", item.class);
-                placeholder.textContent = "Loading Image " + (index + 1);
-                container.appendChild(placeholder);
-
-                setTimeout(() => {
-                    let img = document.createElement("img");
-                    img.src = "https://uitestingplayground.com/static/cube.png";
-                    img.alt = "Test Image";
-                    img.classList.add(item.class);
-                    placeholder.replaceWith(img); // Replace placeholder with actual image
-                }, item.delay);
-            });
-        });
+        window.location.href = "https://www.bing.com/";
     </script>
 </head>
 <body>
-    <h1>CLS, FCP & LCP Testing Page</h1>
-    <p>Each image loads with a delay to trigger CLS and test FCP, LCP, and Visually Complete.</p>
-    <div class="image-container"></div>
+    <p>If you are not redirected, <a href="https://www.bing.com/">click here</a>.</p>
 </body>
 </html>
