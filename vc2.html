@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Heavy Content Page</title>
+    <title>CLS Test Page</title>
 
     <style>
         body {
@@ -65,6 +65,18 @@
         #changeColorBtn:hover {
             background-color: darkblue;
         }
+
+        /* Placeholder content that shifts */
+        .content {
+            font-size: 18px;
+            margin-top: 20px;
+            padding: 10px;
+            background: #ddd;
+            width: 80%;
+            margin-left: auto;
+            margin-right: auto;
+            transition: all 0.3s;
+        }
     </style>
 
     <script>
@@ -75,18 +87,39 @@
 
         document.addEventListener("DOMContentLoaded", function () {
             let container = document.querySelector(".image-container");
-            for (let i = 1; i <= 6; i++) {
-                let img = document.createElement("img");
-                img.src = `https://via.placeholder.com/300x200?text=Image${i}`;
-                img.alt = `Image ${i}`;
-                container.appendChild(img);
-            }
+            
+            // Simulating delayed image load to cause CLS
+            setTimeout(() => {
+                let imageUrls = [
+                    "https://source.unsplash.com/300x200/?nature",
+                    "https://source.unsplash.com/300x200/?city",
+                    "https://source.unsplash.com/300x200/?technology",
+                    "https://source.unsplash.com/300x200/?animals",
+                    "https://source.unsplash.com/300x200/?sports",
+                    "https://source.unsplash.com/300x200/?food"
+                ];
+
+                imageUrls.forEach(url => {
+                    let img = document.createElement("img");
+                    img.src = url;
+                    img.alt = "Dynamic Image";
+                    container.appendChild(img);
+                });
+            }, 2000);
+
+            // Simulating dynamic content insertion
+            setTimeout(() => {
+                let shiftingDiv = document.createElement("div");
+                shiftingDiv.className = "content";
+                shiftingDiv.innerText = "This content was dynamically inserted, causing layout shift!";
+                document.body.insertBefore(shiftingDiv, container);
+            }, 3000);
         });
     </script>
 </head>
 <body>
-    <h1>Heavy Content Page</h1>
-    <p>This page contains CSS animations, JavaScript interactions, and multiple images.</p>
+    <h1>CLS Test Page</h1>
+    <p>This page has Cumulative Layout Shift due to delayed images and dynamic content.</p>
 
     <button id="changeColorBtn" onclick="changeBackgroundColor()">Change Background</button>
 
