@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Playwright Multi-Step Test</title>
+    <script>
+        function fetchData() {
+            document.getElementById("ajax-content").innerText = "Loading...";
+            setTimeout(() => {
+                document.getElementById("ajax-content").innerText = "Data Loaded Successfully!";
+            }, 2000);
+        }
+    </script>
+</head>
+<body>
+    <h1>Multi-Step Playwright Test</h1>
+    
+    <!-- Scenario 1: Page Navigation -->
+    <button id="nav-button" onclick="window.location.href='nextpage.html'">Go to Next Page</button>
+    
+    <!-- Scenario 2: AJAX Request -->
+    <button id="ajax-button" onclick="fetchData()">Load Data</button>
+    <p id="ajax-content"></p>
+</body>
+</html>
