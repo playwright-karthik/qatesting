@@ -1,1 +1,111 @@
 
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Browser Settings Check</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        .popup-container {
+            position: fixed;
+            top: 10px;
+            right: 10px;
+            background: white;
+            padding: 10px;
+            border: 2px solid black;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5);
+            max-width: 300px;
+        }
+        .popup-item {
+            margin-bottom: 10px;
+            padding: 5px;
+            border-bottom: 1px solid #ccc;
+        }
+        .dismiss-button {
+            margin-left: 10px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <h1>Browser Settings Check</h1>
+    <h3>Allowed Settings:</h3>
+    <ul id="allowed-settings"></ul>
+    
+    <div class="popup-container" id="popup-container">
+        <h3>Blocked Settings:</h3>
+        <div id="popup-list"></div>
+    </div>
+
+    <script>
+        const blockedSettings = [];
+        const allowedSettings = document.getElementById("allowed-settings");
+        const popupList = document.getElementById("popup-list");
+        
+        function checkSetting(name, testFunction) {
+            testFunction().then(() => {
+                const li = document.createElement("li");
+                li.textContent = `${name}: Allowed ✅`;
+                allowedSettings.appendChild(li);
+            }).catch(() => {
+                blockedSettings.push(name);
+                showBlockedSetting(name);
+            });
+        }
+
+        function showBlockedSetting(name) {
+            const div = document.createElement("div");
+            div.classList.add("popup-item");
+            div.innerHTML = `${name}: Blocked ❌ <button class='dismiss-button' onclick='dismissPopup(this)'>Dismiss ${name}</button>`;
+            popupList.appendChild(div);
+        }
+
+        function dismissPopup(button) {
+            button.parentElement.remove();
+        }
+
+        // Location
+        checkSetting("Location", () => {
+            return new Promise((resolve, reject) => {
+                navigator.geolocation.getCurrentPosition(resolve, reject);
+            });
+        });
+
+        // Camera
+        checkSetting("Camera", async () => {
+            await navigator.mediaDevices.getUserMedia({ video: true });
+        });
+
+        // Microphone
+        checkSetting("Microphone", async () => {
+            await navigator.mediaDevices.getUserMedia({ audio: true });
+        });
+
+        // Notifications
+        checkSetting("Notifications", () => {
+            return new Promise((resolve, reject) => {
+                if (Notification.permission === "granted") {
+                    resolve();
+                } else {
+                    reject();
+                }
+            });
+        });
+
+        // Sound autoplay test
+        const audio = new Audio("https://www.w3schools.com/html/horse.ogg");
+        audio.autoplay = true;
+        audio.play().then(() => {
+            const li = document.createElement("li");
+            li.textContent = `Sound: Allowed ✅`;
+            allowedSettings.appendChild(li);
+        }).catch(() => {
+            showBlockedSetting("Sound");
+        });
+    </script>
+</body>
+</html>
