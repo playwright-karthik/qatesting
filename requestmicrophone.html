@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Microphone Access Check</title>
+    <title>Microphone Access Request</title>
     <link rel="icon" type="image/png" href="https://raw.githubusercontent.com/playwright-karthik/qatesting/main/favicon5050.png">
     <style>
         body {
@@ -11,21 +11,14 @@
             text-align: center;
             margin: 50px;
         }
-        button {
-            padding: 10px 20px;
-            font-size: 16px;
-            cursor: pointer;
-        }
     </style>
 </head>
 <body>
-    <h1>Microphone Access Simulation</h1>
-    <p>Click the button below to request microphone access. Your browser should show a permission popup.</p>
-    
-    <button onclick="requestMicrophone()">Request Microphone Access</button>
+    <h1>Microphone Access Test</h1>
+    <p>Your browser should automatically prompt you to allow microphone access.</p>
 
     <script>
-        function requestMicrophone() {
+        document.addEventListener("DOMContentLoaded", function () {
             navigator.mediaDevices.getUserMedia({ audio: true })
                 .then(function (stream) {
                     console.log("Microphone access granted");
@@ -34,7 +27,7 @@
                 .catch(function (error) {
                     console.error("Microphone access denied:", error);
                 });
-        }
+        });
     </script>
 </body>
 </html>
