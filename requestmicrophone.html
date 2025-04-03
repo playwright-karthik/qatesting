@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Microphone Access Check</title>
+    <link rel="icon" type="image/png" href="https://raw.githubusercontent.com/playwright-karthik/qatesting/main/favicon5050.png">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin: 50px;
+        }
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <h1>Microphone Access Simulation</h1>
+    <p>Click the button below to request microphone access. Your browser should show a permission popup.</p>
+    
+    <button onclick="requestMicrophone()">Request Microphone Access</button>
+
+    <script>
+        function requestMicrophone() {
+            navigator.mediaDevices.getUserMedia({ audio: true })
+                .then(function (stream) {
+                    console.log("Microphone access granted");
+                    stream.getTracks().forEach(track => track.stop());
+                })
+                .catch(function (error) {
+                    console.error("Microphone access denied:", error);
+                });
+        }
+    </script>
+</body>
+</html>
