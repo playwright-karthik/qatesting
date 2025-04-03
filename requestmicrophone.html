@@ -15,16 +15,24 @@
 </head>
 <body>
     <h1>Microphone Access Test</h1>
-    <p>Your browser should automatically prompt you to allow microphone access.</p>
+    <p id="status">Your browser should automatically prompt you to allow microphone access.</p>
 
     <script>
         document.addEventListener("DOMContentLoaded", function () {
+            if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+                document.getElementById("status").textContent = "getUserMedia is not supported in this browser.";
+                console.error("getUserMedia not supported");
+                return;
+            }
+
             navigator.mediaDevices.getUserMedia({ audio: true })
                 .then(function (stream) {
+                    document.getElementById("status").textContent = "Microphone access granted!";
                     console.log("Microphone access granted");
                     stream.getTracks().forEach(track => track.stop());
                 })
                 .catch(function (error) {
+                    document.getElementById("status").textContent = "Microphone access denied. Please allow microphone permissions in your browser settings.";
                     console.error("Microphone access denied:", error);
                 });
         });
