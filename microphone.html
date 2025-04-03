@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Microphone Access Check</title>
+    <link rel="icon" type="image/png" href="https://raw.githubusercontent.com/playwright-karthik/qatesting/main/favicon5050.png">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin: 50px;
+        }
+        #popup {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: white;
+            padding: 20px;
+            border: 2px solid black;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5);
+        }
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <h1>Microphone Access Simulation</h1>
+    <p>If microphone access is blocked, a pop-up will appear.</p>
+    
+    <div id="popup">
+        <p>Microphone access was blocked. Please allow microphone permissions in site settings.</p>
+        <button onclick="dismissPopup()">Dismiss</button>
+    </div>
+    
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            navigator.mediaDevices.getUserMedia({ audio: true })
+                .then(function (stream) {
+                    console.log("Microphone access granted");
+                    stream.getTracks().forEach(track => track.stop());
+                })
+                .catch(function (error) {
+                    document.getElementById("popup").style.display = "block";
+                });
+        });
+
+        function dismissPopup() {
+            document.getElementById("popup").style.display = "none";
+        }
+    </script>
+</body>
+</html>
