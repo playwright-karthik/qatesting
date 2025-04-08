@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Step-Based Request Test</title>
+</head>
+<body>
+  <h1>Request Grouping Test</h1>
+  <button onclick="triggerStep1()">Step 1</button>
+  <button onclick="triggerStep2()">Step 2</button>
+
+  <script>
+    function sendRequest(url, delay = 0) {
+      setTimeout(() => {
+        fetch(url).then(response => response.text())
+                  .then(data => console.log(`Finished ${url}`));
+      }, delay);
+    }
+
+    function triggerStep1() {
+      console.log("Step 1 clicked");
+
+      // Immediate requests
+      sendRequest('https://httpbin.org/get?req=step1_immediate_1');
+      sendRequest('https://httpbin.org/get?req=step1_immediate_2');
+
+      // Delayed requests
+      sendRequest('https://httpbin.org/get?req=step1_delayed_1', 1000);
+      sendRequest('https://httpbin.org/get?req=step1_delayed_2', 2000);
+
+      // Slow finishing request
+      sendRequest('https://httpbin.org/delay/5?req=step1_slow_finish');
+    }
+
+    function triggerStep2() {
+      console.log("Step 2 clicked");
+
+      sendRequest('https://httpbin.org/get?req=step2_1');
+      sendRequest('https://httpbin.org/get?req=step2_2', 500);
+      sendRequest('https://httpbin.org/delay/3?req=step2_slow');
+    }
+  </script>
+</body>
+</html>
