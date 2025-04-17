@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Testing CLS Good</title>
+    <style>
+        .shifting-container {
+            display: flex;
+            gap: 10px;
+        }
+
+        .shifting-element {
+            width: 100px;
+            height: 100px;
+            background-color: lightblue;
+            transition: transform 0.5s;
+        }
+
+        /* Reserve space for future element */
+        .placeholder {
+            width: 100px;
+            height: 100px;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Testing Good CLS (No Shift)</h1>
+
+    <div class="shifting-container">
+        <div class="shifting-element"></div>
+        <div class="shifting-element"></div>
+        <div class="placeholder"></div> <!-- Placeholder for the future element -->
+    </div>
+
+    <script>
+        // Replace placeholder with actual content after 5 seconds
+        setTimeout(() => {
+            const newElement = document.createElement('div');
+            newElement.className = 'shifting-element';
+            const container = document.querySelector('.shifting-container');
+            const placeholder = container.querySelector('.placeholder');
+            container.replaceChild(newElement, placeholder);
+        }, 5000);
+    </script>
+
+</body>
+</html>
