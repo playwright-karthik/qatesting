@@ -3,37 +3,50 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Bad FCP Example</title>
+  <title>Bad FCP Example - Different FCP and LCP</title>
   <style>
     body {
       font-family: Arial, sans-serif;
       padding: 40px;
     }
-    h1 {
-      font-size: 40px;
+    #small-text {
+      font-size: 24px;
       color: red;
       display: none;
     }
-    p {
+    #big-content {
+      width: 600px;
+      height: 400px;
+      background-color: lightblue;
+      margin-top: 50px;
       display: none;
+      font-size: 36px;
+      text-align: center;
+      line-height: 400px;
     }
   </style>
   <script>
-    // Block rendering artificially
+    // Artificially block for 3 seconds (to cause bad FCP)
     const start = performance.now();
     while (performance.now() - start < 3000) {
-      // Busy-wait for 3 seconds (simulate heavy JS)
+      // Blocking the main thread
     }
   </script>
 </head>
 <body>
 
-  <h1 id="title">Slow First Contentful Paint!</h1>
-  <p id="desc">This page delays content appearing by 3 seconds.</p>
+  <div id="small-text">Small Text (FCP happens here!)</div>
+
+  <div id="big-content">Big Content (LCP happens here!)</div>
 
   <script>
-    document.getElementById('title').style.display = 'block';
-    document.getElementById('desc').style.display = 'block';
+    // Show small text after blocking
+    document.getElementById('small-text').style.display = 'block';
+
+    // Then load big content with delay (simulate slow LCP)
+    setTimeout(() => {
+      document.getElementById('big-content').style.display = 'block';
+    }, 3000); // Big content shows after another 3 seconds
   </script>
 
 </body>
