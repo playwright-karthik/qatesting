@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Bad FCP Example</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 40px;
+    }
+    h1 {
+      font-size: 40px;
+      color: red;
+      display: none;
+    }
+    p {
+      display: none;
+    }
+  </style>
+  <script>
+    // Block rendering artificially
+    const start = performance.now();
+    while (performance.now() - start < 3000) {
+      // Busy-wait for 3 seconds (simulate heavy JS)
+    }
+  </script>
+</head>
+<body>
+
+  <h1 id="title">Slow First Contentful Paint!</h1>
+  <p id="desc">This page delays content appearing by 3 seconds.</p>
+
+  <script>
+    document.getElementById('title').style.display = 'block';
+    document.getElementById('desc').style.display = 'block';
+  </script>
+
+</body>
+</html>
