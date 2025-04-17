@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Bad LCP Example - Slow Image</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      padding: 30px;
+    }
+    img {
+      width: 600px;
+      height: auto;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Bad LCP with Delayed Image</h1>
+
+  <div style="height: 200px;"></div> <!-- Push image lower -->
+
+  <img src="https://via.placeholder.com/2000x1200.png?text=Slow+Image" alt="Slow Loading Image" loading="lazy">
+
+  <p>This large image loads slowly and is lazy loaded, causing a poor LCP.</p>
+
+  <script>
+    // Simulate artificial slow network
+    setTimeout(() => {
+      const img = document.querySelector('img');
+      img.src = "https://via.placeholder.com/2000x1200.png?text=Loaded+Image";
+    }, 4000); // Delayed 4 seconds
+  </script>
+
+</body>
+</html>
