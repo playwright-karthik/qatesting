@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Bad Visually Complete</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 40px;
+      background-color: #f2f2f2;
+    }
+    .box {
+      width: 300px;
+      height: 200px;
+      background-color: lightcoral;
+      margin-bottom: 20px;
+      text-align: center;
+      line-height: 200px;
+      font-size: 24px;
+      font-weight: bold;
+      display: none;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Bad Visually Complete Example</h1>
+
+  <div id="box1" class="box">Box 1</div>
+  <div id="box2" class="box">Box 2</div>
+  <div id="box3" class="box">Box 3</div>
+
+  <script>
+    // Show boxes one by one with delay
+    setTimeout(() => {
+      document.getElementById('box1').style.display = 'block';
+    }, 500); // after 0.5 sec
+
+    setTimeout(() => {
+      document.getElementById('box2').style.display = 'block';
+    }, 1200); // after 1.2 sec
+
+    setTimeout(() => {
+      document.getElementById('box3').style.display = 'block';
+    }, 2000); // after 2 sec
+  </script>
+
+</body>
+</html>
