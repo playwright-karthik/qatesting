@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ICO requests </title>
+</head>
+<body>
+  <script>
+    async function fetchData(url) {
+      try {
+        const response = await fetch(url);
+        const data = await response.json();
+        console.log(data);
+      } catch (error) {
+        console.error('Error fetching data:', error);
+      }
+    }
+
+    // Make requests
+    fetchData('https://httpstat.us/200');
+    //Invalid 404
+    fetchData('https://sqa.3genlabs.net/favicon.ico');
+    fetchData('https://example.com/favicon.ico');
+    //Valid
+    fetchData('https://www.wikipedia.org/static/favicon/wikipedia.ico');
+  </script>
+</body>
+</html>
