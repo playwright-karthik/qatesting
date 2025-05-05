@@ -17,13 +17,15 @@
       }
     }
 
-    // Make requests
-    fetchData('https://httpstat.us/200');
+    // Make requests [No Favicon]
+    fetchData('https://httpstat.us/200'); //No FaviconName
     //Invalid 404
-    fetchData('https://sqa.3genlabs.net/favicon.ico');
-    fetchData('https://example.com/favicon.ico');
-    //Valid
-    fetchData('https://www.wikipedia.org/static/favicon/wikipedia.ico');
+    fetchData('https://sqa.3genlabs.net/favicon.ico'); //global name-1
+    fetchData('https://example.com/favicon.ico'); //global name-2
+    //Custom Favicon
+    fetchData('https://example.com/myfavicon.ico'); //custom name
+    //Valid Favicon
+    fetchData('https://www.wikipedia.org/static/favicon/wikipedia.ico'); //Valid FaviconName
   </script>
 </body>
 </html>
