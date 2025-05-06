@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>HTTP Auth Simulation - Login</title>
+</head>
+<body>
+  <h2>Login Page</h2>
+  <form id="loginForm">
+    <label for="username">Username:</label>
+    <input type="text" id="username" name="username" placeholder="Enter username" /><br /><br />
+
+    <label for="password">Password:</label>
+    <input type="password" id="password" name="password" placeholder="Enter password" /><br /><br />
+
+    <label for="token">Token:</label>
+    <input type="text" id="token" name="token" placeholder="Enter token" /><br /><br />
+
+    <button type="submit">Login</button>
+  </form>
+
+  <div id="result" style="margin-top:20px; color: green;"></div>
+
+  <script>
+    document.getElementById('loginForm').addEventListener('submit', function (e) {
+      e.preventDefault();
+      const username = document.getElementById('username').value;
+      const password = document.getElementById('password').value;
+      const token = document.getElementById('token').value;
+
+      // Simulate macro validation
+      if (username && password && token) {
+        document.getElementById('result').innerText =
+          `Login successful with username: ${username}, password: ${password}, and token: ${token}`;
+      } else {
+        document.getElementById('result').innerText = 'Please fill in all fields.';
+        document.getElementById('result').style.color = 'red';
+      }
+    });
+  </script>
+</body>
+</html>
