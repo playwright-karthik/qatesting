@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>POST Data Test - Multiple Options</title>
+</head>
+<body>
+  <h2>POST Data Submission Options</h2>
+
+  <form action="https://httpbin.org/post" method="POST">
+    <fieldset>
+      <legend>Option 1: Username and Password</legend>
+      <label>Username: <input type="text" name="username" placeholder="Enter username" /></label><br><br>
+      <label>Password: <input type="password" name="password" placeholder="Enter password" /></label>
+    </fieldset>
+    <br>
+
+    <fieldset>
+      <legend>Option 2: Token</legend>
+      <label>Token: <input type="text" name="token" placeholder="Enter token" /></label>
+    </fieldset>
+    <br>
+
+    <fieldset>
+      <legend>Option 3: Use Both</legend>
+      <p>Fill both sections above to test sending all credentials together.</p>
+    </fieldset>
+    <br>
+
+    <button type="submit">Submit</button>
+  </form>
+</body>
+</html>
