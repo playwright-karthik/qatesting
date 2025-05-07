@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Buffer Upload Test</title>
+</head>
+<body>
+  <h2>Upload a File</h2>
+  <form id="uploadForm">
+    <input type="file" id="fileInput" />
+    <button type="button" onclick="readFile()">Submit</button>
+  </form>
+  <pre id="output"></pre>
+
+  <script>
+    function readFile() {
+      const fileInput = document.getElementById('fileInput');
+      const file = fileInput.files[0];
+      const reader = new FileReader();
+
+      reader.onload = function(event) {
+        document.getElementById('output').textContent =
+          'Uploaded file content:\n' + event.target.result;
+      };
+
+      if (file) {
+        reader.readAsText(file);
+      } else {
+        document.getElementById('output').textContent = 'No file selected.';
+      }
+    }
+  </script>
+</body>
+</html>
