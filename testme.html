@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>JavaScript API Tests</title>
+</head>
+<body>
+  <h1>JS Timing and Encoding Test Page</h1>
+
+  <button onclick="testTimeout()">Test setTimeout + clearTimeout</button><br><br>
+  <button onclick="testInterval()">Test setInterval + clearInterval</button><br><br>
+  <button onclick="testMicrotask()">Test queueMicrotask</button><br><br>
+
+  <script>
+    function testTimeout() {
+      let triggered = false;
+      const id = setTimeout(() => {
+        triggered = true;
+        console.log("Timeout executed");
+      }, 1000);
+      clearTimeout(id);
+      setTimeout(() => {
+        console.log("Timeout test result:", triggered ? "FAILED" : "PASSED");
+      }, 1500);
+    }
+
+    function testInterval() {
+      let count = 0;
+      const id = setInterval(() => {
+        count++;
+        console.log("Interval count:", count);
+        clearInterval(id);
+        console.log("Interval cleared. Test result: PASSED");
+      }, 500);
+    }
+
+    function testMicrotask() {
+      console.log("Synchronous log 1");
+      queueMicrotask(() => console.log("Microtask executed"));
+      console.log("Synchronous log 2");
+    }
+  </script>
+</body>
+</html>
