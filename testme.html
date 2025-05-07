@@ -1,43 +1,75 @@
-<!DOCTYPE html>
-<html>
-<head>
-  <title>JavaScript API Tests</title>
-</head>
-<body>
-  <h1>JS Timing and Encoding Test Page</h1>
+<hr>
+<h2>Encoding, Crypto, and Object Tests</h2>
 
-  <button onclick="testTimeout()">Test setTimeout + clearTimeout</button><br><br>
-  <button onclick="testInterval()">Test setInterval + clearInterval</button><br><br>
-  <button onclick="testMicrotask()">Test queueMicrotask</button><br><br>
+<button onclick="testAtobBtoa()">Test atob & btoa</button><br><br>
+<button onclick="testBufferBase64()">Test Buffer Base64</button><br><br>
+<button onclick="testTextEncoderDecoder()">Test TextEncoder/Decoder</button><br><br>
+<button onclick="testURLParsing()">Test URL and URLSearchParams</button><br><br>
+<button onclick="testUtilInspect()">Test util.inspect</button><br><br>
+<button onclick="testCryptoHash()">Test Crypto Hash & HMAC</button><br><br>
+<button onclick="testGenerateKeyPair()">Test generateKeyPairSync</button><br><br>
+<button onclick="testSubtleCrypto()">Test crypto.subtle</button><br><br>
 
-  <script>
-    function testTimeout() {
-      let triggered = false;
-      const id = setTimeout(() => {
-        triggered = true;
-        console.log("Timeout executed");
-      }, 1000);
-      clearTimeout(id);
-      setTimeout(() => {
-        console.log("Timeout test result:", triggered ? "FAILED" : "PASSED");
-      }, 1500);
-    }
+<script type="module">
+  function testAtobBtoa() {
+    const encoded = btoa("Hello");
+    const decoded = atob(encoded);
+    console.log("Encoded:", encoded);
+    console.log("Decoded equals original:", decoded === "Hello" ? "PASSED" : "FAILED");
+  }
 
-    function testInterval() {
-      let count = 0;
-      const id = setInterval(() => {
-        count++;
-        console.log("Interval count:", count);
-        clearInterval(id);
-        console.log("Interval cleared. Test result: PASSED");
-      }, 500);
-    }
+  function testBufferBase64() {
+    const encoded = Buffer.from("Hello").toString("base64");
+    const decoded = Buffer.from(encoded, "base64").toString();
+    console.log("Encoded Buffer:", encoded);
+    console.log("Decoded Buffer equals original:", decoded === "Hello" ? "PASSED" : "FAILED");
+  }
 
-    function testMicrotask() {
-      console.log("Synchronous log 1");
-      queueMicrotask(() => console.log("Microtask executed"));
-      console.log("Synchronous log 2");
-    }
-  </script>
-</body>
-</html>
+  function testTextEncoderDecoder() {
+    const encoder = new TextEncoder();
+    const decoder = new TextDecoder();
+    const bytes = encoder.encode("hello");
+    const decoded = decoder.decode(bytes);
+    console.log("Decoded:", decoded === "hello" ? "PASSED" : "FAILED");
+  }
+
+  function testURLParsing() {
+    const url = new URL("https://example.com/path?param1=value1&param2=value2");
+    const params = new URLSearchParams(url.search);
+    console.log("Host:", url.host);
+    console.log("Pathname:", url.pathname);
+    console.log("param1:", params.get("param1"));
+    console.log("param2:", params.get("param2"));
+  }
+
+  async function testUtilInspect() {
+    const util = await import('node:util');
+    const nestedObj = { a: { b: { c: 1 } } };
+    console.log("Inspected:", util.inspect(nestedObj));
+  }
+
+  async function testCryptoHash() {
+    const { createHash, createHmac } = await import('node:crypto');
+    const hash = createHash("sha256").update("hello").digest("hex");
+    const hmac = createHmac("sha256", "secret").update("hello").digest("hex");
+    console.log("SHA256 Hash:", hash);
+    console.log("HMAC:", hmac);
+  }
+
+  async function testGenerateKeyPair() {
+    const { generateKeyPairSync } = await import('node:crypto');
+    const { publicKey, privateKey } = generateKeyPairSync('rsa', {
+      modulusLength: 2048,
+    });
+    console.log("Public Key PEM:", publicKey.export({ type: 'pkcs1', format: 'pem' }).slice(0, 100) + "...");
+    console.log("Private Key PEM:", privateKey.export({ type: 'pkcs1', format: 'pem' }).slice(0, 100) + "...");
+  }
+
+  async function testSubtleCrypto() {
+    const encoder = new TextEncoder();
+    const data = encoder.encode("hello");
+    const digest = await crypto.subtle.digest("SHA-256", data);
+    const hex = [...new Uint8Array(digest)].map(b => b.toString(16).padStart(2, '0')).join('');
+    console.log("SHA-256 Digest:", hex);
+  }
+</script>
