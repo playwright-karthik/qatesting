@@ -1,75 +1,86 @@
-<hr>
-<h2>Encoding, Crypto, and Object Tests</h2>
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Test Cases for Runtime Features</title>
+</head>
+<body>
+  <script type="module">
+    const log = (label, val) => console.log(`<__log> '${label}'`, val);
 
-<button onclick="testAtobBtoa()">Test atob & btoa</button><br><br>
-<button onclick="testBufferBase64()">Test Buffer Base64</button><br><br>
-<button onclick="testTextEncoderDecoder()">Test TextEncoder/Decoder</button><br><br>
-<button onclick="testURLParsing()">Test URL and URLSearchParams</button><br><br>
-<button onclick="testUtilInspect()">Test util.inspect</button><br><br>
-<button onclick="testCryptoHash()">Test Crypto Hash & HMAC</button><br><br>
-<button onclick="testGenerateKeyPair()">Test generateKeyPairSync</button><br><br>
-<button onclick="testSubtleCrypto()">Test crypto.subtle</button><br><br>
+    // TC1: setTimeout and clearTimeout
+    const timeoutId = setTimeout(() => {
+      console.log("TIMEOUT HAPPENED"); // should not be seen
+    }, 500);
+    clearTimeout(timeoutId);
 
-<script type="module">
-  function testAtobBtoa() {
-    const encoded = btoa("Hello");
-    const decoded = atob(encoded);
-    console.log("Encoded:", encoded);
-    console.log("Decoded equals original:", decoded === "Hello" ? "PASSED" : "FAILED");
-  }
+    // TC2: setInterval and clearInterval
+    const intervalId = setInterval(() => {
+      console.log("<__log> 'INTERVAL HAPPENED'");
+      clearInterval(intervalId); // run only once
+    }, 200);
 
-  function testBufferBase64() {
-    const encoded = Buffer.from("Hello").toString("base64");
-    const decoded = Buffer.from(encoded, "base64").toString();
-    console.log("Encoded Buffer:", encoded);
-    console.log("Decoded Buffer equals original:", decoded === "Hello" ? "PASSED" : "FAILED");
-  }
-
-  function testTextEncoderDecoder() {
-    const encoder = new TextEncoder();
-    const decoder = new TextDecoder();
-    const bytes = encoder.encode("hello");
-    const decoded = decoder.decode(bytes);
-    console.log("Decoded:", decoded === "hello" ? "PASSED" : "FAILED");
-  }
-
-  function testURLParsing() {
-    const url = new URL("https://example.com/path?param1=value1&param2=value2");
-    const params = new URLSearchParams(url.search);
-    console.log("Host:", url.host);
-    console.log("Pathname:", url.pathname);
-    console.log("param1:", params.get("param1"));
-    console.log("param2:", params.get("param2"));
-  }
-
-  async function testUtilInspect() {
-    const util = await import('node:util');
-    const nestedObj = { a: { b: { c: 1 } } };
-    console.log("Inspected:", util.inspect(nestedObj));
-  }
-
-  async function testCryptoHash() {
-    const { createHash, createHmac } = await import('node:crypto');
-    const hash = createHash("sha256").update("hello").digest("hex");
-    const hmac = createHmac("sha256", "secret").update("hello").digest("hex");
-    console.log("SHA256 Hash:", hash);
-    console.log("HMAC:", hmac);
-  }
-
-  async function testGenerateKeyPair() {
-    const { generateKeyPairSync } = await import('node:crypto');
-    const { publicKey, privateKey } = generateKeyPairSync('rsa', {
-      modulusLength: 2048,
+    // TC3: queueMicrotask
+    let microtaskFired = false;
+    queueMicrotask(() => {
+      microtaskFired = true;
+      log("Microtask fired:", microtaskFired);
     });
-    console.log("Public Key PEM:", publicKey.export({ type: 'pkcs1', format: 'pem' }).slice(0, 100) + "...");
-    console.log("Private Key PEM:", privateKey.export({ type: 'pkcs1', format: 'pem' }).slice(0, 100) + "...");
-  }
 
-  async function testSubtleCrypto() {
-    const encoder = new TextEncoder();
-    const data = encoder.encode("hello");
-    const digest = await crypto.subtle.digest("SHA-256", data);
-    const hex = [...new Uint8Array(digest)].map(b => b.toString(16).padStart(2, '0')).join('');
-    console.log("SHA-256 Digest:", hex);
-  }
-</script>
+    // TC4: atob and btoa
+    const ao = "Hello World!";
+    const bo = btoa(ao);
+    log("ao", ao);
+    log("bo", bo);
+
+    // TC5: Buffer conversion
+    const buf = Buffer.from("hello", "utf8");
+    log("data", buf);
+    log("decoded", buf.toString("utf8"));
+    const unbuf = new TextDecoder().decode(new Uint8Array([104, 101, 108, 108, 111]));
+    log("unbuf", unbuf);
+
+    // TC6: URL and TC7: URLSearchParams
+    const url = new URL("https://example.com/path?foo=1&bar=2");
+    const params = new URLSearchParams(url.search);
+    log("Host:", url.hostname);
+    log("Pathname:", url.pathname);
+    log("Has foo:", params.has("foo"));
+    log("Value of bar:", params.get("bar"));
+    params.set("baz", "42");
+    log("New search:", params.toString());
+
+    // TC8: util.inspect
+    import('node:util').then(util => {
+      const inspected = util.inspect({ hello: "world" });
+      log("Inspected:", inspected);
+    });
+
+    // TC9: crypto.createHash / createHmac / randomBytes
+    import('node:crypto').then(crypto => {
+      const hash = crypto.createHash('sha256').update('test').digest('hex');
+      const hmac = crypto.createHmac('sha256', 'key').update('test').digest('hex');
+      const random = crypto.randomBytes(8).toString('hex');
+      log("SHA-256 Hash:", hash);
+      log("HMAC:", hmac);
+      log("Random Bytes:", random);
+
+      // TC10: crypto.generateKeyPairSync
+      const { publicKey, privateKey } = crypto.generateKeyPairSync('rsa', {
+        modulusLength: 512,
+        publicKeyEncoding: { type: 'spki', format: 'pem' },
+        privateKeyEncoding: { type: 'pkcs8', format: 'pem' }
+      });
+      log("Public Key:", publicKey.split('\n')[0] + '\\n' + publicKey.split('\n')[1]);
+      log("Private Key:", privateKey.split('\n')[0] + '\\n' + privateKey.split('\n')[1]);
+
+      // TC11: crypto.webcrypto.subtle
+      const subtle = crypto.webcrypto.subtle;
+      const enc = new TextEncoder().encode("secret data");
+      subtle.digest("SHA-256", enc).then(d => {
+        log("Subtle Digest:", Buffer.from(d).toString('hex'));
+      });
+    });
+
+  </script>
+</body>
+</html>
