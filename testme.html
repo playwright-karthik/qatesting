@@ -1,86 +1,112 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Test Cases for Runtime Features</title>
+  <title>JS Feature Test</title>
 </head>
 <body>
-  <script type="module">
-    const log = (label, val) => console.log(`<__log> '${label}'`, val);
+  <h1>JavaScript Feature Test Cases</h1>
+  <div id="test-buttons"></div>
 
-    // TC1: setTimeout and clearTimeout
-    const timeoutId = setTimeout(() => {
-      console.log("TIMEOUT HAPPENED"); // should not be seen
-    }, 500);
-    clearTimeout(timeoutId);
+  <script>
+    const testCases = [
+      "setTimeout_clearTimeout",
+      "setInterval_clearInterval",
+      "queueMicrotask",
+      "atob_btoa",
+      "Buffer",
+      "TextEncoder_TextDecoder",
+      "URL_URLSearchParams",
+      "util_inspect",
+      "crypto_createHash_HMAC",
+      "crypto_randomBytes",
+      "crypto_generateKeyPairSync"
+    ];
 
-    // TC2: setInterval and clearInterval
-    const intervalId = setInterval(() => {
-      console.log("<__log> 'INTERVAL HAPPENED'");
-      clearInterval(intervalId); // run only once
-    }, 200);
-
-    // TC3: queueMicrotask
-    let microtaskFired = false;
-    queueMicrotask(() => {
-      microtaskFired = true;
-      log("Microtask fired:", microtaskFired);
+    const container = document.getElementById("test-buttons");
+    testCases.forEach((tc, i) => {
+      const btn = document.createElement("button");
+      btn.textContent = `Run TC${i+1}: ${tc}`;
+      btn.onclick = () => runTestCase(i + 1);
+      container.appendChild(btn);
+      container.appendChild(document.createElement("br"));
     });
 
-    // TC4: atob and btoa
-    const ao = "Hello World!";
-    const bo = btoa(ao);
-    log("ao", ao);
-    log("bo", bo);
+    async function runTestCase(tcNumber) {
+      console.log(`Running TC#${tcNumber}`);
+      switch(tcNumber) {
+        case 1:
+          let to = setTimeout(() => console.log("TIMEOUT HAPPENED"), 1000);
+          clearTimeout(to); break;
 
-    // TC5: Buffer conversion
-    const buf = Buffer.from("hello", "utf8");
-    log("data", buf);
-    log("decoded", buf.toString("utf8"));
-    const unbuf = new TextDecoder().decode(new Uint8Array([104, 101, 108, 108, 111]));
-    log("unbuf", unbuf);
+        case 2:
+          let count = 0;
+          let intv = setInterval(() => {
+            console.log("INTERVAL HAPPENED");
+            clearInterval(intv);
+          }, 500); break;
 
-    // TC6: URL and TC7: URLSearchParams
-    const url = new URL("https://example.com/path?foo=1&bar=2");
-    const params = new URLSearchParams(url.search);
-    log("Host:", url.hostname);
-    log("Pathname:", url.pathname);
-    log("Has foo:", params.has("foo"));
-    log("Value of bar:", params.get("bar"));
-    params.set("baz", "42");
-    log("New search:", params.toString());
+        case 3:
+          let ticked = false;
+          queueMicrotask(() => {
+            ticked = true;
+            console.log("Microtask fired:", ticked);
+          }); break;
 
-    // TC8: util.inspect
-    import('node:util').then(util => {
-      const inspected = util.inspect({ hello: "world" });
-      log("Inspected:", inspected);
-    });
+        case 4:
+          console.log("atob:", atob("SGVsbG8gV29ybGQh")); // "Hello World!"
+          console.log("btoa:", btoa("Hello World!")); break;
 
-    // TC9: crypto.createHash / createHmac / randomBytes
-    import('node:crypto').then(crypto => {
-      const hash = crypto.createHash('sha256').update('test').digest('hex');
-      const hmac = crypto.createHmac('sha256', 'key').update('test').digest('hex');
-      const random = crypto.randomBytes(8).toString('hex');
-      log("SHA-256 Hash:", hash);
-      log("HMAC:", hmac);
-      log("Random Bytes:", random);
+        case 5:
+          const base = Buffer.from("hello").toString("base64");
+          const restored = Buffer.from(base, "base64").toString("utf-8");
+          console.log("Base64:", base);
+          console.log("Restored:", restored); break;
 
-      // TC10: crypto.generateKeyPairSync
-      const { publicKey, privateKey } = crypto.generateKeyPairSync('rsa', {
-        modulusLength: 512,
-        publicKeyEncoding: { type: 'spki', format: 'pem' },
-        privateKeyEncoding: { type: 'pkcs8', format: 'pem' }
-      });
-      log("Public Key:", publicKey.split('\n')[0] + '\\n' + publicKey.split('\n')[1]);
-      log("Private Key:", privateKey.split('\n')[0] + '\\n' + privateKey.split('\n')[1]);
+        case 6:
+          const enc = new TextEncoder();
+          const encData = enc.encode("hello");
+          console.log("Encoded:", encData);
+          const dec = new TextDecoder();
+          console.log("Decoded:", dec.decode(encData)); break;
 
-      // TC11: crypto.webcrypto.subtle
-      const subtle = crypto.webcrypto.subtle;
-      const enc = new TextEncoder().encode("secret data");
-      subtle.digest("SHA-256", enc).then(d => {
-        log("Subtle Digest:", Buffer.from(d).toString('hex'));
-      });
-    });
+        case 7:
+          const myURL = new URL("https://example.com/path?foo=1&bar=2");
+          const params = new URLSearchParams(myURL.search);
+          params.set("baz", "42");
+          console.log("Host:", myURL.host);
+          console.log("Pathname:", myURL.pathname);
+          console.log("Has foo:", params.has("foo"));
+          console.log("Value of bar:", params.get("bar"));
+          console.log("New search:", params.toString()); break;
 
+        case 8:
+          const util = require("util");
+          const obj = { test: "value", num: 42 };
+          console.log("Inspected:", util.inspect(obj)); break;
+
+        case 9:
+          const crypto = require("crypto");
+          const hash = crypto.createHash("sha256").update("message").digest("hex");
+          const hmac = crypto.createHmac("sha256", "key").update("message").digest("hex");
+          console.log("SHA256:", hash);
+          console.log("HMAC:", hmac); break;
+
+        case 10:
+          const crypto2 = require("crypto");
+          const rb = crypto2.randomBytes(8).toString("hex");
+          console.log("RandomBytes:", rb); break;
+
+        case 11:
+          const crypto3 = require("crypto");
+          const { publicKey, privateKey } = crypto3.generateKeyPairSync("rsa", {
+            modulusLength: 512,
+            publicKeyEncoding: { type: "spki", format: "pem" },
+            privateKeyEncoding: { type: "pkcs8", format: "pem" }
+          });
+          console.log("PublicKey:", publicKey.slice(0, 32), "...");
+          console.log("PrivateKey:", privateKey.slice(0, 32), "..."); break;
+      }
+    }
   </script>
 </body>
 </html>
