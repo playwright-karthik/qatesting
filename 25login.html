@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>25+ Char Login Test</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 40px;
+      background-color: #f4f4f4;
+    }
+    .login-container {
+      max-width: 400px;
+      padding: 20px;
+      background-color: white;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+      margin: auto;
+      border-radius: 10px;
+    }
+    input[type="text"], input[type="password"] {
+      width: 100%;
+      padding: 10px;
+      margin-top: 10px;
+      margin-bottom: 20px;
+    }
+    button {
+      width: 100%;
+      padding: 10px;
+      background-color: #4CAF50;
+      color: white;
+      font-size: 16px;
+      border: none;
+      cursor: pointer;
+    }
+    #result {
+      margin-top: 20px;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="login-container">
+    <h2>Login Test (25+ Character Credentials)</h2>
+    <form id="loginForm">
+      <label for="username">Username:</label>
+      <input type="text" id="username" name="username" placeholder="Enter username" required>
+
+      <label for="password">Password:</label>
+      <input type="password" id="password" name="password" placeholder="Enter password" required>
+
+      <button type="submit">Login</button>
+    </form>
+
+    <div id="result"></div>
+  </div>
+
+  <script>
+    const VALID_USERNAME = "VeryLongUsername_1234567890!@#";
+    const VALID_PASSWORD = "SuperSecurePass!2025WithLongLength#";
+
+    document.getElementById("loginForm").addEventListener("submit", function(event) {
+      event.preventDefault();
+      const username = document.getElementById("username").value;
+      const password = document.getElementById("password").value;
+
+      const result = document.getElementById("result");
+      if (username === VALID_USERNAME && password === VALID_PASSWORD) {
+        result.style.color = "green";
+        result.textContent = "✅ Login successful!";
+      } else {
+        result.style.color = "red";
+        result.textContent = "❌ Invalid credentials.";
+      }
+    });
+  </script>
+
+</body>
+</html>
