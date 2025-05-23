@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Test Page for Playwright Assertions</title>
+<style>
+  #hidden { display: none; }
+  #hasCSS { color: red; }
+  #inViewport { margin-top: 1000px; } /* So it's initially offscreen, scroll into viewport before testing */
+</style>
+</head>
+<body>
+
+<!-- Elements for assertions -->
+
+<input id="attached" /> <!-- toBeAttached -->
+
+<input id="checked" type="checkbox" checked /> <!-- toBeChecked -->
+
+<input id="disabled" disabled /> <!-- toBeDisabled -->
+
+<input id="editable" /> <!-- toBeEditable -->
+
+<div id="empty"></div> <!-- toBeEmpty -->
+
+<input id="enabled" /> <!-- toBeEnabled -->
+
+<input id="focused" /> <!-- toBeFocused, will focus programmatically -->
+
+<div id="hidden">Hidden element</div> <!-- toBeHidden -->
+
+<div id="inViewport">In Viewport Element</div> <!-- toBeInViewport -->
+
+<div id="visible">Visible Element</div> <!-- toBeVisible -->
+
+<div id="containsText">Hello Playwright</div> <!-- toContainText -->
+
+<!-- Accessible Description -->
+<button id="hasDescription" aria-describedby="descId">Desc Button</button>
+<div id="descId" hidden>desc</div> <!-- toHaveAccessibleDescription -->
+
+<!-- Accessible Name -->
+<button id="hasName" aria-label="submit">Submit Button</button> <!-- toHaveAccessibleName -->
+
+<div id="hasAttribute" data-test="value">Attribute Element</div> <!-- toHaveAttribute -->
+
+<div id="hasClass" class="active special">Class Element</div> <!-- toHaveClass -->
+
+<!-- List items for count -->
+<ul>
+  <li class="list-item">Item 1</li>
+  <li class="list-item">Item 2</li>
+  <li class="list-item">Item 3</li>
+</ul> <!-- toHaveCount -->
+
+<div id="hasCSS" style="color: red;">CSS Element</div> <!-- toHaveCSS -->
+
+<div id="hasId">ID Element</div> <!-- toHaveId -->
+
+<input id="hasJSProp" value="hello" /> <!-- toHaveJSProperty -->
+
+<button id="hasRole" role="button">Role Button</button> <!-- toHaveRole -->
+
+<div id="screenshotTarget">Screenshot Target</div> <!-- toHaveScreenshot -->
+
+<div id="hasText">Exact Match Text</div> <!-- toHaveText -->
+
+<input id="inputValue" value="test123" /> <!-- toHaveValue -->
+
+<select id="selectValues" multiple>
+  <option value="option1">Option 1</option>
+  <option value="option2" selected>Option 2</option>
+  <option value="option3" selected>Option 3</option>
+</select> <!-- toHaveValues -->
+
+<script>
+  // Scroll #inViewport element into view for viewport assertion
+  document.getElementById('inViewport').scrollIntoView();
+</script>
+
+</body>
+</html>
