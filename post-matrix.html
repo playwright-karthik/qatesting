@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>POST Request Matrix</title>
+</head>
+<body>
+  <h1>POST Request Matrix</h1>
+
+  <button onclick="postJSON()">POST: application/json</button><br><br>
+  <button onclick="postFormUrlEncoded()">POST: x-www-form-urlencoded</button><br><br>
+  <button onclick="postMultipart()">POST: multipart/form-data</button><br><br>
+  <button onclick="postEmpty()">POST: Empty Body</button><br><br>
+  <button onclick="postLargePayload()">POST: Large Payload</button><br><br>
+  <button onclick="postWithSpecialChars()">POST: Special Characters</button><br><br>
+  <button onclick="postWithDelay()">POST: With Delay</button><br><br>
+  <button onclick="postInvalidContentType()">POST: Invalid Content-Type</button><br><br>
+  <button onclick="postWithCustomHeaders()">POST: Custom Headers</button><br><br>
+
+  <pre id="output" style="background:#eee; padding:10px; margin-top:20px;"></pre>
+
+  <script>
+    const endpoint = "https://eoxgqgnh0o2kokm.m.pipedream.net";
+
+    function show(res) {
+      document.getElementById('output').textContent = res;
+    }
+
+    async function postJSON() {
+      const res = await fetch(endpoint, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ key1: "value1", key2: "value2" })
+      });
+      show(await res.text());
+    }
+
+    async function postFormUrlEncoded() {
+      const params = new URLSearchParams();
+      params.append("key1", "value1");
+      params.append("key2", "value2");
+
+      const res = await fetch(endpoint, {
+        method: "POST",
+        headers: { "Content-Type": "application/x-www-form-urlencoded" },
+        body: params.toString()
+      });
+      show(await res.text());
+    }
+
+    async function postMultipart() {
+      const form = new FormData();
+      form.append("file", new Blob(["dummy content"], { type: "text/plain" }), "test.txt");
+      form.append("key", "value");
+
+      const res = await fetch(endpoint, {
+        method: "POST",
+        body: form
+      });
+      show(await res.text());
+    }
+
+    async function postEmpty() {
+      const res = await fetch(endpoint, {
+        method: "POST"
+      });
+      show(await res.text());
+    }
+
+    async function postLargePayload() {
+      const bigData = "A".repeat(100000); // 100KB
+      const res = await fetch(endpoint, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ data: bigData })
+      });
+      show(await res.text());
+    }
+
+    async function postWithSpecialChars() {
+      const res = await fetch(endpoint, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ emoji: "😃", symbols: "@#$%^&*()", language: "中文/हिंदी" })
+      });
+      show(await res.text());
+    }
+
+    async function postWithDelay() {
+      await new Promise(resolve => setTimeout(resolve, 3000));
+      const res = await fetch(endpoint, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ delayed: true })
+      });
+      show(await res.text());
+    }
+
+    async function postInvalidContentType() {
+      const res = await fetch(endpoint, {
+        method: "POST",
+        headers: { "Content-Type": "application/x-bogus-type" },
+        body: "raw string data"
+      });
+      show(await res.text());
+    }
+
+    async function postWithCustomHeaders() {
+      const res = await fetch(endpoint, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "X-Test-Header": "MyValue",
+          "Authorization": "Bearer testtoken123"
+        },
+        body: JSON.stringify({ test: true })
+      });
+      show(await res.text());
+    }
+  </script>
+</body>
+</html>
