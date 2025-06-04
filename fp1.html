@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>First Paint Test</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      background-color: #fafafa;
+      margin: 0;
+      padding: 2rem;
+    }
+    #content {
+      display: none;
+      font-size: 2rem;
+      color: green;
+    }
+  </style>
+  <script>
+    const getDelay = () => {
+      const urlParams = new URLSearchParams(window.location.search);
+      return parseInt(urlParams.get("delay") || document.body.dataset.delay || "1000");
+    };
+
+    window.addEventListener("DOMContentLoaded", () => {
+      const delay = getDelay();
+
+      setTimeout(() => {
+        document.getElementById("content").style.display = "block";
+
+        // Optional: log First Paint using Paint Timing API
+        const perf = performance.getEntriesByType("paint");
+        const fp = perf.find(p => p.name === "first-paint");
+        if (fp) {
+          document.getElementById("fpvalue").textContent = `First Paint (from Paint Timing API): ${fp.startTime.toFixed(2)} ms`;
+        } else {
+          document.getElementById("fpvalue").textContent = "First Paint timing not available (maybe not supported)";
+        }
+      }, delay);
+    });
+  </script>
+</head>
+<body data-delay="1000">
+  <h1>First Paint Test Page</h1>
+  <p>This page delays visual content to simulate custom First Paint values.</p>
+  <div id="fpvalue" style="margin: 1rem 0; color: #444;"></div>
+  <div id="content">👋 Hello! This is the simulated First Paint content.</div>
+</body>
+</html>
