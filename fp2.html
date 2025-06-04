@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Loading...</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <!-- Simulate font and CSS load -->
+  <link href="https://fonts.googleapis.com/css2?family=Roboto&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
+
+  <style>
+    body {
+      font-family: 'Roboto', sans-serif;
+      margin: 0;
+      padding: 0;
+    }
+
+    #banner {
+      background-color: #282c34;
+      color: white;
+      font-size: 2rem;
+      text-align: center;
+      padding: 30px;
+    }
+
+    .image-container {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      margin: 20px;
+    }
+
+    .image-container img {
+      width: 300px;
+      height: auto;
+      margin: 10px;
+      border: 2px solid #ccc;
+      transition: transform 0.3s ease;
+    }
+
+    .image-container img:hover {
+      transform: scale(1.05);
+    }
+
+    #content {
+      font-size: 1.2rem;
+      padding: 20px;
+    }
+  </style>
+</head>
+<body>
+  <div id="banner" class="animate__animated animate__fadeInDown">🌐 Performance Metrics Test Page</div>
+
+  <div class="image-container">
+    <img src="https://picsum.photos/seed/pic1/600/400" alt="Sample 1" loading="lazy">
+    <img src="https://picsum.photos/seed/pic2/600/400" alt="Sample 2" loading="lazy">
+    <img src="https://picsum.photos/seed/pic3/600/400" alt="Sample 3" loading="lazy">
+    <img src="https://picsum.photos/seed/pic4/600/400" alt="Sample 4" loading="lazy">
+  </div>
+
+  <div id="content"></div>
+
+  <script>
+    // Simulate title change to test TimeToTitle
+    setTimeout(() => {
+      document.title = "Performance Page Ready!";
+    }, 1200);
+
+    const params = new URLSearchParams(window.location.search);
+    const delay = parseInt(params.get("delay") || "1000");
+
+    setTimeout(() => {
+      const el = document.getElementById('content');
+      el.textContent = `✅ Page content loaded after simulated delay of ${delay} ms`;
+      el.className = "animate__animated animate__fadeInUp";
+    }, delay);
+  </script>
+</body>
+</html>
