@@ -1,49 +1,63 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>First Paint Test</title>
+  <meta charset="UTF-8" />
+  <title>Initial Title</title>
   <style>
     body {
+      background: #fff;
       font-family: sans-serif;
-      background-color: #fafafa;
       margin: 0;
-      padding: 2rem;
+      padding: 0;
     }
+
     #content {
-      display: none;
-      font-size: 2rem;
-      color: green;
+      opacity: 0;
+      transition: opacity 0.5s ease-in;
+      padding: 40px;
+      font-size: 24px;
+      color: #333;
+    }
+
+    .shift-box {
+      width: 100px;
+      height: 100px;
+      background: red;
+      margin: 20px;
     }
   </style>
-  <script>
-    const getDelay = () => {
-      const urlParams = new URLSearchParams(window.location.search);
-      return parseInt(urlParams.get("delay") || document.body.dataset.delay || "1000");
-    };
-
-    window.addEventListener("DOMContentLoaded", () => {
-      const delay = getDelay();
-
-      setTimeout(() => {
-        document.getElementById("content").style.display = "block";
-
-        // Optional: log First Paint using Paint Timing API
-        const perf = performance.getEntriesByType("paint");
-        const fp = perf.find(p => p.name === "first-paint");
-        if (fp) {
-          document.getElementById("fpvalue").textContent = `First Paint (from Paint Timing API): ${fp.startTime.toFixed(2)} ms`;
-        } else {
-          document.getElementById("fpvalue").textContent = "First Paint timing not available (maybe not supported)";
-        }
-      }, delay);
-    });
-  </script>
 </head>
-<body data-delay="1000">
-  <h1>First Paint Test Page</h1>
-  <p>This page delays visual content to simulate custom First Paint values.</p>
-  <div id="fpvalue" style="margin: 1rem 0; color: #444;"></div>
-  <div id="content">👋 Hello! This is the simulated First Paint content.</div>
+<body>
+  <h1>Performance Test Page</h1>
+
+  <!-- This block simulates layout shift -->
+  <div id="layoutShiftContainer">
+    <div class="shift-box"></div>
+  </div>
+
+  <!-- This content will appear with delay to simulate LCP -->
+  <div id="content">🚀 Delayed Content Loaded!</div>
+
+  <script>
+    const params = new URLSearchParams(window.location.search);
+    const delay = parseInt(params.get("delay") || "0", 10);
+
+    // Simulate layout shift
+    setTimeout(() => {
+      const shiftBox = document.querySelector('.shift-box');
+      shiftBox.style.marginTop = '100px'; // layout shift
+    }, 500);
+
+    // Simulate title update (for Time to Title)
+    setTimeout(() => {
+      document.title = "Updated Title After Load";
+    }, 1000);
+
+    // Show main content after delay (this will trigger LCP)
+    setTimeout(() => {
+      const content = document.getElementById('content');
+      content.style.opacity = 1;
+    }, delay);
+  </script>
 </body>
 </html>
