@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Shadow DOM Popup Simulation</title>
+  <style>
+    body { font-family: Arial, sans-serif; margin: 20px; }
+    .main-content { margin-top: 50px; }
+    .overlay {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background-color: rgba(0,0,0,0.3);
+      display: none;
+      z-index: 9998;
+    }
+  </style>
+</head>
+<body>
+  <h1>Login Successful</h1>
+  <p class="main-content">Welcome to the dashboard. Navigating to profile...</p>
+
+  <div class="overlay" id="overlay"></div>
+  <div id="shadow-host"></div>
+
+  <script>
+    const host = document.getElementById("shadow-host");
+    const shadow = host.attachShadow({ mode: "open" });
+
+    const popupHTML = `
+      <style>
+        .popup {
+          position: fixed;
+          top: 20%;
+          left: 30%;
+          width: 40%;
+          background: #f8d7da;
+          border: 1px solid #f5c2c7;
+          padding: 20px;
+          box-shadow: 0 0 10px red;
+          display: none;
+          z-index: 9999;
+        }
+        .popup h2 { margin-top: 0; }
+        button { margin-top: 10px; }
+      </style>
+      <div class="popup" id="popup">
+        <h2>The page has an error.</h2>
+        <p>You might just need to refresh it.<br />
+        First, would you give us some details?<br />
+        (We're reporting this as error ID: <strong>ERR-12345</strong>)</p>
+        <button id="dismiss">Dismiss</button>
+      </div>
+    `;
+
+    shadow.innerHTML = popupHTML;
+
+    const showPopup = () => {
+      document.getElementById("overlay").style.display = "block";
+      shadow.getElementById("popup").style.display = "block";
+    };
+
+    const dismissPopup = () => {
+      document.getElementById("overlay").style.display = "none";
+      shadow.getElementById("popup").style.display = "none";
+    };
+
+    shadow.getElementById("dismiss").addEventListener("click", dismissPopup);
+
+    // 30% chance of showing popup between 3–5 sec
+    if (Math.random() < 0.3) {
+      setTimeout(showPopup, Math.random() * 2000 + 3000);
+    }
+  </script>
+</body>
+</html>
