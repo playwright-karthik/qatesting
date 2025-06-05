@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Auto Dismiss Popup</title>
+  <style>
+    .popup {
+      position: fixed;
+      top: 30%;
+      left: 30%;
+      width: 40%;
+      background-color: #fff3cd;
+      border: 1px solid #ffeeba;
+      padding: 20px;
+      display: none;
+      z-index: 1000;
+      box-shadow: 0 0 10px orange;
+    }
+  </style>
+</head>
+<body>
+  <h1>Simulating Auto-Dismiss Popup</h1>
+  <p>You are logged in. This message may or may not appear.</p>
+
+  <div class="popup" id="popup">
+    <p>⚠️ Temporary issue detected. Reporting error ID: <strong>AUTO12345</strong></p>
+  </div>
+
+  <script>
+    if (Math.random() < 0.3) {
+      const popup = document.getElementById('popup');
+      popup.style.display = 'block';
+      setTimeout(() => popup.style.display = 'none', 4000);
+    }
+  </script>
+</body>
+</html>
