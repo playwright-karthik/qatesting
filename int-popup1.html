@@ -5,7 +5,11 @@
   <title>Shadow DOM Popup Simulation</title>
   <style>
     body { font-family: Arial, sans-serif; margin: 20px; }
-    .main-content { margin-top: 50px; }
+    .main-content { margin-top: 30px; }
+    .btn-group button {
+      margin: 5px; padding: 10px 20px;
+      font-size: 16px;
+    }
     .overlay {
       position: fixed;
       top: 0; left: 0;
@@ -17,13 +21,42 @@
   </style>
 </head>
 <body>
-  <h1>Login Successful</h1>
-  <p class="main-content">Welcome to the dashboard. Navigating to profile...</p>
+  <h2>🔐 Logged In to App (Shadow DOM Popup)</h2>
+  <div class="main-content">
+    <div class="btn-group">
+      <button onclick="increment('btn1')">Button 1</button>
+      <button onclick="increment('btn2')">Button 2</button>
+    </div>
+    <p>Button 1 Clicks: <span id="btn1-count">0</span></p>
+    <p>Button 2 Clicks: <span id="btn2-count">0</span></p>
+    <p id="popup-status">Popup status: <strong>Not yet shown</strong></p>
+    <p id="interaction-log"></p>
+  </div>
 
   <div class="overlay" id="overlay"></div>
   <div id="shadow-host"></div>
 
   <script>
+    let btn1Count = 0;
+    let btn2Count = 0;
+    let popupShown = false;
+
+    function increment(btn) {
+      if (popupShown) {
+        document.getElementById('interaction-log').textContent = "❌ Cannot interact while popup is open.";
+        return;
+      }
+      if (btn === 'btn1') {
+        btn1Count++;
+        document.getElementById('btn1-count').textContent = btn1Count;
+      } else {
+        btn2Count++;
+        document.getElementById('btn2-count').textContent = btn2Count;
+      }
+      document.getElementById('interaction-log').textContent = `✅ You clicked ${btn === 'btn1' ? 'Button 1' : 'Button 2'}`;
+    }
+
+    // Shadow DOM setup
     const host = document.getElementById("shadow-host");
     const shadow = host.attachShadow({ mode: "open" });
 
@@ -31,7 +64,7 @@
       <style>
         .popup {
           position: fixed;
-          top: 20%;
+          top: 25%;
           left: 30%;
           width: 40%;
           background: #f8d7da;
@@ -45,32 +78,33 @@
         button { margin-top: 10px; }
       </style>
       <div class="popup" id="popup">
-        <h2>The page has an error.</h2>
+        <h2>⚠️ The page has an error</h2>
         <p>You might just need to refresh it.<br />
-        First, would you give us some details?<br />
-        (We're reporting this as error ID: <strong>ERR-12345</strong>)</p>
+        (Reporting error ID: <strong>ERR-12345</strong>)</p>
         <button id="dismiss">Dismiss</button>
       </div>
     `;
 
     shadow.innerHTML = popupHTML;
 
-    const showPopup = () => {
+    function showPopup() {
       document.getElementById("overlay").style.display = "block";
       shadow.getElementById("popup").style.display = "block";
-    };
+      popupShown = true;
+      document.getElementById("popup-status").innerHTML = "Popup status: <strong style='color:red'>Shown</strong>";
+    }
 
-    const dismissPopup = () => {
+    function dismissPopup() {
       document.getElementById("overlay").style.display = "none";
       shadow.getElementById("popup").style.display = "none";
-    };
+      popupShown = false;
+      document.getElementById("popup-status").innerHTML = "Popup status: <strong style='color:green'>Dismissed by user</strong>";
+    }
 
     shadow.getElementById("dismiss").addEventListener("click", dismissPopup);
 
-    // 30% chance of showing popup between 3–5 sec
-    if (Math.random() < 0.3) {
-      setTimeout(showPopup, Math.random() * 2000 + 3000);
-    }
+    // Show popup after 5–7 seconds, always
+    setTimeout(showPopup, Math.random() * 2000 + 5000);
   </script>
 </body>
 </html>
