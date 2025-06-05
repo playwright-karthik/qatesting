@@ -2,36 +2,89 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>Auto Dismiss Popup</title>
+  <title>Auto Dismiss Popup Simulation</title>
   <style>
+    body { font-family: Arial, sans-serif; margin: 20px; }
+    .main-content { margin-top: 30px; }
+    .btn-group button {
+      margin: 5px; padding: 10px 20px;
+      font-size: 16px;
+    }
     .popup {
       position: fixed;
-      top: 30%;
+      top: 25%;
       left: 30%;
       width: 40%;
       background-color: #fff3cd;
       border: 1px solid #ffeeba;
       padding: 20px;
       display: none;
-      z-index: 1000;
+      z-index: 9999;
       box-shadow: 0 0 10px orange;
+    }
+    .overlay {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background-color: rgba(0,0,0,0.3);
+      display: none;
+      z-index: 9998;
     }
   </style>
 </head>
 <body>
-  <h1>Simulating Auto-Dismiss Popup</h1>
-  <p>You are logged in. This message may or may not appear.</p>
+  <h2>🔐 Logged In to App (Auto Dismiss Popup)</h2>
+  <div class="main-content">
+    <div class="btn-group">
+      <button onclick="increment('btn1')">Button 1</button>
+      <button onclick="increment('btn2')">Button 2</button>
+    </div>
+    <p>Button 1 Clicks: <span id="btn1-count">0</span></p>
+    <p>Button 2 Clicks: <span id="btn2-count">0</span></p>
+    <p id="popup-status">Popup status: <strong>Not yet shown</strong></p>
+    <p id="interaction-log"></p>
+  </div>
 
+  <div class="overlay" id="overlay"></div>
   <div class="popup" id="popup">
     <p>⚠️ Temporary issue detected. Reporting error ID: <strong>AUTO12345</strong></p>
   </div>
 
   <script>
-    if (Math.random() < 0.3) {
-      const popup = document.getElementById('popup');
-      popup.style.display = 'block';
-      setTimeout(() => popup.style.display = 'none', 4000);
+    let btn1Count = 0;
+    let btn2Count = 0;
+    let popupShown = false;
+
+    function increment(btn) {
+      if (popupShown) {
+        document.getElementById('interaction-log').textContent = "❌ Cannot interact while popup is open.";
+        return;
+      }
+      if (btn === 'btn1') {
+        btn1Count++;
+        document.getElementById('btn1-count').textContent = btn1Count;
+      } else {
+        btn2Count++;
+        document.getElementById('btn2-count').textContent = btn2Count;
+      }
+      document.getElementById('interaction-log').textContent = `✅ You clicked ${btn === 'btn1' ? 'Button 1' : 'Button 2'}`;
     }
+
+    function showPopup() {
+      document.getElementById('popup').style.display = 'block';
+      document.getElementById('overlay').style.display = 'block';
+      popupShown = true;
+      document.getElementById('popup-status').innerHTML = "Popup status: <strong style='color:red'>Shown (will auto-dismiss)</strong>";
+      setTimeout(() => {
+        document.getElementById('popup').style.display = 'none';
+        document.getElementById('overlay').style.display = 'none';
+        popupShown = false;
+        document.getElementById('popup-status').innerHTML = "Popup status: <strong style='color:green'>Auto-dismissed</strong>";
+      }, 4000);
+    }
+
+    // Show popup after 5–7 seconds
+    setTimeout(showPopup, Math.random() * 2000 + 5000);
   </script>
 </body>
 </html>
