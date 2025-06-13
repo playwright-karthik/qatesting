@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>HAR File Viewer</title>
+  <style>
+    body { font-family: Arial, sans-serif; padding: 20px; }
+    table { border-collapse: collapse; width: 100%; margin-top: 20px; }
+    th, td { border: 1px solid #ccc; padding: 8px; text-align: left; }
+    th { background-color: #f2f2f2; }
+    #totals { margin-top: 20px; font-weight: bold; }
+  </style>
+</head>
+<body>
+  <h2>Upload .HAR File</h2>
+  <input type="file" id="harInput" accept=".har" />
+  <div id="totals"></div>
+  <table id="requestTable">
+    <thead>
+      <tr>
+        <th>#</th>
+        <th>Method</th>
+        <th>Status</th>
+        <th>URL</th>
+        <th>DNS</th>
+        <th>SSL</th>
+        <th>Connect</th>
+        <th>Send</th>
+        <th>Wait</th>
+        <th>Receive</th>
+        <th>Total Time</th>
+      </tr>
+    </thead>
+    <tbody></tbody>
+  </table>
+
+  <script>
+    document.getElementById('harInput').addEventListener('change', function(event) {
+      const file = event.target.files[0];
+      if (!file) return;
+
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        try {
+          const har = JSON.parse(e.target.result);
+          const entries = har.log.entries;
+          const tbody = document.querySelector('#requestTable tbody');
+          tbody.innerHTML = "";
+
+          let totals = {
+            DNS: 0, SSL: 0, CONNECT: 0, SEND: 0, WAIT: 0, RECEIVE: 0, TOTAL: 0, COUNT: 0
+          };
+
+          entries.forEach((entry, index) => {
+            const t = entry.timings || {};
+            const row = document.createElement('tr');
+            const safe = (v) => (typeof v === 'number' && v >= 0 ? v : 0);
+
+            const dns = safe(t.dns);
+            const ssl = safe(t.ssl);
+            const connect = safe(t.connect);
+            const send = safe(t.send);
+            const wait = safe(t.wait);
+            const receive = safe(t.receive);
+            const total = safe(entry.time);
+
+            totals.DNS += dns;
+            totals.SSL += ssl;
+            totals.CONNECT += connect;
+            totals.SEND += send;
+            totals.WAIT += wait;
+            totals.RECEIVE += receive;
+            totals.TOTAL += total;
+            totals.COUNT += 1;
+
+            row.innerHTML = `
+              <td>${index + 1}</td>
+              <td>${entry.request.method}</td>
+              <td>${entry.response.status}</td>
+              <td title="${entry.request.url}">${entry.request.url.slice(0, 80)}...</td>
+              <td>${dns.toFixed(1)}</td>
+              <td>${ssl.toFixed(1)}</td>
+              <td>${connect.toFixed(1)}</td>
+              <td>${send.toFixed(1)}</td>
+              <td>${wait.toFixed(1)}</td>
+              <td>${receive.toFixed(1)}</td>
+              <td>${total.toFixed(1)}</td>
+            `;
+            tbody.appendChild(row);
+          });
+
+          const avg = (x) => (totals.COUNT ? (x / totals.COUNT).toFixed(1) : "0.0");
+
+          document.getElementById("totals").innerHTML = `
+            <p>Total Requests: ${totals.COUNT}</p>
+            <p><strong>Averages (ms)</strong><br>
+            DNS: ${avg(totals.DNS)}, SSL: ${avg(totals.SSL)}, Connect: ${avg(totals.CONNECT)}, 
+            Send: ${avg(totals.SEND)}, Wait: ${avg(totals.WAIT)}, Receive: ${avg(totals.RECEIVE)}, 
+            Total Time: ${avg(totals.TOTAL)}</p>
+          `;
+        } catch (err) {
+          alert("Invalid HAR file!");
+          console.error(err);
+        }
+      };
+      reader.readAsText(file);
+    });
+  </script>
+</body>
+</html>
