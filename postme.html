@@ -1,46 +1,48 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>POST URL Tester</title>
+  <title>Auto Query Decoder</title>
+  <meta charset="UTF-8">
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 40px;
+    }
+    pre {
+      background-color: #f2f2f2;
+      padding: 10px;
+      border-radius: 8px;
+      white-space: pre-wrap;
+      word-break: break-all;
+    }
+  </style>
 </head>
 <body>
-  <h2>POST URL Tester</h2>
-
-  <p>You can add query parameters to the URL bar manually, and they will be sent as a POST request body.</p>
-
-  <form id="postForm" method="POST" action="">
-    <textarea id="postData" name="postData" rows="10" cols="80" placeholder="Enter data or leave blank to use URL parameters"></textarea>
-    <br><br>
-    <button type="submit">Submit via POST</button>
-  </form>
-
-  <h3>Received Info:</h3>
-  <pre id="output"></pre>
+  <h2>Decoded URL Parameters</h2>
+  <p>This page auto-parses and displays anything you send in the query string.</p>
+  <pre id="output">Loading...</pre>
 
   <script>
-    // Extract query string if no custom data provided
-    const form = document.getElementById('postForm');
-    const postDataTextarea = document.getElementById('postData');
-    const output = document.getElementById('output');
+    function parseQueryParams(queryString) {
+      const params = new URLSearchParams(queryString);
+      const result = {};
+      for (const [key, value] of params.entries()) {
+        try {
+          result[key] = decodeURIComponent(value);
+        } catch {
+          result[key] = value;
+        }
+      }
+      return result;
+    }
 
-    form.addEventListener('submit', function(event) {
-      event.preventDefault();
+    const query = window.location.search.slice(1); // remove ?
+    const parsed = parseQueryParams(query);
 
-      const dataToSend = postDataTextarea.value || window.location.search.slice(1);
-
-      fetch(window.location.href, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-        body: dataToSend
-      })
-      .then(response => response.text())
-      .then(text => {
-        output.textContent = 'POST Sent:\n' + dataToSend + '\n\nResponse:\n' + text;
-      })
-      .catch(err => {
-        output.textContent = 'Error:\n' + err;
-      });
-    });
+    document.getElementById('output').textContent = 
+      Object.keys(parsed).length > 0 
+        ? JSON.stringify(parsed, null, 2) 
+        : 'No query parameters found.';
   </script>
 </body>
 </html>
