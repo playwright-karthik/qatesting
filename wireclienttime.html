@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>HAR Wire/Client Time Analyzer (OnLoad-aware)</title>
+  <style>
+    body { font-family: Arial, sans-serif; max-width: 700px; margin: 2em auto; }
+    textarea { width: 100%; height: 200px; }
+    button { padding: 0.6em 1.5em; margin: 1em 0; }
+    .result { background: #e5f9e5; padding: 1em; margin-top: 1em; }
+    .error { color: #b00; font-weight: bold; }
+    .warn { color: #e67e22; }
+  </style>
+</head>
+<body>
+  <h1>HAR Wire/Client Time Analyzer (OnLoad-aware)</h1>
+  <p>Paste HAR file contents (as JSON) below:</p>
+  <textarea id="harInput" placeholder="Paste HAR JSON here"></textarea>
+  <br>
+  <button id="calcBtn">Calculate</button>
+  <div id="result"></div>
+
+<script>
+function parseISOTime(isoStr) {
+  return new Date(isoStr).getTime();
+}
+
+document.getElementById('calcBtn').onclick = function() {
+  const output = document.getElementById('result');
+  output.innerHTML = '';
+
+  let har;
+  try {
+    har = JSON.parse(document.getElementById('harInput').value);
+  } catch (e) {
+    output.innerHTML = '<span class="error">Invalid JSON</span>';
+    return;
+  }
+  if (!har.log || !har.log.entries || !har.log.entries.length) {
+    output.innerHTML = '<span class="error">No entries found in HAR</span>';
+    return;
+  }
+
+  const entries = har.log.entries;
+  // Identify main page entry
+  let mainEntry = entries[0];
+  if (entries[0].pageref) {
+    mainEntry = entries.find(e => e.pageref === entries[0].pageref) || entries[0];
+  }
+
+  // Main blocked
+  let mainBlockedMs = 0;
+  let mainBlockedEnd = parseISOTime(mainEntry.startedDateTime);
+  if (mainEntry.timings && typeof mainEntry.timings.blocked === "number" && mainEntry.timings.blocked > 0) {
+    mainBlockedMs = mainEntry.timings.blocked;
+    mainBlockedEnd += mainBlockedMs;
+  }
+
+  // Find the analysis end (by default, end of all wire, but truncate to onLoad if present)
+  let wireIntervals = [];
+  let analysisEnd = -Infinity;
+
+  // Find page's onLoad timing if present
+  let pageOnLoadMs = null;
+  let pageStartTime = null;
+  if (har.log.pages && har.log.pages.length > 0) {
+    const page = har.log.pages[0];
+    if (page.pageTimings && typeof page.pageTimings.onLoad === "number" && page.pageTimings.onLoad > 0) {
+      pageOnLoadMs = page.pageTimings.onLoad;
+      if (page.startedDateTime) {
+        pageStartTime = parseISOTime(page.startedDateTime);
+      } else if (mainEntry.startedDateTime) {
+        pageStartTime = parseISOTime(mainEntry.startedDateTime);
+      }
+    }
+  }
+
+  // Collect all wire intervals and set default analysisEnd
+  for (let entry of entries) {
+    let t = entry.timings || {};
+    let base = parseISOTime(entry.startedDateTime);
+    let curr = base;
+    // skip blocked (not wire)
+    if (typeof t.blocked === "number" && t.blocked > 0) {
+      curr += t.blocked;
+    }
+    function addPhase(len) {
+      if (typeof len === "number" && len > 0) {
+        wireIntervals.push([curr, curr + len]);
+        curr += len;
+      }
+    }
+    addPhase(t.dns);
+    addPhase(t.connect);
+    addPhase(t.ssl);
+    addPhase(t.send);
+    addPhase(t.wait);
+    addPhase(t.receive);
+    if (curr > analysisEnd) analysisEnd = curr;
+  }
+
+  // If onLoad is present, set analysisEnd accordingly
+  if (pageOnLoadMs !== null && pageStartTime !== null) {
+    let onLoadTimeAbs = pageStartTime + pageOnLoadMs;
+    if (onLoadTimeAbs < analysisEnd) {
+      analysisEnd = onLoadTimeAbs;
+    }
+  }
+
+  if (analysisEnd <= mainBlockedEnd) {
+    output.innerHTML = '<span class="error">No wire phases found after main page blocked phase, or onLoad is before any network activity.</span>';
+    return;
+  }
+  const windowLength = Math.ceil(analysisEnd - mainBlockedEnd);
+
+  if (windowLength > 120000) {
+    output.innerHTML = '<span class="warn">Warning: HAR covers more than 2 minutes, may be slow!</span><br>';
+  }
+
+  // Build ms-by-ms wire timeline
+  let wireBitmap = new Uint8Array(windowLength);
+  for (let [start, end] of wireIntervals) {
+    let s = Math.max(0, Math.floor(start - mainBlockedEnd));
+    let e = Math.min(windowLength, Math.ceil(end - mainBlockedEnd));
+    for (let i = s; i < e; ++i) wireBitmap[i] = 1;
+  }
+
+  let wireMs = 0, clientMs = 0;
+  for (let i = 0; i < windowLength; ++i) {
+    if (wireBitmap[i] === 1) wireMs++;
+    else clientMs++;
+  }
+
+  output.innerHTML += `
+    <div class="result">
+      <b>Results:</b><br>
+      <b>Wire time:</b> ${wireMs.toLocaleString()} ms (${(wireMs/1000).toFixed(3)} s, ${(wireMs/windowLength*100).toFixed(1)}%)<br>
+      <b>Client-only time:</b> ${clientMs.toLocaleString()} ms (${(clientMs/1000).toFixed(3)} s, ${(clientMs/windowLength*100).toFixed(1)}%)<br>
+      <b>Total measured interval:</b> ${windowLength.toLocaleString()} ms (${(windowLength/1000).toFixed(3)} s)
+      <br><small>
+      Main page "blocked" time (${mainBlockedMs.toLocaleString()} ms) is <b>excluded</b> from all calculations per spec.<br>
+      ${pageOnLoadMs !== null ? `Calculation window ends at onLoad: ${pageOnLoadMs.toLocaleString()} ms after navigation start.` : `Calculation window ends at end of last network activity.`}
+      </small>
+    </div>
+  `;
+};
+</script>
+</body>
+</html>
