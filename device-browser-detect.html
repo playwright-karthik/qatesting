@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Device & Viewport Detector</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      margin: 0;
+      padding: 1rem;
+      background: #f0f4f8;
+      color: #222;
+      overflow: hidden; /* prevent scrollbar */
+    }
+    .container {
+      max-width: 600px;
+      margin: auto;
+      background: white;
+      border-radius: 10px;
+      padding: 2rem;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+    h1 {
+      font-size: 1.5rem;
+      margin-bottom: 1rem;
+    }
+    .info {
+      margin: 0.5rem 0;
+    }
+    @media (max-width: 768px) {
+      h1 {
+        color: green;
+      }
+    }
+    @media (min-width: 769px) {
+      h1 {
+        color: blue;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Device & Browser Detection</h1>
+    <p class="info" id="device-type">Detecting device type...</p>
+    <p class="info" id="viewport">Detecting viewport...</p>
+    <p class="info" id="browser">Detecting browser...</p>
+    <p class="info" id="user-agent">Detecting user-agent...</p>
+  </div>
+
+  <script>
+    function getDeviceType(ua) {
+      if (/android/i.test(ua)) return "Android Phone or Tablet";
+      if (/iPad|Tablet/i.test(ua)) return "Tablet (possibly iPad)";
+      if (/iPhone/i.test(ua)) return "iPhone";
+      if (/Mobile/i.test(ua)) return "Mobile Phone";
+      if (/Windows|Macintosh|Linux/i.test(ua)) return "Laptop/Desktop";
+      return "Unknown Device";
+    }
+
+    function getBrowserName(ua) {
+      if (ua.includes("Firefox/")) return "Firefox";
+      if (ua.includes("Edg/")) return "Microsoft Edge";
+      if (ua.includes("Chrome/")) return "Chrome";
+      if (ua.includes("Safari/") && !ua.includes("Chrome")) return "Safari";
+      return "Unknown Browser";
+    }
+
+    const ua = navigator.userAgent;
+    const deviceType = getDeviceType(ua);
+    const browser = getBrowserName(ua);
+    const width = window.innerWidth;
+    const height = window.innerHeight;
+
+    document.getElementById('device-type').textContent = `Device Type: ${deviceType}`;
+    document.getElementById('viewport').textContent = `Viewport: ${width}px x ${height}px`;
+    document.getElementById('browser').textContent = `Browser: ${browser}`;
+    document.getElementById('user-agent').textContent = `User-Agent: ${ua}`;
+  </script>
+</body>
+</html>
