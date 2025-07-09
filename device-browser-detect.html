@@ -14,7 +14,7 @@
       overflow: hidden; /* prevent scrollbar */
     }
     .container {
-      max-width: 600px;
+      max-width: 700px;
       margin: auto;
       background: white;
       border-radius: 10px;
@@ -29,53 +29,64 @@
       margin: 0.5rem 0;
     }
     @media (max-width: 768px) {
-      h1 {
-        color: green;
-      }
+      h1 { color: green; }
     }
     @media (min-width: 769px) {
-      h1 {
-        color: blue;
-      }
+      h1 { color: blue; }
     }
   </style>
 </head>
 <body>
   <div class="container">
-    <h1>Device & Browser Detection</h1>
-    <p class="info" id="device-type">Detecting device type...</p>
+    <h1>Device & Browser Info</h1>
+    <p class="info" id="device-type">Detecting device...</p>
     <p class="info" id="viewport">Detecting viewport...</p>
     <p class="info" id="browser">Detecting browser...</p>
-    <p class="info" id="user-agent">Detecting user-agent...</p>
+    <p class="info" id="os">Detecting OS...</p>
+    <p class="info" id="user-agent">User-Agent:</p>
   </div>
 
   <script>
+    const ua = navigator.userAgent;
+
     function getDeviceType(ua) {
-      if (/android/i.test(ua)) return "Android Phone or Tablet";
-      if (/iPad|Tablet/i.test(ua)) return "Tablet (possibly iPad)";
+      if (/android/i.test(ua)) return "Android Device";
       if (/iPhone/i.test(ua)) return "iPhone";
+      if (/iPad|Tablet/i.test(ua)) return "iPad or Tablet";
       if (/Mobile/i.test(ua)) return "Mobile Phone";
       if (/Windows|Macintosh|Linux/i.test(ua)) return "Laptop/Desktop";
       return "Unknown Device";
     }
 
-    function getBrowserName(ua) {
-      if (ua.includes("Firefox/")) return "Firefox";
-      if (ua.includes("Edg/")) return "Microsoft Edge";
-      if (ua.includes("Chrome/")) return "Chrome";
-      if (ua.includes("Safari/") && !ua.includes("Chrome")) return "Safari";
-      return "Unknown Browser";
+    function getBrowserInfo(ua) {
+      let match =
+        ua.match(/Edg\/([\d\.]+)/) ? ["Edge", ua.match(/Edg\/([\d\.]+)/)[1]] :
+        ua.match(/Chrome\/([\d\.]+)/) ? ["Chrome", ua.match(/Chrome\/([\d\.]+)/)[1]] :
+        ua.match(/Firefox\/([\d\.]+)/) ? ["Firefox", ua.match(/Firefox\/([\d\.]+)/)[1]] :
+        ua.match(/Version\/([\d\.]+).*Safari/) ? ["Safari", ua.match(/Version\/([\d\.]+).*Safari/)[1]] :
+        ["Unknown", ""];
+
+      return `${match[0]} ${match[1]}`;
     }
 
-    const ua = navigator.userAgent;
-    const deviceType = getDeviceType(ua);
-    const browser = getBrowserName(ua);
+    function getOSInfo(ua) {
+      if (/Windows NT 10\.0/.test(ua)) return "Windows 10";
+      if (/Windows NT 11/.test(ua)) return "Windows 11";
+      if (/Mac OS X 10_[\d_]+/.test(ua)) return "macOS " + ua.match(/Mac OS X ([\d_]+)/)[1].replace(/_/g, ".");
+      if (/Android [\d.]+/.test(ua)) return "Android " + ua.match(/Android ([\d.]+)/)[1];
+      if (/iPhone OS [\d_]+/.test(ua)) return "iOS " + ua.match(/iPhone OS ([\d_]+)/)[1].replace(/_/g, ".");
+      if (/iPad; CPU OS [\d_]+/.test(ua)) return "iPadOS " + ua.match(/CPU OS ([\d_]+)/)[1].replace(/_/g, ".");
+      if (/Linux/.test(ua)) return "Linux";
+      return "Unknown OS";
+    }
+
     const width = window.innerWidth;
     const height = window.innerHeight;
 
-    document.getElementById('device-type').textContent = `Device Type: ${deviceType}`;
+    document.getElementById('device-type').textContent = `Device Type: ${getDeviceType(ua)}`;
     document.getElementById('viewport').textContent = `Viewport: ${width}px x ${height}px`;
-    document.getElementById('browser').textContent = `Browser: ${browser}`;
+    document.getElementById('browser').textContent = `Browser: ${getBrowserInfo(ua)}`;
+    document.getElementById('os').textContent = `OS: ${getOSInfo(ua)}`;
     document.getElementById('user-agent').textContent = `User-Agent: ${ua}`;
   </script>
 </body>
