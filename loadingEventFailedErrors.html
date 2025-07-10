@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>LoadingEventFailedErrors</title>
+
+  <!-- CSP: Block fonts (csp error) -->
+  <meta http-equiv="Content-Security-Policy" content="
+    default-src 'self'; 
+    style-src 'self' https://fonts.googleapis.com; 
+    font-src 'none';
+    script-src 'self'; 
+    connect-src 'self'; 
+    object-src 'none';
+    upgrade-insecure-requests;
+  ">
+
+  <!-- SRI with incorrect hash (sri-message-signature-mismatch) -->
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"
+    integrity="sha384-invalidhash123" crossorigin="anonymous"></script>
+
+  <!-- Mixed content request (mixed-content) -->
+  <script src="http://httpbin.org/html"></script>
+
+  <!-- COEP/COOP blocked iframe (coep-frame-resource-needs-coep-header / coop-sandboxed...) -->
+  <meta http-equiv="Cross-Origin-Embedder-Policy" content="require-corp">
+  <meta http-equiv="Cross-Origin-Opener-Policy" content="same-origin">
+  
+  <style>
+    body {
+      font-family: 'Roboto', sans-serif;
+      padding: 20px;
+    }
+    h1 {
+      color: darkred;
+    }
+  </style>
+
+  <!-- Attempt to load blocked font (csp font-src 'none') -->
+  <link href="https://fonts.googleapis.com/css2?family=Roboto&display=swap" rel="stylesheet">
+
+</head>
+<body>
+  <h1>LoadingEventFailedErrors</h1>
+  <p>This page is meant to trigger various <code>net::ERR_*</code> loading failures.</p>
+  
+  <ul>
+    <li><strong>CSP font-src 'none'</strong> → <code>net::ERR_BLOCKED_BY_CSP</code></li>
+    <li><strong>Mixed content script</strong> → <code>net::ERR_BLOCKED_BY_CLIENT</code></li>
+    <li><strong>Invalid SRI hash</strong> → <code>net::ERR_SRI_SIGNATURE_MISMATCH</code></li>
+    <li><strong>Blocked iframe (COEP/COOP)</strong> → <code>net::ERR_INVALID_RESPONSE</code></li>
+    <li><strong>Cross-origin image (CORP)</strong> → <code>net::ERR_BLOCKED_BY_CORP</code></li>
+    <li><strong>404 Subresource</strong> → <code>net::ERR_FAILED</code></li>
+    <li><strong>Script with wrong MIME (Content-Type)</strong> → <code>net::ERR_BLOCKED_BY_RESPONSE</code></li>
+  </ul>
+
+  <!-- Iframe violating COEP -->
+  <iframe src="https://example.com" width="300" height="200"></iframe>
+
+  <!-- Cross-origin image without proper CORP header -->
+  <img src="https://upload.wikimedia.org/wikipedia/commons/4/47/PNG_transparency_demonstration_1.png" crossorigin="anonymous" alt="Cross-Origin Image"/>
+
+  <!-- Subresource with unknown host (should fail to load) -->
+  <script src="https://nonexistent-subdomain.3genlabs.net/script.js"></script>
+
+  <!-- Invalid content-type for JS (text/html instead of JS) -->
+  <script src="https://httpbin.org/html"></script>
+</body>
+</html>
