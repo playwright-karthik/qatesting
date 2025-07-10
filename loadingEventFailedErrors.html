@@ -4,10 +4,10 @@
   <meta charset="UTF-8">
   <title>LoadingEventFailedErrors</title>
 
-  <!-- CSP to block fonts -->
+  <!-- CSP: Block font loading -->
   <meta http-equiv="Content-Security-Policy" content="
-    default-src 'self'; 
-    style-src 'self' https://fonts.googleapis.com; 
+    default-src 'self';
+    style-src 'self' https://fonts.googleapis.com;
     font-src 'none';
     script-src 'self' https:;
     object-src 'none';
@@ -19,125 +19,50 @@
     body {
       font-family: sans-serif;
       padding: 20px;
-      background: #f5f5f5;
+      background: #fff;
     }
     h1 {
       color: #b22222;
     }
-    .error-list {
-      list-style: none;
-      padding-left: 0;
-    }
-    .error-list li {
-      padding: 6px 10px;
-      margin-bottom: 8px;
-      background: #fff;
-      border-left: 6px solid gray;
-      font-family: monospace;
-    }
-    .success {
-      border-left-color: green;
-    }
-    .fail {
-      border-left-color: red;
+    ul {
+      line-height: 1.6;
     }
   </style>
-
-  <script>
-    const results = {
-      'csp': false,
-      'mixed-content': false,
-      'sri': false,
-      'iframe': false,
-      'corp': false,
-      '404': false,
-      'mime': false,
-    };
-
-    window.addEventListener('error', function (e) {
-      const src = e.target.src || e.target.href || '';
-      if (src.includes('fonts.googleapis.com')) results['csp'] = true;
-      else if (src.startsWith('http://')) results['mixed-content'] = true;
-      else if (src.includes('jquery')) results['sri'] = true;
-      else if (src.includes('httpstat.us/404')) results['404'] = true;
-      else if (src.includes('httpbin.org/html')) results['mime'] = true;
-      else if (src.includes('wikipedia')) results['corp'] = true;
-    }, true);
-
-    window.addEventListener('DOMContentLoaded', () => {
-      const container = document.getElementById('results');
-      for (const key in results) {
-        const li = document.createElement('li');
-        li.id = `status-${key}`;
-        li.className = 'fail';
-        li.textContent = `[✗] ${key} error not triggered`;
-        container.appendChild(li);
-      }
-
-      // Iframe COEP/COOP block checker
-      setTimeout(() => {
-        const iframe = document.getElementById('test-iframe');
-        try {
-          const access = iframe.contentWindow.location.href;
-          document.getElementById('status-iframe').className = 'fail';
-          document.getElementById('status-iframe').textContent = `[✗] iframe error not triggered (COEP bypassed)`;
-        } catch (e) {
-          results['iframe'] = true;
-          document.getElementById('status-iframe').className = 'success';
-          document.getElementById('status-iframe').textContent = `[✓] net::ERR_INVALID_RESPONSE triggered via COEP iframe`;
-        }
-
-        // Update UI for others
-        for (const key in results) {
-          if (key === 'iframe') continue;
-          if (results[key]) {
-            const li = document.getElementById(`status-${key}`);
-            li.className = 'success';
-            li.textContent = `[✓] ${friendlyName(key)} triggered`;
-          }
-        }
-      }, 1000);
-    });
-
-    function friendlyName(key) {
-      return {
-        'csp': 'net::ERR_BLOCKED_BY_CSP',
-        'mixed-content': 'net::ERR_BLOCKED_BY_CLIENT (Mixed Content)',
-        'sri': 'net::ERR_SRI_SIGNATURE_MISMATCH',
-        'iframe': 'net::ERR_INVALID_RESPONSE (COEP/COOP)',
-        'corp': 'net::ERR_BLOCKED_BY_CORP',
-        '404': 'net::ERR_FAILED (404)',
-        'mime': 'net::ERR_BLOCKED_BY_RESPONSE (MIME mismatch)',
-      }[key];
-    }
-  </script>
 </head>
 <body>
   <h1>LoadingEventFailedErrors</h1>
-  <p>This page triggers various <code>net::ERR_*</code> loading failures and displays their status below:</p>
+  <p>This page attempts to trigger several common <code>net::ERR_*</code> errors via resource loading violations. Open <strong>DevTools → Console / Network</strong> to inspect the failures.</p>
 
-  <ul id="results" class="error-list"></ul>
+  <ul>
+    <li>🛑 <strong>CSP Blocked Font</strong> → should trigger <code>net::ERR_BLOCKED_BY_CSP</code></li>
+    <li>🛑 <strong>Mixed Content Script</strong> → should trigger <code>net::ERR_BLOCKED_BY_CLIENT</code></li>
+    <li>🛑 <strong>Invalid SRI Hash</strong> → should trigger <code>net::ERR_SRI_SIGNATURE_MISMATCH</code></li>
+    <li>🛑 <strong>Blocked iframe (COEP/COOP)</strong> → should trigger <code>net::ERR_INVALID_RESPONSE</code></li>
+    <li>🛑 <strong>Cross-Origin Image (CORP)</strong> → should trigger <code>net::ERR_BLOCKED_BY_CORP</code></li>
+    <li>🛑 <strong>404 Subresource</strong> → should trigger <code>net::ERR_FAILED</code></li>
+    <li>🛑 <strong>Script with wrong MIME type</strong> → should trigger <code>net::ERR_BLOCKED_BY_RESPONSE</code></li>
+  </ul>
 
   <!-- 1. CSP Blocked Font -->
   <link href="https://fonts.googleapis.com/css2?family=Roboto&display=swap" rel="stylesheet">
 
-  <!-- 2. Mixed Content -->
-  <script src="http://httpbin.org/html?v=mc"></script>
+  <!-- 2. Mixed Content Script (works only if page is served over HTTPS) -->
+  <script src="http://httpbin.org/html?v=mixed"></script>
 
   <!-- 3. Invalid SRI -->
   <script src="https://code.jquery.com/jquery-3.6.0.min.js"
     integrity="sha384-invalidhash123456789" crossorigin="anonymous"></script>
 
-  <!-- 4. COEP iframe test -->
+  <!-- 4. Blocked iframe (COEP/COOP) -->
   <iframe id="test-iframe" src="https://example.com" width="0" height="0" style="display:none"></iframe>
 
-  <!-- 5. CORP image (crossorigin set) -->
-  <img src="https://upload.wikimedia.org/wikipedia/commons/4/47/PNG_transparency_demonstration_1.png" crossorigin="anonymous" alt="corp-img" style="display:none">
+  <!-- 5. CORP image (may show broken placeholder) -->
+  <img src="https://upload.wikimedia.org/wikipedia/commons/4/47/PNG_transparency_demonstration_1.png" crossorigin="anonymous" alt="cross-origin image" style="display:none">
 
   <!-- 6. 404 Subresource -->
-  <script src="https://httpstat.us/404?v=404"></script>
+  <script src="https://httpstat.us/404?v=notfound"></script>
 
-  <!-- 7. Script with wrong MIME -->
+  <!-- 7. MIME type mismatch: HTML loaded as JS -->
   <script src="https://httpbin.org/html?v=mime"></script>
 </body>
 </html>
