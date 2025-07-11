@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Device & Viewport Detector</title>
+  <title>System Info</title>
   <style>
     body {
       font-family: sans-serif;
@@ -11,7 +11,6 @@
       padding: 1rem;
       background: #f0f4f8;
       color: #222;
-      overflow: hidden;
     }
     .container {
       max-width: 700px;
@@ -28,45 +27,40 @@
     .info {
       margin: 0.5rem 0;
     }
-    @media (max-width: 768px) {
-      h1 { color: green; }
-    }
-    @media (min-width: 769px) {
-      h1 { color: blue; }
-    }
   </style>
 </head>
 <body>
   <div class="container">
-    <h1>Device & Browser Info</h1>
-    <p class="info" id="device-type">Detecting device...</p>
-    <p class="info" id="viewport">Detecting viewport...</p>
-    <p class="info" id="browser">Detecting browser...</p>
-    <p class="info" id="os">Detecting OS...</p>
-    <p class="info" id="model">Detecting model...</p>
-    <p class="info" id="user-agent">User-Agent:</p>
+    <h1>Device & System Info</h1>
+    <p class="info" id="device-type">Device Type: </p>
+    <p class="info" id="viewport">Viewport: </p>
+    <p class="info" id="browser">Browser: </p>
+    <p class="info" id="os">Operating System: </p>
+    <p class="info" id="model">Mobile Model: </p>
+    <p class="info" id="user-agent">User-Agent: </p>
   </div>
 
   <script>
-    const ua = navigator.userAgent;
+    var ua = navigator.userAgent;
 
     function getDeviceType(ua) {
       if (/android/i.test(ua)) return "Android Device";
       if (/iPhone/i.test(ua)) return "iPhone";
-      if (/iPad|Tablet/i.test(ua)) return "iPad or Tablet";
+      if (/iPad/i.test(ua)) return "iPad";
+      if (/BB10/i.test(ua)) return "BlackBerry 10 Device";
       if (/Mobile/i.test(ua)) return "Mobile Phone";
       if (/Windows|Macintosh|Linux/i.test(ua)) return "Laptop/Desktop";
-      return "Unknown Device";
+      return "Unknown";
     }
 
     function getBrowserInfo(ua) {
-      let match =
+      var match =
         ua.match(/Edg\/([\d\.]+)/) ? ["Edge", ua.match(/Edg\/([\d\.]+)/)[1]] :
         ua.match(/Chrome\/([\d\.]+)/) ? ["Chrome", ua.match(/Chrome\/([\d\.]+)/)[1]] :
         ua.match(/Firefox\/([\d\.]+)/) ? ["Firefox", ua.match(/Firefox\/([\d\.]+)/)[1]] :
         ua.match(/Version\/([\d\.]+).*Safari/) ? ["Safari", ua.match(/Version\/([\d\.]+).*Safari/)[1]] :
         ["Unknown", ""];
-      return `${match[0]} ${match[1]}`;
+      return match[0] + " " + match[1];
     }
 
     function getOSInfo(ua) {
@@ -76,25 +70,47 @@
       if (/Android [\d.]+/.test(ua)) return "Android " + ua.match(/Android ([\d.]+)/)[1];
       if (/iPhone OS [\d_]+/.test(ua)) return "iOS " + ua.match(/iPhone OS ([\d_]+)/)[1].replace(/_/g, ".");
       if (/iPad; CPU OS [\d_]+/.test(ua)) return "iPadOS " + ua.match(/CPU OS ([\d_]+)/)[1].replace(/_/g, ".");
+      if (/BB10/.test(ua)) return "BlackBerry 10";
       if (/Linux/.test(ua)) return "Linux";
-      return "Unknown OS";
+      return "Unknown";
     }
 
     function getMobileModel(ua) {
-      // Look for pattern like "SAMSUNG SM-G988B"
-      const match = ua.match(/(SAMSUNG|SM|Pixel|iPhone|Nexus|Motorola|OnePlus)[\w\s\-]+/i);
-      return match ? match[0] : "Not Available";
+      var match = ua.match(/\b(SM-[\w\d\-]+|GT-[\w\d\-]+|Pixel[\s\d\w]*|iPhone[\s\d]*|OnePlus[\s\dT]*|Nexus[\s\d]*|BB10)\b/i);
+      var rawModel = match ? match[0] : "Not Available";
+
+      var knownModels = {
+        "SM-G988B": "Galaxy S20 Ultra",
+        "SM-G991B": "Galaxy S21",
+        "GT-N7000": "Galaxy Note",
+        "GT-I9505": "Galaxy S4",
+        "Pixel 6": "Google Pixel 6",
+        "Pixel 7": "Google Pixel 7",
+        "iPhone15": "iPhone 15",
+        "OnePlus8T": "OnePlus 8T",
+        "BB10": "BlackBerry 10 Device"
+      };
+
+      var normalized = rawModel.replace(/[\s\-]/g, "").toUpperCase();
+
+      for (var key in knownModels) {
+        if (normalized.includes(key.replace(/[\s\-]/g, "").toUpperCase())) {
+          return knownModels[key] + " (" + rawModel + ")";
+        }
+      }
+
+      return rawModel;
     }
 
-    const width = window.innerWidth;
-    const height = window.innerHeight;
+    var width = window.innerWidth;
+    var height = window.innerHeight;
 
-    document.getElementById('device-type').textContent = `Device Type: ${getDeviceType(ua)}`;
-    document.getElementById('viewport').textContent = `Viewport: ${width}px x ${height}px`;
-    document.getElementById('browser').textContent = `Browser: ${getBrowserInfo(ua)}`;
-    document.getElementById('os').textContent = `OS: ${getOSInfo(ua)}`;
-    document.getElementById('model').textContent = `Mobile Model: ${getMobileModel(ua)}`;
-    document.getElementById('user-agent').textContent = `User-Agent: ${ua}`;
+    document.getElementById('device-type').textContent = "Device Type: " + getDeviceType(ua);
+    document.getElementById('viewport').textContent = "Viewport: " + width + "px x " + height + "px";
+    document.getElementById('browser').textContent = "Browser: " + getBrowserInfo(ua);
+    document.getElementById('os').textContent = "Operating System: " + getOSInfo(ua);
+    document.getElementById('model').textContent = "Mobile Model: " + getMobileModel(ua);
+    document.getElementById('user-agent').textContent = "User-Agent: " + ua;
   </script>
 </body>
 </html>
