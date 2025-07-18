@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>JSON Tree Viewer</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      margin: 2rem;
+    }
+    textarea {
+      width: 100%;
+      height: 200px;
+      font-family: monospace;
+    }
+    .tree {
+      white-space: pre;
+      font-family: monospace;
+      background: #f4f4f4;
+      padding: 1rem;
+      border: 1px solid #ccc;
+      overflow-x: auto;
+    }
+    details {
+      margin-left: 1em;
+    }
+    summary {
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <h1>JSON Tree Viewer</h1>
+
+  <textarea id="jsonInput" placeholder="Paste your JSON here..."></textarea><br>
+  <button onclick="renderTree()">Render Tree</button>
+  <input type="file" id="fileInput" />
+  <div id="treeOutput" class="tree"></div>
+
+  <script>
+    function renderTreeFromObject(obj, parent) {
+      if (typeof obj === 'object' && obj !== null) {
+        const keys = Object.keys(obj);
+        for (const key of keys) {
+          const val = obj[key];
+          const details = document.createElement('details');
+          const summary = document.createElement('summary');
+          summary.textContent = key;
+          details.appendChild(summary);
+          parent.appendChild(details);
+
+          if (typeof val === 'object' && val !== null) {
+            renderTreeFromObject(val, details);
+          } else {
+            const text = document.createElement('div');
+            text.textContent = `${key}: ${val}`;
+            text.style.marginLeft = '1em';
+            details.appendChild(text);
+          }
+        }
+      } else {
+        const div = document.createElement('div');
+        div.textContent = obj;
+        parent.appendChild(div);
+      }
+    }
+
+    function renderTree() {
+      const input = document.getElementById('jsonInput').value;
+      const output = document.getElementById('treeOutput');
+      output.innerHTML = '';
+
+      try {
+        const obj = JSON.parse(input);
+        renderTreeFromObject(obj, output);
+      } catch (err) {
+        output.textContent = 'Invalid JSON!';
+      }
+    }
+
+    document.getElementById('fileInput').addEventListener('change', function (e) {
+      const file = e.target.files[0];
+      const reader = new FileReader();
+      reader.onload = function () {
+        document.getElementById('jsonInput').value = reader.result;
+        renderTree();
+      };
+      reader.readAsText(file);
+    });
+  </script>
+</body>
+</html>
