@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>CPU Measurement Test</title>
+</head>
+<body>
+  <h2>CPU Performance Measurement</h2>
+  <button onclick="runTest()">Run Test</button>
+  <pre id="output"></pre>
+
+  <script>
+    function runTest() {
+      const start = performance.now();
+      const output = document.getElementById("output");
+
+      let measurements = [];
+      let endTime = start + 10000; // Run for 10 seconds
+
+      function doWork() {
+        let loopStart = performance.now();
+        // Simulate 10ms job (calculate primes, etc.)
+        let count = 0;
+        while (performance.now() - loopStart < 10) {
+          count++;
+        }
+        let loopEnd = performance.now();
+        measurements.push(loopEnd - loopStart);
+
+        if (performance.now() < endTime) {
+          requestAnimationFrame(doWork);
+        } else {
+          let p98 = measurements.sort((a, b) => a - b)[Math.floor(0.98 * measurements.length)];
+          output.textContent = `Total Measurements: ${measurements.length}\n98th Percentile: ${p98.toFixed(2)}ms`;
+        }
+      }
+
+      doWork();
+    }
+  </script>
+</body>
+</html>
