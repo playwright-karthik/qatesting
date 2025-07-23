@@ -4,13 +4,14 @@
   <meta charset="UTF-8">
   <title>Main Page - Nested Popups</title>
   <script>
-    window.onload = function () {
+    function openPopup1() {
       window.open('popup1.html', 'Popup1', 'width=500,height=400');
-    };
+    }
   </script>
 </head>
 <body>
   <h1>Main Page</h1>
-  <p>This page automatically opens <strong>Popup 1</strong>.</p>
+  <p>Click the button below to open <strong>Popup 1</strong>.</p>
+  <button onclick="openPopup1()">Open Popup 1</button>
 </body>
 </html>
