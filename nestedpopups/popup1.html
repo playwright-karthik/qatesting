@@ -4,13 +4,14 @@
   <meta charset="UTF-8">
   <title>Popup Page 1</title>
   <script>
-    window.onload = function () {
+    function openPopup2() {
       window.open('popup2.html', 'Popup2', 'width=500,height=400');
-    };
+    }
   </script>
 </head>
 <body>
   <h1>Popup Page 1</h1>
-  <p>This popup was opened from the main page and now opens <strong>Popup 2</strong>.</p>
+  <p>Click the button below to open <strong>Popup 2</strong>.</p>
+  <button onclick="openPopup2()">Open Popup 2</button>
 </body>
 </html>
