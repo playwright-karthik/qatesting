@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Initiator URL Testing Page</title>
+<style>
+  body { font-family: Arial, sans-serif; padding: 20px; }
+  .bg-img { 
+    width: 200px; height: 100px;
+    background-image: url('https://via.placeholder.com/200x100.png?text=CSS+Image');
+    background-size: cover;
+    border: 1px solid #ccc;
+  }
+</style>
+</head>
+<body>
+
+<h1>Initiator URL Test Page</h1>
+<p>This page contains multiple resources to test Initiator URL correctness in a waterfall view.</p>
+
+<h2>1. Root Request</h2>
+<p>The main HTML document is the root request.</p>
+
+<h2>2. Redirect Test</h2>
+<a href="https://httpbin.org/redirect-to?url=https://www.wikipedia.org" target="_blank">
+  Trigger Cross-Domain Redirect
+</a>
+
+<h2>3. CSS Image Load</h2>
+<div class="bg-img"></div>
+
+<h2>4. JS-Initiated AJAX</h2>
+<script>
+fetch('https://reqres.in/api/users?page=2')
+  .then(res => res.json())
+  .then(data => console.log('AJAX Loaded:', data));
+</script>
+
+<h2>5. Script Loading Another Script</h2>
+<script>
+  let script = document.createElement('script');
+  script.src = "https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.17.21/lodash.min.js";
+  document.body.appendChild(script);
+</script>
+
+<h2>6. Iframe</h2>
+<iframe src="https://www.w3schools.com" width="300" height="200"></iframe>
+
+<h2>7. Meta Refresh Redirect</h2>
+<p>This will redirect in 10 seconds to example.com</p>
+<meta http-equiv="refresh" content="10; url=https://example.com" />
+
+<h2>8. Third-party Analytics</h2>
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-12345678-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'UA-12345678-1');
+</script>
+
+</body>
+</html>
