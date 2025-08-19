@@ -2,17 +2,40 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Bad URL Test</title>
+  <title>Invalid Child Host - One at a Time</title>
 </head>
 <body>
-  <h1>Testing Bad URL Handling</h1>
+  <h1>Invalid Child Host Test (Switchable)</h1>
+  <p>Uncomment only one <code>&lt;script&gt;</code> or <code>&lt;img&gt;</code> tag below to test a single invalid child request.</p>
 
-  <!-- Intentionally malformed URL (no / after .com) -->
+  <!-- Example: Uncomment ONE block at a time -->
+
+  <!-- 1. Missing "/" after .com -->
   <script src="https://nbcu-ds-svr-side-tag-dev-001.ue.r.appspot.comgtm-nqwrl4bm&sct=1/"></script>
 
-  <!-- You can uncomment below to test other invalid cases -->
+  <!-- 2. Non-existent host + invalid port -->
   <!-- <img src="http://nowhere.nothing:99999" /> -->
+
+  <!-- 3. Missing scheme -->
   <!-- <script src="noscheme"></script> -->
+
+  <!-- 4. Bad hostname with & and no path -->
   <!-- <script src="http://badhostname.com&missing_path"></script> -->
+
+  <!-- 5. No scheme before domain -->
+  <!-- <script src="://example.com/script.js"></script> -->
+
+  <!-- 6. Empty URL -->
+  <!-- <script src="http://"></script> -->
+
+  <!-- 7. Double dot in hostname -->
+  <!-- <script src="http://example..com/app.js"></script> -->
+
+  <!-- 8. Space in hostname -->
+  <!-- <script src="http://exa mple.com/frame.html"></script> -->
+
+  <!-- 9. Malformed IPv6 -->
+  <!-- <script src="http://[::1"></script> -->
+
 </body>
 </html>
