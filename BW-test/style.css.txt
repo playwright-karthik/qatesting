@@ -1,0 +1,30 @@
+body {
+  font-family: Arial, sans-serif;
+  margin: 40px;
+  background-color: #f2f2f2;
+  color: #333;
+}
+
+h1 {
+  font-size: 24px;
+  color: #004d99;
+}
+
+img {
+  max-width: 100%;
+  margin: 20px 0;
+  border: 2px solid #ccc;
+}
+
+#metrics {
+  background: #fff;
+  padding: 20px;
+  border-radius: 6px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+pre {
+  background: #eee;
+  padding: 10px;
+  overflow-x: auto;
+}

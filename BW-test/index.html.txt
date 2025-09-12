@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Network Throttle Test</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <h1>🌐 Network Throttling Test Page</h1>
+  <p>This page is designed to test how your site behaves under various network conditions (Cable, LTE, GPRS, etc.)</p>
+
+  <img src="assets/large-image.jpg" alt="Large Test Image" />
+
+  <div id="metrics">
+    <h2>📊 Performance Metrics</h2>
+    <pre id="perf"></pre>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
