@@ -1,0 +1,13 @@
+@font-face {
+  font-family: 'SlowFont';
+  src: url('./slow-font.woff2') format('woff2');
+  font-display: swap; /* Optional: can use 'block' or 'optional' to test different load behaviors */
+}
+
+body {
+  font-family: 'SlowFont', sans-serif;
+  background-color: #f4f4f4;
+  padding: 2rem;
+  line-height: 1.5;
+  color: #333;
+}
