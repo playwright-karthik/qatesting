@@ -4,13 +4,59 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Playwright Screenshot Font Delay Test</title>
-  <link rel="stylesheet" href="style.css" />
+  <!-- Load a large Google font to simulate delay -->
+  <link
+    rel="stylesheet"
+    href="https://fonts.googleapis.com/css2?family=Noto+Serif+Display:wght@700&display=swap"
+  />
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 2rem;
+      line-height: 1.5;
+    }
+
+    h1 {
+      font-family: "Noto Serif Display", serif;
+      font-size: 2.5rem;
+      color: darkblue;
+    }
+
+    .slow-font {
+      font-family: "Noto Serif Display", serif;
+      font-size: 1.5rem;
+      color: darkred;
+    }
+
+    .loader {
+      margin-top: 2rem;
+      width: 50px;
+      height: 50px;
+      border: 5px solid lightgray;
+      border-top: 5px solid darkblue;
+      border-radius: 50%;
+      animation: spin 2s linear infinite;
+    }
+
+    @keyframes spin {
+      from {
+        transform: rotate(0deg);
+      }
+      to {
+        transform: rotate(360deg);
+      }
+    }
+  </style>
 </head>
 <body>
   <h1>Slow Font Loading Test</h1>
-  <p>
-    This text uses a very large WOFF2 font file to simulate a delay in font loading.
-    Use this to test screenshot timing behavior in Playwright.
+  <p class="slow-font">
+    This paragraph uses a remote Google font. Depending on your network speed,
+    it may take time to load. <br />
+    Use this page to test whether screenshots capture text **before** or
+    **after** the font finishes loading.
   </p>
+
+  <div class="loader"></div>
 </body>
 </html>
