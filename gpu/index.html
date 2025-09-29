@@ -1,10 +1,20 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>GPU / SwiftShader WebGL Test</title>
-  <link rel="stylesheet" href="style.css" />
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>GPU / SwiftShader WebGL Test Arena</title>
+  <style>
+    body { font-family: Arial, sans-serif; background:#f4f6fa; text-align:center; margin:0; padding:20px; }
+    #canvas-container { display:flex; justify-content:center; margin:20px 0; }
+    canvas { border:1px solid #444; background:white; }
+    .controls button { margin:5px; padding:10px; font-size:14px; cursor:pointer; }
+    #results { max-width:600px; margin:20px auto; text-align:left; background:#fff; border:1px solid #ccc; padding:10px; border-radius:8px; }
+    #results ul { list-style-type:none; padding:0; }
+    #results li { padding:3px 0; }
+    .pass { color:green; }
+    .fail { color:red; }
+  </style>
 </head>
 <body>
   <h1>GPU / SwiftShader WebGL Test Arena</h1>
@@ -21,15 +31,17 @@
   </div>
 
   <h2>Test Results</h2>
-  <div id="results">
-    <ul id="test-list"></ul>
-  </div>
+  <div id="results"><ul id="test-list"></ul></div>
 
   <h2>Status</h2>
   <p id="status">Initializing...</p>
   <p><strong>Renderer:</strong> <span id="renderer"></span></p>
   <p><strong>FPS:</strong> <span id="fps">0</span></p>
 
+  <!-- matrix math library -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gl-matrix/2.8.1/gl-matrix-min.js"></script>
+
+  <!-- main logic -->
   <script src="script.js"></script>
 </body>
 </html>
