@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>GPU / SwiftShader WebGL Test</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <h1>GPU / SwiftShader WebGL Test Arena</h1>
+
+  <div id="canvas-container">
+    <canvas id="glCanvas" width="600" height="400"></canvas>
+  </div>
+
+  <div class="controls">
+    <button onclick="toggleAnimation()">▶️ Toggle Animation</button>
+    <button onclick="toggleWireframe()">🧩 Toggle Wireframe</button>
+    <button onclick="changeColors()">🎨 Change Colors</button>
+    <button onclick="resetScene()">🔄 Reset Scene</button>
+  </div>
+
+  <h2>Test Results</h2>
+  <div id="results">
+    <ul id="test-list"></ul>
+  </div>
+
+  <h2>Status</h2>
+  <p id="status">Initializing...</p>
+  <p><strong>Renderer:</strong> <span id="renderer"></span></p>
+  <p><strong>FPS:</strong> <span id="fps">0</span></p>
+
+  <script src="script.js"></script>
+</body>
+</html>
