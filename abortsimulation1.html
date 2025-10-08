@@ -11,7 +11,6 @@
             // DNS error simulation
             xhr.open('GET', 'https://www.chethanpatel.com', true);
 
-            // Abort after 2 seconds
             const abortTimeout = setTimeout(() => {
                 console.log('DNS Error Request aborted.');
                 xhr.abort();
@@ -36,10 +35,9 @@
         function triggerConnectErrorRequest() {
             const xhr = new XMLHttpRequest();
 
-            // Connection error simulation
+            // Connection error simulation (domain)
             xhr.open('GET', 'https://www.amazon.com:81', true);
 
-            // Abort after 2 seconds
             const abortTimeout = setTimeout(() => {
                 console.log('Connect Error Request aborted.');
                 xhr.abort();
@@ -60,12 +58,40 @@
             console.log('Sending Connect Error Request...');
             xhr.send();
         }
+
+        function triggerConnectErrorWithIP() {
+            const xhr = new XMLHttpRequest();
+
+            // Connection error simulation (IP)
+            xhr.open('GET', 'https://192.168.128.111:81', true);
+
+            const abortTimeout = setTimeout(() => {
+                console.log('Connect Error (IP) Request aborted.');
+                xhr.abort();
+            }, 2000);
+
+            xhr.onreadystatechange = () => {
+                if (xhr.readyState === 4) {
+                    console.log('Connect Error (IP) Request completed (should not happen).');
+                    clearTimeout(abortTimeout);
+                }
+            };
+
+            xhr.onerror = () => {
+                console.error('Connect Error (IP) Request encountered an error.');
+                clearTimeout(abortTimeout);
+            };
+
+            console.log('Sending Connect Error (IP) Request...');
+            xhr.send();
+        }
     </script>
 </head>
 <body>
     <h1>Request Abort Simulation</h1>
     <button onclick="triggerDnsErrorRequest()">Trigger DNS Error Request</button>
     <button onclick="triggerConnectErrorRequest()">Trigger Connect Error Request</button>
-    <p>Click the buttons to simulate requests with DNS/connect failure and manual abort.</p>
+    <button onclick="triggerConnectErrorWithIP()">Trigger Connect Error with IP</button>
+    <p>Click the buttons to simulate requests with DNS or connection failures and manual abort.</p>
 </body>
 </html>
