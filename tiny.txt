@@ -1,0 +1,1 @@
+Small test payload for HTTP/2 header simulation

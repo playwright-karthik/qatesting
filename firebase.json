@@ -1,0 +1,9 @@
+{
+  "redirects": [
+    {
+      "source": "/shortlinks/a",
+      "destination": "https://google.com",
+      "type": 301
+    }
+  ]
+}
