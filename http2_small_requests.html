@@ -34,7 +34,7 @@ async function makeRequests(count) {
 
   for (let i = 0; i < count; i++) {
     requests.push(
-      fetch(`/tiny.txt?req=${i}`, {
+      fetch(`./tiny.txt?req=${i}`, {
         headers: {
           "X-Fill-Header": headerFiller,
           "X-Req-Id": `${i}`
