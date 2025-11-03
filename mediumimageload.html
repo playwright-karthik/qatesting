@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Multiple Requests Example</title>
+</head>
+<body>
+
+<h1>Multiple Requests Example</h1>
+
+<div id="response-container"></div>
+
+<script>
+async function makeRequests() {
+  const responseContainer = document.getElementById("response-container");
+  const requests = [];
+
+  try {
+    // Create array of fetch Promises
+    for (let i = 0; i < 100; i++) {
+      requests.push(fetch(`./mediumimage.jpg?req=${i}`));
+    }
+
+    // Wait for all requests to complete
+    const responses = await Promise.all(requests);
+
+    // Convert each response to a blob and display it
+    for (let i = 0; i < responses.length; i++) {
+      const blob = await responses[i].blob();
+      const imgURL = URL.createObjectURL(blob);
+
+      const img = document.createElement('img');
+      img.src = imgURL;
+      img.width = 200; // optional thumbnail size
+      img.style.margin = "5px";
+
+      responseContainer.appendChild(img);
+    }
+  } catch (error) {
+    console.error('Error making requests:', error);
+  }
+}
+
+makeRequests();
+</script>
+
+</body>
+</html>
