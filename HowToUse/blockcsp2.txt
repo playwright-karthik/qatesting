@@ -1,0 +1,17 @@
+How to Use This
+
+Host this single HTML file anywhere accessible (e.g., local test server or Catchpoint Synthetic Page Server).
+
+In your Transaction Test:
+
+Set a step to open:
+
+/CSPTest.html?mode=root → Simulates Root URL CSP violation
+
+/CSPTest.html?mode=redirect → Simulates Redirect-based root CSP violation
+
+/CSPTest.html?mode=child → Simulates Child resource CSP violation
+
+Watch test logs and Catchpoint records for Error 51029 (CSP violation).
+
+Confirm whether the test continues or stops after the failing step — that will validate the bug.
