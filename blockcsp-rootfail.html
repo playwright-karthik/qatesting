@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>CSP Root Fail Test</title>
+
+  <!-- This CSP blocks all inline scripts (including this page's own logic) -->
+  <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'none'; style-src 'none'; img-src 'none';">
+
+  <script>
+    // This inline script is essential for rendering.
+    // It will be blocked by CSP, causing the root page to fail immediately.
+    document.write("<h1 style='color:red'>This should never appear if CSP works!</h1>");
+  </script>
+</head>
+<body>
+  <noscript>
+    <h1>CSP Root Fail Simulation</h1>
+    <p>If you see this message, inline scripts were blocked by CSP — root URL failed to execute properly.</p>
+  </noscript>
+</body>
+</html>
