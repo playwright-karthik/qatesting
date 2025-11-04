@@ -2,85 +2,101 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>CSP Violation Test Modes</title>
+  <title>CSP Simulation Test Modes</title>
 
   <script>
-    // Parse mode from URL query param
     const params = new URLSearchParams(window.location.search);
-    const mode = params.get("mode") || "child"; // default: child
+    const mode = params.get('mode') || 'pass';
 
-    // Dynamically apply different CSP policies based on mode
-    if (mode === "root") {
-      // Root CSP: blocks inline scripts (this page will self-violate)
-      document.write(`
-        <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self';">
-      `);
-    } else if (mode === "redirect") {
-      // Redirect CSP: allows navigation but will redirect to another page that violates CSP
-      document.write(`
-        <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'none';">
-      `);
-      // trigger redirect after short delay
-      setTimeout(() => {
-        window.location.href = window.location.origin + window.location.pathname + "?mode=redirect_target";
-      }, 1000);
-    } else if (mode === "redirect_target") {
-      // Target page after redirect - will violate CSP immediately
-      document.write(`
-        <meta http-equiv="Content-Security-Policy" content="default-src 'none';">
-      `);
-    } else {
-      // Child mode: block fonts or scripts (only sub-resources fail)
-      document.write(`
-        <meta http-equiv="Content-Security-Policy" content="default-src 'self'; style-src 'self' https://fonts.googleapis.com; font-src 'none';">
-      `);
+    // Inject CSP meta dynamically based on mode
+    function setCSP(policy) {
+      const meta = document.createElement('meta');
+      meta.httpEquiv = "Content-Security-Policy";
+      meta.content = policy;
+      document.head.appendChild(meta);
+    }
+
+    switch (mode) {
+      case 'root':
+        // Completely block all resource loads (simulates Root URL fail)
+        setCSP("default-src 'none';");
+        break;
+      case 'redirect':
+        // Allow initial load but redirect immediately
+        setTimeout(() => {
+          window.location.href = "https://example.com"; // simulate redirect to disallowed domain
+        }, 1000);
+        setCSP("default-src 'self'; script-src 'none';");
+        break;
+      case 'child':
+        // Allow page itself but block external fonts or images
+        setCSP("default-src 'self'; font-src 'none'; img-src 'none';");
+        break;
+      case 'pass':
+      default:
+        // Allow all + add extra child resources to verify document complete
+        setCSP("default-src * 'unsafe-inline';");
+        break;
     }
   </script>
 
   <style>
-    body { font-family: sans-serif; padding: 20px; }
-    .mode { color: darkblue; font-weight: bold; }
-    .error-hint { color: crimson; }
+    body {
+      font-family: Arial, sans-serif;
+      padding: 20px;
+    }
+    h1 {
+      color: darkgreen;
+    }
+    .info {
+      background: #eef;
+      border-left: 5px solid #66f;
+      padding: 10px;
+      margin-top: 15px;
+    }
   </style>
 </head>
 <body>
-  <h1>🔒 CSP Violation Test</h1>
-  <p>Current Mode: <span class="mode" id="modeText"></span></p>
+  <h1>CSP Simulation Test</h1>
+  <div class="info">
+    <p><b>Mode:</b> <span id="modeText"></span></p>
+    <p>This test page simulates different CSP behaviors.</p>
+  </div>
+
+  <p id="desc"></p>
+
+  <!-- Child requests for testing -->
+  <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/a/a7/React-icon.svg/64px-React-icon.svg.png" alt="React Logo" width="64" height="64">
+  <link href="https://fonts.googleapis.com/css2?family=Roboto&display=swap" rel="stylesheet">
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
   <script>
-    document.getElementById("modeText").textContent = mode;
+    const desc = document.getElementById('desc');
+    const modeText = document.getElementById('modeText');
+    modeText.textContent = mode.toUpperCase();
 
-    if (mode === "root") {
-      // This inline script will be blocked by CSP → Root URL violation
-      console.log("This inline script should be blocked!");
-    } else if (mode === "child") {
-      // Try to load a font that will be blocked → Child violation
-      const link = document.createElement("link");
-      link.rel = "stylesheet";
-      link.href = "https://fonts.googleapis.com/css2?family=Roboto&display=swap";
-      document.head.appendChild(link);
-      document.body.insertAdjacentHTML("beforeend",
-        `<p class="error-hint">Expect a CSP error for blocked font (child resource).</p>`);
-    } else if (mode === "redirect_target") {
-      // Hard CSP block on redirected page
-      fetch(window.location.href)
-        .catch(e => console.error("Blocked by CSP:", e));
-      document.body.insertAdjacentHTML("beforeend",
-        `<p class="error-hint">This is the redirected page. Expect immediate CSP block.</p>`);
-    } else if (mode === "redirect") {
-      document.body.insertAdjacentHTML("beforeend",
-        `<p>Redirecting shortly to trigger redirect CSP violation...</p>`);
+    switch (mode) {
+      case 'root':
+        desc.textContent = "Root mode: Entire document should fail to load due to CSP 'default-src none'.";
+        break;
+      case 'redirect':
+        desc.textContent = "Redirect mode: Page will attempt to redirect to example.com (simulating CSP failure after redirect).";
+        break;
+      case 'child':
+        desc.textContent = "Child mode: Root loads fine, but external fonts/images/scripts are blocked (CSP violation visible in console).";
+        break;
+      case 'pass':
+        desc.textContent = "Pass mode: Everything loads properly, including images, fonts, and scripts.";
+        // Load additional children to show document completeness
+        const extraImg = document.createElement('img');
+        extraImg.src = "https://placekitten.com/200/200";
+        document.body.appendChild(extraImg);
+        break;
+      default:
+        desc.textContent = "Unknown mode. Defaulting to pass behavior.";
     }
+
+    console.log(`CSP test running in mode: ${mode}`);
   </script>
-
-  <hr>
-  <h3>🔁 Quick Links to Test Modes</h3>
-  <ul>
-    <li><a href="?mode=child">Child Resource CSP Violation</a></li>
-    <li><a href="?mode=root">Root Inline Script CSP Violation</a></li>
-    <li><a href="?mode=redirect">Redirect + Root CSP Violation</a></li>
-  </ul>
-
-  <p><b>Note:</b> Open DevTools → Console/Network to verify which request was blocked by CSP.</p>
 </body>
 </html>
