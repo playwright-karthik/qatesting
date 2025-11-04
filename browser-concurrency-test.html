@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Chrome Concurrency Test</title>
+<style>
+body { font-family: Arial, sans-serif; line-height: 1.5; margin: 20px; }
+h1 { font-size: 1.5em; }
+#controls { margin-bottom: 1em; }
+#log {
+  background: #f4f4f4;
+  padding: 10px;
+  border-radius: 8px;
+  font-family: monospace;
+  font-size: 14px;
+  white-space: pre-wrap;
+  height: 300px;
+  overflow-y: auto;
+}
+.status-line { margin-top: 0.5em; font-weight: bold; }
+</style>
+</head>
+<body>
+
+<h1>Chrome Concurrency Test (HTTP/1.1 vs HTTP/2)</h1>
+<p>
+Use this page to observe how Chrome handles concurrent fetch requests —
+especially when running with <code>--single-process</code> or using HTTP/1.1 vs HTTP/2.
+</p>
+
+<div id="controls">
+  <label for="reqCount">Number of requests:</label>
+  <input type="number" id="reqCount" min="1" max="1000" value="200">
+  <button id="startBtn">Start Test</button>
+</div>
+
+<p id="status" class="status-line"></p>
+<div id="log"></div>
+
+<script>
+function getQueryParam(name, defaultValue) {
+  const urlParams = new URLSearchParams(window.location.search);
+  const value = urlParams.get(name);
+  return value ? parseInt(value, 10) : defaultValue;
+}
+
+async function makeRequests(count) {
+  const status = document.getElementById("status");
+  const log = document.getElementById("log");
+  const headerFiller = "x".repeat(850);
+  const startTime = performance.now();
+  let active = 0;
+  let completed = 0;
+
+  log.textContent = "";
+  status.textContent = `Starting ${count} requests...`;
+
+  function updateStatus() {
+    status.textContent = `Active: ${active} | Completed: ${completed}/${count}`;
+  }
+
+  const requests = Array.from({ length: count }, (_, i) => {
+    active++;
+    updateStatus();
+
+    return fetch(`/tiny.txt?req=${i}`, {
+      headers: {
+        "X-Fill-Header": headerFiller,
+        "X-Req-Id": `${i}`
+      }
+    })
+    .then(r => r.text())
+    .then(() => {
+      active--;
+      completed++;
+      if (completed % 10 === 0 || completed === count) {
+        updateStatus();
+      }
+    })
+    .catch(err => {
+      active--;
+      completed++;
+      log.textContent += `Error on req ${i}: ${err}\n`;
+    });
+  });
+
+  await Promise.all(requests);
+  const total = (performance.now() - startTime).toFixed(2);
+  status.textContent = `✅ Done: ${count} requests in ${total} ms`;
+  log.textContent += `Test complete.\n`;
+}
+
+// Load default or URL param value
+const defaultCount = getQueryParam("count", 200);
+document.getElementById("reqCount").value = defaultCount;
+
+// Run automatically if ?count= is present
+if (window.location.search.includes("count")) {
+  makeRequests(defaultCount);
+}
+
+document.getElementById("startBtn").addEventListener("click", () => {
+  const count = parseInt(document.getElementById("reqCount").value, 10);
+  makeRequests(count);
+});
+</script>
+
+</body>
+</html>
