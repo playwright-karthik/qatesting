@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>CSP Redirect Fail</title>
+  <!-- Inline script blocked due to script-src 'none' -->
+  <script>
+    location.href = 'redirect-target.html';
+  </script>
+</head>
+<body>
+  <h1>Redirect Fail Test</h1>
+  <p>If redirect doesn't occur, CSP blocked the inline script as expected.</p>
+</body>
+</html>
