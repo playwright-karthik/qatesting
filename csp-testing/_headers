@@ -1,0 +1,17 @@
+# CSP test headers
+
+# Root request will fail: browser refuses to load due to CSP
+/csp-testing/blockcsp-rootfail.html
+  Content-Security-Policy: default-src 'none'
+
+# Redirect fail test – inline scripts are blocked
+/csp-testing/blockcsp-redirectfail.html
+  Content-Security-Policy: default-src 'self'; script-src 'none'
+
+# Child fail test – images blocked
+/csp-testing/blockcsp-childfail.html
+  Content-Security-Policy: default-src 'self'; img-src 'none'
+
+# Default safe config for all others
+/* 
+  Content-Security-Policy: default-src 'self' https: data:
