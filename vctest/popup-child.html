@@ -1,0 +1,11 @@
+<!DOCTYPE html>
+<html><head><title>Popup Child</title>
+<style>body{font-family:Arial;padding:20px;}</style></head>
+<body>
+<h1>Popup Content</h1>
+<p>This page simulates delayed visual rendering.</p>
+<div id="late" style="font-size:20px;color:green;"></div>
+<script>
+setTimeout(()=>{document.getElementById('late').innerText="Popup late content loaded (2.5s)";},2500);
+</script>
+</body></html>
