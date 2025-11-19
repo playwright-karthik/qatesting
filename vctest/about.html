@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>About - Catchpoint VC Bug Test</title>
+  <style>
+    body { 
+      font-family: Arial, sans-serif; 
+      margin: 40px; 
+      background-color: #f8f9fa;
+    }
+    .container {
+      max-width: 800px;
+      margin: 0 auto;
+      background: white;
+      padding: 30px;
+      border-radius: 8px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+    .nav { 
+      margin-bottom: 20px; 
+      padding: 10px;
+      background: #e9ecef;
+      border-radius: 4px;
+    }
+    .nav a { 
+      margin-right: 15px; 
+      text-decoration: none; 
+      color: #007bff;
+      font-weight: 500;
+    }
+    .nav a:hover { text-decoration: underline; }
+    .info-box {
+      background: #f8f9fa;
+      border: 1px solid #dee2e6;
+      border-radius: 4px;
+      padding: 20px;
+      margin: 20px 0;
+    }
+    .highlight-box {
+      background: #fff3cd;
+      border: 1px solid #ffeaa7;
+      border-radius: 4px;
+      padding: 20px;
+      margin: 20px 0;
+    }
+    .code-snippet {
+      background: #f1f3f4;
+      border: 1px solid #dadce0;
+      border-radius: 4px;
+      padding: 15px;
+      font-family: 'Courier New', monospace;
+      font-size: 14px;
+      overflow-x: auto;
+      margin: 15px 0;
+    }
+    h2 { color: #495057; }
+    h3 { color: #6c757d; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="nav">
+      <a href="index.html">🏠 Home</a>
+      <a href="about.html">ℹ️ About</a>
+      <a href="contact.html">📧 Contact</a>
+    </div>
+
+    <h1>📋 About This Catchpoint VC Bug Test</h1>
+
+    <div class="highlight-box">
+      <h2>🎯 Purpose</h2>
+      <p>This test suite is designed to reproduce and analyze the Visually Complete (VC) bug in Catchpoint where <strong>VC timing exceeds Webpage Response Time</strong> during SPA (Single Page Application) interactions.</p>
+    </div>
+
+    <div class="info-box">
+      <h2>🔬 Technical Details</h2>
+      <h3>What is the VC Bug?</h3>
+      <p>In normal scenarios: <code>Visually Complete ≤ Webpage Response Time</code></p>
+      <p>With VC Bug: <code>Visually Complete > Webpage Response Time</code></p>
+      <p>This happens when soft navigation (no page reload) takes longer to visually complete than the initial page load.</p>
+    </div>
+
+    <div class="info-box">
+      <h2>📊 Test Scenarios</h2>
+      <h3>1. Full Navigation (Normal)</h3>
+      <p>Complete page reload with all network requests, DOM building, and visual completion.</p>
+      
+      <h3>2. Soft Navigation (SPA)</h3>
+      <p>JavaScript-driven content updates without page reload. Uses delayed rendering to simulate real-world async operations.</p>
+      
+      <h3>3. Catchpoint Integration</h3>
+      <p>Uses <code>Catchpoint.startStep()</code> API to measure timing differences between scenarios.</p>
+    </div>
+
+    <div class="info-box">
+      <h2>🛠️ Implementation</h2>
+      <div class="code-snippet">
+// Key timing mechanism
+setTimeout(() => {
+  results.innerHTML = `✅ Results found for: ${input.value}`;
+}, 1200); // 1.2s delay makes VC timing observable
+      </div>
+      <p>The 1200ms delay simulates real-world API calls and helps reproduce conditions where VC timing becomes problematic.</p>
+    </div>
+
+    <div class="info-box">
+      <h2>🌐 Deployment Options</h2>
+      <h3>1. Local VPN Server (Original)</h3>
+      <ul>
+        <li>IP: 192.168.128.109:8143</li>
+        <li>Private network access</li>
+        <li>Full control over server configuration</li>
+      </ul>
+      
+      <h3>2. GitHub Pages (Public)</h3>
+      <ul>
+        <li>Accessible from anywhere</li>
+        <li>No VPN dependency</li>
+        <li>Easy sharing with team members</li>
+        <li>CI/CD integration friendly</li>
+      </ul>
+    </div>
+
+    <div class="highlight-box">
+      <h2>🚀 Usage with Catchpoint</h2>
+      <p>Use the provided Playwright or Puppeteer test scripts to automate testing with your Catchpoint product. The scripts follow your exact API pattern:</p>
+      <div class="code-snippet">
+await Catchpoint.startStep('Navigate to Home');
+// ... navigation logic
+await Catchpoint.endStep();
+
+await Catchpoint.startStep('Perform Search');
+// ... search interaction
+await Catchpoint.endStep();
+      </div>
+    </div>
+
+    <div class="info-box">
+      <h2>📈 Expected Results</h2>
+      <p>When the VC bug manifests, you'll observe:</p>
+      <ul>
+        <li>Search interaction (soft navigation) has higher VC time than initial page load</li>
+        <li>VC > Webpage Response Time in Catchpoint metrics</li>
+        <li>Timing discrepancies between browser types</li>
+        <li>Inconsistent visual completion detection</li>
+      </ul>
+    </div>
+  </div>
+</body>
+</html>

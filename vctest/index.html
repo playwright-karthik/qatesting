@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Catchpoint VC Bug Test - Public</title>
+  <style>
+    body { 
+      font-family: Arial, sans-serif; 
+      margin: 40px; 
+      background-color: #f5f5f5;
+    }
+    .container {
+      max-width: 800px;
+      margin: 0 auto;
+      background: white;
+      padding: 30px;
+      border-radius: 8px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+    .nav { 
+      margin-bottom: 20px; 
+      padding: 10px;
+      background: #e9ecef;
+      border-radius: 4px;
+    }
+    .nav a { 
+      margin-right: 15px; 
+      text-decoration: none; 
+      color: #007bff;
+      font-weight: 500;
+    }
+    .nav a:hover { text-decoration: underline; }
+    #results {
+      display: none;
+      margin-top: 20px;
+      padding: 15px;
+      font-size: 18px;
+      color: #28a745;
+      background: #d4edda;
+      border: 1px solid #c3e6cb;
+      border-radius: 4px;
+    }
+    .search-container {
+      margin: 20px 0;
+    }
+    .search-input {
+      width: 100%;
+      max-width: 400px;
+      padding: 10px;
+      font-size: 16px;
+      border: 2px solid #ddd;
+      border-radius: 4px;
+    }
+    .info-box {
+      background: #e3f2fd;
+      border: 1px solid #bbdefb;
+      border-radius: 4px;
+      padding: 20px;
+      margin: 20px 0;
+    }
+    .info-box h3 {
+      margin-top: 0;
+      color: #1976d2;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="nav">
+      <a href="index.html">🏠 Home</a>
+      <a href="about.html">ℹ️ About</a>
+      <a href="contact.html">📧 Contact</a>
+    </div>
+
+    <h1>🎯 Catchpoint VC Bug Demo - Public Version</h1>
+    <p>This page demonstrates soft navigation (SPA) behavior for Catchpoint VC testing.</p>
+    
+    <div class="info-box">
+      <h3>📊 How to Use This Test</h3>
+      <p>Type in the search box below to trigger soft navigation. The results appear without a page reload, which helps reproduce the VC bug where <strong>Visually Complete > Webpage Response Time</strong>.</p>
+    </div>
+
+    <div class="search-container">
+      <input 
+        type="text" 
+        id="search" 
+        class="search-input"
+        placeholder="Type a keyword..." 
+        autocomplete="off"
+      >
+      <div id="results">Results appear here…</div>
+    </div>
+
+    <div class="info-box">
+      <h3>🔧 Test Instructions for Catchpoint</h3>
+      <ul>
+        <li>✅ <strong>Step 1:</strong> Navigate to this page (full navigation)</li>
+        <li>✅ <strong>Step 2:</strong> Type in search box (soft navigation)</li>
+        <li>📈 <strong>Compare:</strong> Soft navigation timing vs full navigation timing</li>
+        <li>🚨 <strong>VC Bug:</strong> When soft navigation takes longer than full navigation</li>
+      </ul>
+    </div>
+
+    <div class="info-box">
+      <h3>🌐 Public Access</h3>
+      <p>This page is hosted publicly and accessible from anywhere without VPN. Perfect for:</p>
+      <ul>
+        <li>Remote Catchpoint testing</li>
+        <li>Cross-network performance testing</li>
+        <li>Public CI/CD integration</li>
+        <li>Sharing with team members</li>
+      </ul>
+    </div>
+  </div>
+
+  <script>
+    const input = document.getElementById('search');
+    const results = document.getElementById('results');
+
+    // Add loading state for better UX
+    input.addEventListener('input', () => {
+      if (input.value.trim() === '') {
+        results.style.display = 'none';
+        return;
+      }
+
+      // Soft visual change, no reload
+      results.style.display = 'block';
+      results.style.color = '#ffc107';
+      results.textContent = '🔍 Searching for: ' + input.value;
+
+      // Simulate async loading with delay (important for VC testing)
+      setTimeout(() => {
+        results.style.color = '#28a745';
+        results.innerHTML = `✅ <strong>Results found for:</strong> ${input.value}<br><small>This update happened via soft navigation (no page reload)</small>`;
+      }, 1200); // 1.2 second delay to make VC timing observable
+    });
+
+    // Clear results when input is empty
+    input.addEventListener('blur', () => {
+      if (input.value.trim() === '') {
+        setTimeout(() => {
+          results.style.display = 'none';
+        }, 2000);
+      }
+    });
+
+    console.log('🎯 Catchpoint VC Test Page Loaded');
+    console.log('📍 Public URL - No VPN required');
+    console.log('🔗 Ready for Catchpoint integration');
+  </script>
+</body>
+</html>

@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Contact - Catchpoint VC Bug Test</title>
+  <style>
+    body { 
+      font-family: Arial, sans-serif; 
+      margin: 40px; 
+      background-color: #f8f9fa;
+    }
+    .container {
+      max-width: 800px;
+      margin: 0 auto;
+      background: white;
+      padding: 30px;
+      border-radius: 8px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+    .nav { 
+      margin-bottom: 20px; 
+      padding: 10px;
+      background: #e9ecef;
+      border-radius: 4px;
+    }
+    .nav a { 
+      margin-right: 15px; 
+      text-decoration: none; 
+      color: #007bff;
+      font-weight: 500;
+    }
+    .nav a:hover { text-decoration: underline; }
+    .form-group {
+      margin-bottom: 20px;
+    }
+    .form-group label {
+      display: block;
+      margin-bottom: 5px;
+      font-weight: bold;
+      color: #495057;
+    }
+    .form-group input,
+    .form-group textarea {
+      width: 100%;
+      max-width: 500px;
+      padding: 10px;
+      border: 2px solid #ddd;
+      border-radius: 4px;
+      font-size: 16px;
+    }
+    .form-group textarea {
+      height: 120px;
+      resize: vertical;
+    }
+    .submit-btn {
+      background: #007bff;
+      color: white;
+      padding: 12px 25px;
+      border: none;
+      border-radius: 4px;
+      font-size: 16px;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+    .submit-btn:hover {
+      background: #0056b3;
+    }
+    .form-message {
+      display: none;
+      margin-top: 20px;
+      padding: 15px;
+      border-radius: 4px;
+      font-weight: bold;
+    }
+    .form-message.success {
+      background: #d4edda;
+      border: 1px solid #c3e6cb;
+      color: #155724;
+    }
+    .info-box {
+      background: #e9ecef;
+      border: 1px solid #dee2e6;
+      border-radius: 4px;
+      padding: 20px;
+      margin: 20px 0;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="nav">
+      <a href="index.html">🏠 Home</a>
+      <a href="about.html">ℹ️ About</a>
+      <a href="contact.html">📧 Contact</a>
+    </div>
+
+    <h1>📧 Contact Form - Advanced VC Testing</h1>
+
+    <div class="info-box">
+      <h3>🎯 Advanced SPA Interaction Testing</h3>
+      <p>This contact form provides complex user interactions for advanced VC bug testing:</p>
+      <ul>
+        <li><strong>Form Validation:</strong> Real-time validation without page reload</li>
+        <li><strong>Submit Processing:</strong> Simulated async form submission</li>
+        <li><strong>Dynamic Content:</strong> Success messages via DOM manipulation</li>
+        <li><strong>Multi-step Flow:</strong> Complex interaction chains for VC analysis</li>
+      </ul>
+    </div>
+
+    <form id="contact-form">
+      <div class="form-group">
+        <label for="name">Name:</label>
+        <input type="text" id="name" name="name" required>
+        <div id="name-error" class="error-message"></div>
+      </div>
+
+      <div class="form-group">
+        <label for="email">Email:</label>
+        <input type="email" id="email" name="email" required>
+        <div id="email-error" class="error-message"></div>
+      </div>
+
+      <div class="form-group">
+        <label for="subject">Subject:</label>
+        <input type="text" id="subject" name="subject" required>
+        <div id="subject-error" class="error-message"></div>
+      </div>
+
+      <div class="form-group">
+        <label for="message">Message:</label>
+        <textarea id="message" name="message" required placeholder="Describe your Catchpoint VC testing scenario..."></textarea>
+        <div id="message-error" class="error-message"></div>
+      </div>
+
+      <button type="submit" class="submit-btn" id="submit-btn">
+        📤 Submit Message
+      </button>
+
+      <div id="form-message" class="form-message"></div>
+    </form>
+
+    <div class="info-box">
+      <h3>🔬 How This Tests VC</h3>
+      <p><strong>Test Scenario:</strong> Fill out the form completely and submit to trigger:</p>
+      <ul>
+        <li>✅ <strong>Validation Phase:</strong> Real-time field validation (soft navigation)</li>
+        <li>⏳ <strong>Processing Phase:</strong> 2-second simulated submission delay</li>
+        <li>✨ <strong>Success Phase:</strong> Dynamic success message display</li>
+        <li>📊 <strong>VC Measurement:</strong> Compare timing vs full navigation</li>
+      </ul>
+      <p><strong>Expected VC Bug:</strong> The form submission visual completion may exceed the initial page load time, demonstrating the VC timing issue.</p>
+    </div>
+  </div>
+
+  <script>
+    const form = document.getElementById('contact-form');
+    const submitBtn = document.getElementById('submit-btn');
+    const formMessage = document.getElementById('form-message');
+
+    // Real-time validation (soft navigation)
+    function validateField(field, errorElement, validator) {
+      field.addEventListener('blur', () => {
+        const isValid = validator(field.value);
+        if (!isValid) {
+          errorElement.textContent = `❌ Please enter a valid ${field.name}`;
+          errorElement.style.color = '#dc3545';
+          errorElement.style.display = 'block';
+          errorElement.style.fontSize = '14px';
+          errorElement.style.marginTop = '5px';
+        } else {
+          errorElement.textContent = `✅ Valid ${field.name}`;
+          errorElement.style.color = '#28a745';
+        }
+      });
+
+      field.addEventListener('input', () => {
+        if (errorElement.textContent) {
+          const isValid = validator(field.value);
+          errorElement.textContent = isValid ? `✅ Valid ${field.name}` : `❌ Please enter a valid ${field.name}`;
+          errorElement.style.color = isValid ? '#28a745' : '#dc3545';
+        }
+      });
+    }
+
+    // Set up validation for all fields
+    validateField(
+      document.getElementById('name'),
+      document.getElementById('name-error'),
+      value => value.trim().length >= 2
+    );
+
+    validateField(
+      document.getElementById('email'),
+      document.getElementById('email-error'),
+      value => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)
+    );
+
+    validateField(
+      document.getElementById('subject'),
+      document.getElementById('subject-error'),
+      value => value.trim().length >= 5
+    );
+
+    validateField(
+      document.getElementById('message'),
+      document.getElementById('message-error'),
+      value => value.trim().length >= 10
+    );
+
+    // Form submission (complex soft navigation)
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      // Start processing state
+      submitBtn.disabled = true;
+      submitBtn.textContent = '⏳ Processing...';
+      submitBtn.style.background = '#ffc107';
+
+      formMessage.style.display = 'block';
+      formMessage.className = 'form-message';
+      formMessage.style.background = '#fff3cd';
+      formMessage.style.color = '#856404';
+      formMessage.textContent = '📤 Submitting your message...';
+
+      // Simulate async processing (important for VC timing)
+      await new Promise(resolve => setTimeout(resolve, 2000));
+
+      // Success state (soft visual update)
+      submitBtn.textContent = '✅ Sent Successfully!';
+      submitBtn.style.background = '#28a745';
+
+      formMessage.className = 'form-message success';
+      formMessage.innerHTML = `
+        <strong>🎉 Message Sent Successfully!</strong><br>
+        <small>📊 This success message was displayed via soft navigation (no page reload)</small><br>
+        <small>⏱️ Processing took 2 seconds - perfect for VC timing analysis</small>
+      `;
+
+      // Reset form after delay
+      setTimeout(() => {
+        form.reset();
+        submitBtn.disabled = false;
+        submitBtn.textContent = '📤 Submit Message';
+        submitBtn.style.background = '#007bff';
+        
+        // Clear all validation messages
+        document.querySelectorAll('.error-message').forEach(el => {
+          el.textContent = '';
+          el.style.display = 'none';
+        });
+      }, 4000);
+
+      console.log('🎯 Contact form submission completed');
+      console.log('📊 VC timing measurement point reached');
+    });
+
+    console.log('📧 Contact form loaded');
+    console.log('🔬 Ready for advanced VC testing');
+  </script>
+</body>
+</html>
