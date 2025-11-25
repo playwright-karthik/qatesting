@@ -1,0 +1,170 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Chrome HTTP/2 Prioritization — Browser‑only Lab</title>
+  <!--
+    PURPOSE
+    =======
+    A minimal page to study how *Chrome* prioritizes requests (no RFC7540 tree control),
+    using modern browser-visible signals:
+      • HTML Priority Hints:  <img fetchpriority> and <link rel=preload fetchpriority>
+      • Resource order & initiator differences
+      • Deliberate contention (many large images/scripts) under throttling
+
+    HOW TO USE
+    ==========
+    1) Serve over HTTP/2 and open this page in Chrome.
+    2) DevTools → Network:
+       - Enable columns: Protocol, Priority, Initiator, Waterfall.
+       - Check "Disable cache" and choose Network Throttling (e.g., Fast 3G).
+    3) Click a scenario below, then observe request ordering and the Priority column.
+       Note: DevTools shows *initial* priority; Chrome may change internal priority later.
+
+    ASSETS
+    ======
+    Adjust the paths below to your host. The sample filenames match the asset pack I provided:
+      ./assets/theme.css
+      ./assets/jquery.js, ./assets/underscore.js, ./assets/doctools.js, ./assets/theme.js
+      ./assets/img/photo1.jpg ... photo8.jpg (you can duplicate the 3 provided photos)
+  -->
+  <style>
+    :root { color-scheme: light dark; }
+    body { font-family: system-ui, -apple-system, Segoe UI, Roboto, sans-serif; margin: 0; padding: 20px; }
+    .wrap { max-width: 1100px; margin: 0 auto; }
+    h1 { font-size: 1.4rem; margin: 0 0 6px; }
+    p { margin: 6px 0 12px; opacity: .9; }
+    .row { display:flex; gap:10px; flex-wrap:wrap; align-items:center; }
+    button { padding:10px 14px; border-radius:12px; border:1px solid rgba(0,0,0,.35); background:#111; color:#fff; cursor:pointer; font-weight:700; }
+    button:disabled { opacity:.5; cursor:not-allowed; }
+    .log { border:1px solid rgba(0,0,0,.12); border-radius:12px; padding:10px; height:240px; overflow:auto; font:12.5px ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; background:rgba(0,0,0,.03) }
+    .grid { display:grid; grid-template-columns: 1fr; gap:12px }
+    @media (min-width: 960px){ .grid{ grid-template-columns: 1fr 1fr } }
+    img.thumb { width: 120px; height: 90px; object-fit: cover; border-radius:10px; border:1px solid rgba(0,0,0,.2) }
+    code.k { padding:2px 6px; border-radius:6px; background:rgba(0,0,0,.06) }
+  </style>
+  <link rel="preload" as="script" href="./assets/jquery.js" fetchpriority="low">
+  <!-- preload low on purpose to compare with high/auto inserted later -->
+</head>
+<body>
+  <div class="wrap">
+    <h1>Chrome HTTP/2 Prioritization — Browser‑only Lab</h1>
+    <p>This demonstrates how Chrome schedules competing requests using <code class="k">fetchpriority</code>,
+       element types, and document order. There is no RFC‑7540 dependency tree control here—this is about browser behavior.</p>
+
+    <div class="grid">
+      <section>
+        <h2>Scenarios</h2>
+        <div class="row">
+          <button id="scnA">A) Baseline: 6 images (auto priority)</button>
+          <button id="scnB">B) Mixed: 3 high vs 3 low images</button>
+          <button id="scnC">C) Preload CSS (high) + images (low)</button>
+          <button id="scnD">D) Scripts vs images (scripts high)</button>
+          <button id="clear">Clear DOM</button>
+        </div>
+        <p><strong>Tip:</strong> Set DevTools throttling (e.g., Fast 3G) and disable cache to make differences obvious.</p>
+
+        <div class="log" id="log" aria-live="polite"></div>
+      </section>
+
+      <section>
+        <h2>Playground</h2>
+        <p>Insert your own image URLs (one per line). First half high, second half low.</p>
+        <textarea id="urls" style="width:100%;height:140px">./assets/img/photo1.jpg
+./assets/img/photo2.jpg
+./assets/img/photo3.jpg
+./assets/img/photo1.jpg
+./assets/img/photo2.jpg
+./assets/img/photo3.jpg</textarea>
+        <div class="row">
+          <button id="runCustom">Run custom (split high/low)</button>
+        </div>
+        <div id="stage" class="row" style="margin-top:10px; gap:12px; flex-wrap:wrap"></div>
+      </section>
+    </div>
+
+    <section style="margin-top:16px">
+      <h2>What to look for in DevTools</h2>
+      <ul>
+        <li><strong>Protocol</strong> should show <code>h2</code> (not h3) for apples‑to‑apples.</li>
+        <li><strong>Priority</strong> column: compare values for High/Low/Auto resources.</li>
+        <li><strong>Waterfall</strong>: on a throttled network, high priority should start/finish sooner.</li>
+        <li>Note: DevTools shows the <em>initial</em> priority; Chrome may adjust internally during load.</li>
+      </ul>
+    </section>
+  </div>
+
+  <script>
+    const $ = s => document.querySelector(s);
+    const log = (m)=>{ const d=document.createElement('div'); d.textContent=m; $('#log').appendChild(d); $('#log').scrollTop = $('#log').scrollHeight; };
+    function clearStage(){ $('#stage').innerHTML=''; $('#log').innerHTML=''; }
+
+    // Util to add an image with optional fetchpriority
+    function addImg(src, prio='auto'){
+      const img = new Image();
+      img.fetchPriority = prio; // 'high' | 'low' | 'auto'
+      img.decoding = 'async';
+      img.loading = 'eager';
+      img.className = 'thumb';
+      img.src = src + (src.includes('?')?'&':'?') + 'cb=' + Math.random().toString(36).slice(2);
+      $('#stage').appendChild(img);
+    }
+
+    // Scenario A: all auto priority
+    $('#scnA').addEventListener('click', ()=>{
+      clearStage();
+      log('Scenario A: 6 images, fetchpriority=auto');
+      ['./assets/img/photo1.jpg','./assets/img/photo2.jpg','./assets/img/photo3.jpg','./assets/img/photo1.jpg','./assets/img/photo2.jpg','./assets/img/photo3.jpg']
+        .forEach(u=>addImg(u,'auto'));
+    });
+
+    // Scenario B: 3 high then 3 low (contention)
+    $('#scnB').addEventListener('click', ()=>{
+      clearStage();
+      log('Scenario B: first 3 images high, next 3 low');
+      ['./assets/img/photo1.jpg','./assets/img/photo2.jpg','./assets/img/photo3.jpg'].forEach(u=>addImg(u,'high'));
+      ['./assets/img/photo1.jpg','./assets/img/photo2.jpg','./assets/img/photo3.jpg'].forEach(u=>addImg(u,'low'));
+    });
+
+    // Scenario C: Preload CSS high; images low
+    $('#scnC').addEventListener('click', ()=>{
+      clearStage();
+      log('Scenario C: <link rel=preload as=style fetchpriority=high> then 6 low images');
+      const l = document.createElement('link');
+      l.rel = 'preload'; l.as = 'style'; l.href = './assets/theme.css?cb=' + Math.random().toString(36).slice(2);
+      l.fetchPriority = 'high';
+      document.head.appendChild(l);
+      ;['./assets/img/photo1.jpg','./assets/img/photo2.jpg','./assets/img/photo3.jpg','./assets/img/photo1.jpg','./assets/img/photo2.jpg','./assets/img/photo3.jpg']
+        .forEach(u=>addImg(u,'low'));
+    });
+
+    // Scenario D: Scripts vs images
+    $('#scnD').addEventListener('click', ()=>{
+      clearStage();
+      log('Scenario D: insert two <script> (high by type) while loading 6 images low');
+      // insert scripts (modulepreload + module)
+      const mp = document.createElement('link');
+      mp.rel = 'modulepreload'; mp.href = './assets/theme.js?cb=' + Math.random().toString(36).slice(2);
+      document.head.appendChild(mp);
+      const s = document.createElement('script');
+      s.type = 'module'; s.src = './assets/jquery.js?cb=' + Math.random().toString(36).slice(2);
+      document.head.appendChild(s);
+      ;['./assets/img/photo1.jpg','./assets/img/photo2.jpg','./assets/img/photo3.jpg','./assets/img/photo1.jpg','./assets/img/photo2.jpg','./assets/img/photo3.jpg']
+        .forEach(u=>addImg(u,'low'));
+    });
+
+    // Playground: first half high, second half low
+    $('#runCustom').addEventListener('click', ()=>{
+      clearStage();
+      const lines = $('#urls').value.split(/\n+/).map(s=>s.trim()).filter(Boolean);
+      const mid = Math.floor(lines.length/2);
+      log(`Custom: ${mid} high, ${lines.length-mid} low`);
+      lines.slice(0, mid).forEach(u=>addImg(u,'high'));
+      lines.slice(mid).forEach(u=>addImg(u,'low'));
+    });
+
+    $('#clear').addEventListener('click', clearStage);
+  </script>
+</body>
+</html>

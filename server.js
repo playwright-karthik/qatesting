@@ -2,7 +2,7 @@ const http = require('http');
 const fs = require('fs');
 const path = require('path');
 
-const PORT = 6000;
+const PORT = 38636;
 
 http.createServer((req, res) => {
   const url = req.url.split('?')[0];  // remove query parameters

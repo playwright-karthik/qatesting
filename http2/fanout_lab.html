@@ -1,0 +1,106 @@
+
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>JS Fanout Lab — 3–5 entries spawn 30–40 JS each</title>
+  <style>
+    :root { color-scheme: light dark; }
+    body { font-family: system-ui, -apple-system, Segoe UI, Roboto, sans-serif; margin:0; padding:20px; }
+    .wrap { max-width: 1000px; margin: 0 auto; }
+    h1 { font-size: 1.4rem; margin: 0 0 8px; }
+    .row { display:flex; gap:10px; flex-wrap:wrap; align-items:center }
+    label { font-weight:600 }
+    input, select { padding:10px 12px; border-radius:10px; border:1px solid rgba(0,0,0,.25) }
+    button { padding:10px 14px; border-radius:12px; border:1px solid rgba(0,0,0,.35); background:#111; color:#fff; cursor:pointer; font-weight:700 }
+    .small { font-size: 12px; opacity: .85 }
+    code.k { padding:2px 6px; border-radius:6px; background:rgba(0,0,0,.06) }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <h1>JS Fanout Lab — 3–5 entries spawn 30–40 JS each</h1>
+    <p>Simulate a real-world bundle where a handful of entry scripts fan out to many module requests. Choose how entries load their children (<code class="k">import()</code>, <code class="k">script</code>, or <code class="k">fetch</code>).</p>
+    <div class="row">
+      <label>Entries
+        <input id="entries" type="number" min="1" max="5" value="4" />
+      </label>
+      <label>childMin
+        <input id="childMin" type="number" min="1" max="48" value="30" />
+      </label>
+      <label>childMax
+        <input id="childMax" type="number" min="1" max="48" value="40" />
+      </label>
+      <label>childDelay (ms)
+        <input id="childDelay" type="number" min="0" max="200" value="0" />
+      </label>
+      <label>method
+        <select id="method">
+          <option value="import">import</option>
+          <option value="script">script</option>
+          <option value="fetch">fetch</option>
+        </select>
+      </label>
+      <label>prefix
+        <input id="prefix" type="text" value="../jsmods" />
+      </label>
+      <label style="display:flex;align-items:center;gap:8px">
+        <input id="header" type="checkbox" /> ~900B header (fetch only)
+      </label>
+      <label>jitter (ms)
+        <input id="jitter" type="number" min="0" max="50" value="10" />
+      </label>
+      <button id="run">Run</button>
+    </div>
+    <p class="small">DevTools → Network. Keep throttling OFF for your test. Compare <em>Request sent</em> on the entry JS and on children. If extensions touch requests, try a clean profile to compare.</p>
+  </div>
+  <script type="module">
+  const $ = s => document.querySelector(s);
+  const ENTRIES = ['./entry/entry1.js','./entry/entry2.js','./entry/entry3.js','./entry/entry4.js','./entry/entry5.js'];
+
+  function loadParamsFromURL(){
+    const p = new URLSearchParams(location.search);
+    if (p.has('method')) $('#method').value = p.get('method');
+    if (p.has('childMin')) $('#childMin').value = p.get('childMin');
+    if (p.has('childMax')) $('#childMax').value = p.get('childMax');
+    if (p.has('childDelay')) $('#childDelay').value = p.get('childDelay');
+    if (p.has('prefix')) $('#prefix').value = p.get('prefix');
+    if (p.has('jitter')) $('#jitter').value = p.get('jitter');
+    if (p.has('entries')) $('#entries').value = p.get('entries');
+    $('#header').checked = p.has('header');
+  }
+
+  function applyParamsToURL(){
+    const p = new URLSearchParams(location.search);
+    p.set('method', $('#method').value);
+    p.set('childMin', $('#childMin').value);
+    p.set('childMax', $('#childMax').value);
+    p.set('childDelay', $('#childDelay').value);
+    p.set('prefix', $('#prefix').value);
+    p.set('jitter', $('#jitter').value);
+    p.set('entries', $('#entries').value);
+    if ($('#header').checked) p.set('header','1'); else p.delete('header');
+    history.replaceState(null, '', '?' + p.toString());
+  }
+
+  function run(){
+    applyParamsToURL();
+    const n = Math.min(5, Math.max(1, parseInt($('#entries').value||'4',10)));
+    const head = document.head || document.documentElement;
+    for (let i=0; i<n; i++){
+      const s = document.createElement('script');
+      s.type = 'module';
+      s.src = `./entry/entry${i+1}.js?cb=` + Math.random().toString(36).slice(2);
+      head.appendChild(s);
+    }
+  }
+
+  document.getElementById('run').addEventListener('click', run);
+  // NEW: read URL params first, then run once.
+  loadParamsFromURL();
+  run();
+</script>
+
+</body>
+</html>

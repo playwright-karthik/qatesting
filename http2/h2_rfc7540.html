@@ -1,0 +1,82 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>HTTP/2 Dependency Tree Demo (RFC 7540)</title>
+  <!--
+    Goal: Provide an HTML page that, when fetched by an HTTP/2 client such as
+    `nghttp -nva -a https://host/demo.html`, triggers a classic dependency tree like
+    the nghttp2 blog post describes: several JS files as non-exclusive children of
+    the HTML, then a CSS requested exclusively (causing re-parenting), then a JS
+    requested after the CSS as the CSS's child.
+
+    Important:
+    - The actual PRIORITY frames (deps/weights/exclusive) are created by the *client*.
+      Browsers don't let JS control the HTTP/2 priority tree, but the `nghttp` client
+      implements the scheme used in the blog. So use this HTML with nghttp's `-a`
+      (spider) option to reproduce the logs.
+    - Replace the placeholder asset URLs below with real files on your server. Make
+      them reasonably large (e.g., 200–1000 KB) so scheduling is visible.
+  -->
+
+  <!-- 1) CSS that we want to be prioritized; place it *after* some scripts to make
+       the client re-parent with an exclusive dependency (per nghttp's strategy). -->
+  <link rel="stylesheet" href="./assets/theme.css">
+
+  <style>
+    :root { color-scheme: light dark; }
+    body { font-family: system-ui, -apple-system, Segoe UI, Roboto, sans-serif; margin: 0; }
+    header { padding: 18px 24px; border-bottom: 1px solid rgba(0,0,0,.12); }
+    main { padding: 16px 24px; max-width: 900px; }
+    .hint { opacity: .85; }
+    .files { list-style: none; padding: 0; }
+    .files li { padding: 6px 0; }
+    code { padding: 2px 6px; border-radius: 6px; background: rgba(0,0,0,.06); }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>HTTP/2 Dependency Tree Demo</h1>
+    <p class="hint">Use <code>nghttp -nva -a https://your-host/demo.html</code> and inspect the PRIORITY logs. This page's asset order mirrors the nghttp2 blog example.</p>
+  </header>
+
+  <main>
+    <h2>Included resources (in document order)</h2>
+    <ol class="files">
+      <li>1) <code>/assets/jquery.js</code> (script)</li>
+      <li>2) <code>/assets/underscore.js</code> (script)</li>
+      <li>3) <code>/assets/doctools.js</code> (script)</li>
+      <li>4) <code>/assets/theme.css</code> (stylesheet)</li>
+      <li>5) <code>/assets/theme.js</code> (script, added after CSS)</li>
+    </ol>
+
+    <p class="hint">
+      Suggested sizes to make scheduling visible: scripts ≈ 300–800 KB, CSS ≈ 100–300 KB.
+      Any content works; bigger files make the timing clearer.
+    </p>
+
+    <!-- Place the three initial JS first (typical in the blog's walkthrough). -->
+    <script src="./assets/jquery.js" defer></script>
+    <script src="./assets/underscore.js" defer></script>
+    <script src="./assets/doctools.js" defer></script>
+
+    <!-- The CSS follows the initial scripts; nghttp's prioritizer will typically
+         create an exclusive dependency here, reparenting prior children under the CSS. -->
+    <link rel="stylesheet" href="./assets/theme.css">
+    <!-- A script after CSS; in the blog example, this becomes a child of the CSS node. -->
+    <script src="./assets/theme.js" defer></script>
+
+    <section style="margin-top:24px">
+      <h3>Optional: extra payload (images) to visualize scheduling</h3>
+      <p class="hint">Include a few large images so your server opens multiple HTTP/2 streams. These are just placeholders; point to real images on your origin.</p>
+      <img src="./assets/img/photo1.jpg" alt="img1" width="240" height="160" loading="eager">
+      <img src="./assets/img/photo2.jpg" alt="img2" width="240" height="160" loading="eager">
+      <img src="./assets/img/photo3.jpg" alt="img3" width="240" height="160" loading="eager">
+    </section>
+
+    <section style="margin-top:24px">
+    </section>
+  </main>
+</body>
+</html>

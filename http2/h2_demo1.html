@@ -1,0 +1,240 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>HTTP/2 Prioritization Learning Lab</title>
+  <style>
+    :root { color-scheme: light dark; }
+    body { font-family: system-ui, -apple-system, Segoe UI, Roboto, sans-serif; margin: 0; padding: 24px; line-height: 1.45; }
+    .wrap { max-width: 1000px; margin: 0 auto; }
+    h1 { font-size: 1.6rem; margin: 0 0 6px; }
+    .subtle { opacity: .8; margin-top: 0; }
+    .grid { display: grid; grid-template-columns: 1fr; gap: 14px; }
+    @media (min-width: 900px) { .grid { grid-template-columns: 1fr 1fr; } }
+
+    fieldset { border: 1px solid rgba(0,0,0,.15); border-radius: 14px; padding: 14px; }
+    legend { padding: 0 6px; font-weight: 700; }
+
+    label { display: block; font-weight: 600; margin: 8px 0 6px; }
+    input[type="text"], input[type="number"], select { width: 100%; padding: 10px 12px; border-radius: 10px; border: 1px solid rgba(0,0,0,.25); background: #fff; color: #111; }
+    textarea { width: 100%; min-height: 120px; padding: 10px 12px; border-radius: 10px; border: 1px solid rgba(0,0,0,.25); }
+
+    .row { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+    .btn { padding: 10px 14px; border-radius: 12px; border: 1px solid rgba(0,0,0,.35); background: #111; color: #fff; cursor: pointer; font-weight: 700; }
+    .btn:disabled { opacity: .5; cursor: not-allowed; }
+
+    .log { border: 1px solid rgba(0,0,0,.12); border-radius: 14px; padding: 12px; height: 280px; overflow: auto; font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size: 12.5px; background: rgba(0,0,0,.03); }
+    .pill { display: inline-block; padding: 2px 8px; border-radius: 999px; background: rgba(0,0,0,.08); margin-left: 6px; font-size: 11px; }
+    .ok { color: #047857; }
+    .warn { color: #b45309; }
+    .err { color: #b91c1c; }
+    code.k { padding: 2px 6px; border-radius: 6px; background: rgba(0,0,0,.06); }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <h1>HTTP/2 Prioritization & Dependency — Learning Lab</h1>
+    <p class="subtle">This page fires multiple requests using different <em>priority hints</em> and lets you compare start/finish timing. Note: browsers do not expose the old HTTP/2 <em>"dependency tree" PRIORITY frames</em> to JS, and many servers ignore them. Modern practice uses the <code class="k">Priority</code> header (RFC 9218) and HTML <code class="k">fetchpriority</code> hints. This demo focuses on those.</p>
+
+    <div class="grid">
+      <fieldset>
+        <legend>1) Fetch() experiments</legend>
+        <label for="urls">Request URLs (one per line)</label>
+        <textarea id="urls" placeholder="https://your-host/slow?a=1\nhttps://your-host/slow?a=2\nhttps://your-host/bigfile.bin"></textarea>
+
+        <div class="row">
+          <div style="flex:1">
+            <label for="priority">Priority header (RFC 9218 format)</label>
+            <input id="priority" type="text" value="u=3, i" placeholder="e.g. u=0 or u=5, i; see RFC 9218" />
+          </div>
+          <div>
+            <label for="concurrency">Max in-flight</label>
+            <input id="concurrency" type="number" value="6" min="1" max="32" />
+          </div>
+          <div>
+            <label for="repeat">Repeat count</label>
+            <input id="repeat" type="number" value="1" min="1" max="20" />
+          </div>
+        </div>
+
+        <div class="row" style="margin-top:8px">
+          <label style="display:flex;align-items:center;gap:8px">
+            <input id="send-priority" type="checkbox" checked /> Send <code class="k">Priority</code> request header (requires CORS allow)
+          </label>
+          <label style="display:flex;align-items:center;gap:8px">
+            <input id="cache-bust" type="checkbox" /> Add cache-busting query
+          </label>
+        </div>
+
+        <div class="row" style="margin-top:10px">
+          <button id="run-fetch" class="btn">Run fetch batch</button>
+          <span id="h2-indicator" class="pill">protocol: <span id="proto">?</span></span>
+        </div>
+      </fieldset>
+
+      <fieldset>
+        <legend>2) Image & preload (Priority Hints)</legend>
+        <label for="imgurls">Image URLs (one per line)</label>
+        <textarea id="imgurls" placeholder="https://your-host/img1.jpg\nhttps://your-host/img2.jpg"></textarea>
+
+        <div class="row">
+          <div style="flex:1">
+            <label for="img-prio">img <code class="k">fetchpriority</code></label>
+            <select id="img-prio">
+              <option value="auto">auto</option>
+              <option value="high">high</option>
+              <option value="low">low</option>
+            </select>
+          </div>
+          <div style="flex:1">
+            <label for="preload-prio"><code class="k">rel=preload</code> priority</label>
+            <select id="preload-prio">
+              <option value="">(none)</option>
+              <option value="high">high</option>
+              <option value="low">low</option>
+            </select>
+          </div>
+        </div>
+        <div class="row" style="margin-top:10px">
+          <button id="run-img" class="btn">Inject images</button>
+          <button id="clear-img" class="btn" style="background:#444">Clear</button>
+        </div>
+        <div id="img-container" class="row" style="margin-top:10px;gap:12px;flex-wrap:wrap"></div>
+      </fieldset>
+    </div>
+
+    <fieldset style="margin-top:14px">
+      <legend>Resource timing</legend>
+      <div class="row" style="gap:8px; margin-bottom:6px">
+        <button id="snap" class="btn">Snapshot timings</button>
+        <button id="reset" class="btn" style="background:#444">Clear log</button>
+      </div>
+      <div class="log" id="log" aria-live="polite"></div>
+    </fieldset>
+
+    <p class="subtle">Notes:
+      <br>• To set the <code class="k">Priority</code> header cross-origin, the server must include <code class="k">Access-Control-Allow-Headers: Priority</code>. Otherwise, the browser will block the custom header.
+      <br>• Whether hints take effect depends on browser & server. Many stacks translate hints into HTTP <code class="k">Priority</code> and/or protocol-specific frames under the hood.
+      <br>• The old HTTP/2 dependency tree isn’t exposed to JS and is deprecated in practice; use these hints to study scheduling.
+    </p>
+  </div>
+
+  <script>
+    // --- helpers ---
+    const $ = sel => document.querySelector(sel);
+    const $$ = sel => Array.from(document.querySelectorAll(sel));
+    const logEl = $('#log');
+    function log(msg, cls='') { const d=document.createElement('div'); d.className=cls; d.textContent=msg; logEl.appendChild(d); logEl.scrollTop = logEl.scrollHeight; }
+    function clearLog(){ logEl.innerHTML=''; }
+
+    // Detect protocol for this origin using a tiny fetch (best-effort)
+    async function detectProtocol() {
+      try {
+        const r = await fetch(location.href, { method:'HEAD', cache:'no-store' });
+        const p = r?.url ? performance.getEntriesByType('navigation')[0]?.nextHopProtocol : '';
+        $('#proto').textContent = p || 'unknown';
+      } catch(e) { $('#proto').textContent = 'unknown'; }
+    }
+    detectProtocol();
+
+    // --- Fetch batch with optional Priority header ---
+    async function runFetchBatch() {
+      clearLog();
+      const sendPriority = $('#send-priority').checked;
+      const prival = $('#priority').value.trim();
+      const concurrency = Math.max(1, Math.min(32, parseInt($('#concurrency').value,10)||6));
+      const repeat = Math.max(1, Math.min(20, parseInt($('#repeat').value,10)||1));
+      let urls = $('#urls').value.split(/\n+/).map(s=>s.trim()).filter(Boolean);
+      if ($('#cache-bust').checked) {
+        urls = urls.map(u => {
+          try { const url = new URL(u); url.searchParams.set('cb', Math.random().toString(36).slice(2)); return url.toString(); }
+          catch { return u + (u.includes('?')?'&':'?') + 'cb=' + Math.random().toString(36).slice(2); }
+        });
+      }
+      const reqs = [];
+      for (let r=0; r<repeat; r++) for (const u of urls) reqs.push(u);
+
+      const headers = {};
+      if (sendPriority && prival) headers['Priority'] = prival; // requires ACAH: Priority on server for CORS
+
+      log(`Starting ${reqs.length} requests (concurrency ${concurrency})`);
+
+      const queue = reqs.slice();
+      let inFlight = 0; let done = 0; let id = 0;
+
+      function startOne() {
+        if (!queue.length) return;
+        const url = queue.shift();
+        const myId = ++id;
+        inFlight++;
+        const startT = performance.now();
+        fetch(url, { headers })
+          .then(r => r.blob())
+          .then(() => {
+            const dur = (performance.now()-startT).toFixed(0);
+            log(`#${myId} done in ${dur}ms — ${url}`,'ok');
+          })
+          .catch(e => log(`#${myId} ERROR ${e} — ${url}`,'err'))
+          .finally(() => { inFlight--; done++; if (queue.length) startOne(); });
+      }
+      for (let i=0;i<concurrency && i<reqs.length;i++) startOne();
+
+      const timer = setInterval(()=>{
+        log(`progress: ${done}/${reqs.length} in-flight=${inFlight}`);
+        if (done>=reqs.length) { clearInterval(timer); log('All fetches complete.'); }
+      }, 1000);
+    }
+
+    // --- Image & Preload experiments ---
+    function runImg() {
+      const urls = $('#imgurls').value.split(/\n+/).map(s=>s.trim()).filter(Boolean);
+      const fetchPri = $('#img-prio').value;
+      const preloadPri = $('#preload-prio').value;
+      const container = $('#img-container');
+
+      // optional: insert <link rel=preload> entries first
+      for (const u of urls) {
+        if (!preloadPri) continue;
+        const l = document.createElement('link');
+        l.rel = 'preload'; l.as = 'image'; l.href = u; l.fetchPriority = preloadPri; // hint
+        document.head.appendChild(l);
+      }
+
+      // then inject images (will create HTTP/2 streams with hints)
+      for (const u of urls) {
+        const img = new Image();
+        img.fetchPriority = fetchPri; // 'high'|'low'|'auto'
+        img.decoding = 'async';
+        img.loading = 'eager';
+        img.width = 120; img.height = 90; img.alt = 'img'; img.style.borderRadius='8px';
+        img.src = u;
+        container.appendChild(img);
+      }
+    }
+
+    function clearImg(){ $('#img-container').innerHTML=''; $$('link[rel=preload][as=image]').forEach(e=>e.remove()); }
+
+    // --- Resource Timing snapshot ---
+    function snapshotTimings(){
+      const items = performance.getEntriesByType('resource').slice(-200);
+      const nav = performance.getEntriesByType('navigation')[0];
+      const base = nav ? nav.startTime : 0;
+      log('--- Timing snapshot (last ~200 resources) ---','warn');
+      for (const e of items) {
+        const when = (e.startTime - base).toFixed(1);
+        const dur = e.duration.toFixed(1);
+        const proto = e.nextHopProtocol || '?';
+        log(`${when}ms  dur=${dur}ms  proto=${proto}  ${e.initiatorType}  ${e.name}`);
+      }
+    }
+
+    // wire up
+    $('#run-fetch').addEventListener('click', runFetchBatch);
+    $('#run-img').addEventListener('click', runImg);
+    $('#clear-img').addEventListener('click', clearImg);
+    $('#snap').addEventListener('click', snapshotTimings);
+    $('#reset').addEventListener('click', clearLog);
+  </script>
+</body>
+</html>
