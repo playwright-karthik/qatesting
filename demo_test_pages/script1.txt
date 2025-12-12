@@ -1,0 +1,54 @@
+// Step 1 - Landing Page
+await Catchpoint.startStep('Step1');
+await page.goto('https://playwright-karthik.github.io/qatesting/mytest1.html');
+
+const pageA_Promise = page.waitForEvent('popup');
+await page.getByRole('link', { name: 'Open Page A' }).click();
+const pageA = await pageA_Promise;
+
+await pageA.locator("//h1[text()='Page A']").waitFor({ state: 'visible' });
+await pageA.locator("//button[text()='Go To Page B']").first().click();
+
+
+// Step 2 - Page B popup
+const pageB_Promise = pageA.waitForEvent('popup');
+
+await Catchpoint.startStep('Click Page B', pageA);
+await pageA.waitForTimeout(2000);   // simulate real delay
+const pageB = await pageB_Promise;
+
+await pageB.locator("//h1[text()='Welcome to Page B']").waitFor({ state: 'visible' });
+
+
+// Step 3 - Page C popup
+await Catchpoint.startStep('Open Page C');
+const pageC_Promise = pageB.waitForEvent('popup');
+await pageB.locator("//a[text()='Open Page C']").first().click();
+const pageC = await pageC_Promise;
+
+await pageC.waitForTimeout(2000);
+await pageC.locator("//h1[text()='Page C']").waitFor({ state: 'visible' });
+
+
+// Step 4 - Open Home Page
+await Catchpoint.startStep('Open Home Page');
+const pageHome_Promise = pageC.waitForEvent('popup');
+await pageC.locator("//button[text()='Go Home']").first().click();
+const pageHome = await pageHome_Promise;
+
+await pageHome.waitForTimeout(3000);
+await expect(pageHome.getByRole('heading', { name: 'Home Dashboard' })).toBeVisible();
+
+
+// Step 5 - Assert UI areas
+await Catchpoint.startStep('Assert Content Cabinet');
+await expect(pageHome.locator("//div[@id='contentCabinet']")).toBeVisible();
+await expect(pageHome.locator("//button[@id='logoutButton']")).toBeVisible();
+
+
+// Step 6 - Logout
+await Catchpoint.startStep('Logout');
+await pageHome.locator("//button[@id='logoutButton']").click();
+await pageHome.locator("//text()[contains(.,'Please log in again')]").waitFor({
+    state: 'visible'
+});
