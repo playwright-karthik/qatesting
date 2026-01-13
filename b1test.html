@@ -1,0 +1,192 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Event-driven Submit</title>
+    <style>
+      body {
+        font-family: system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
+        margin: 24px;
+      }
+      .wrap {
+        max-width: 720px;
+        margin: 0 auto;
+      }
+      .row {
+        margin: 16px 0;
+      }
+      button.big {
+        font-size: 28px;
+        padding: 22px 28px;
+        width: 100%;
+        border-radius: 14px;
+        border: 2px solid #333;
+        cursor: pointer;
+      }
+      label {
+        display: inline-flex;
+        gap: 10px;
+        align-items: center;
+        font-size: 18px;
+      }
+      .hint {
+        color: #555;
+        font-size: 14px;
+      }
+      code {
+        background: #f2f2f2;
+        padding: 2px 6px;
+        border-radius: 6px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="wrap">
+      <h1>Event-driven navigation demo</h1>
+
+      <div class="row hint">
+        Uses query param <code>?event=...</code>. Supported button events:
+        <code>focus</code>, <code>clickat</code>, <code>blur</code>, <code>mousemove</code>,
+        <code>mouseup</code>, <code>mousedown</code>, <code>mousedownright</code>, and normal
+        submit via <code>submit</code>. Checkbox events: <code>check</code>, <code>uncheck</code>.
+      </div>
+
+      <form id="demoForm" action="https://www.catchpoint.com" method="GET">
+        <!-- Form can be empty; action is the key requirement. -->
+
+        <div class="row">
+          <label for="toggle">
+            <input id="toggle" name="toggle" type="checkbox" />
+            Checkbox (used for <code>event=check</code> / <code>event=uncheck</code>)
+          </label>
+        </div>
+
+        <div class="row">
+          <button id="bigBtn" class="big" type="submit">GO</button>
+        </div>
+
+        <div class="row hint">
+          Tip: Try <code>?event=clickat</code> then click different places on the button.
+        </div>
+      </form>
+    </div>
+
+    <script>
+      (function () {
+        function getEventParam() {
+          const url = new URL(window.location.href);
+          return (url.searchParams.get("event") || "").trim();
+        }
+
+        const eventParam = getEventParam();
+
+        const form = document.getElementById("demoForm");
+        const btn = document.getElementById("bigBtn");
+        const checkbox = document.getElementById("toggle");
+
+        // If event=uncheck, checkbox will already be checked.
+        if (eventParam === "uncheck") checkbox.checked = true;
+
+        let fired = false;
+
+        function navigate(extraParams) {
+          if (fired) return;
+          fired = true;
+
+          const dest = new URL(form.action);
+
+          // Always include which event caused the navigation (useful for debugging).
+          if (eventParam) dest.searchParams.set("event", eventParam);
+
+          // Add any extra params (e.g., click offsets).
+          if (extraParams && typeof extraParams === "object") {
+            for (const [k, v] of Object.entries(extraParams)) {
+              dest.searchParams.set(k, String(v));
+            }
+          }
+
+          // Navigate "as if submit was pressed".
+          window.location.assign(dest.toString());
+        }
+
+        // If event=submit, allow normal submit logic to apply.
+        // Otherwise, prevent default submit (so only the configured trigger navigates).
+        form.addEventListener("submit", function (e) {
+          if (eventParam !== "submit") {
+            e.preventDefault();
+            e.stopPropagation();
+          }
+        });
+
+        // Checkbox triggers.
+        checkbox.addEventListener("change", function () {
+          if (eventParam === "check" && checkbox.checked) {
+            navigate({ source: "checkbox" });
+          } else if (eventParam === "uncheck" && !checkbox.checked) {
+            navigate({ source: "checkbox" });
+          }
+        });
+
+        // Button triggers list.
+        const allowedButtonEvents = new Set([
+          "focus",
+          "clickat",
+          "blur",
+          "mousemove",
+          "mouseup",
+          "mousedown",
+          "mousedownright",
+        ]);
+
+        // If not one of the supported event types, do nothing special.
+        if (!allowedButtonEvents.has(eventParam)) return;
+
+        // Focus / blur / mouse events.
+        if (eventParam === "focus") {
+          btn.addEventListener("focus", function () {
+            navigate({ source: "button" });
+          });
+        } else if (eventParam === "blur") {
+          btn.addEventListener("blur", function () {
+            navigate({ source: "button" });
+          });
+        } else if (eventParam === "mousemove") {
+          btn.addEventListener("mousemove", function () {
+            navigate({ source: "button" });
+          });
+        } else if (eventParam === "mouseup") {
+          btn.addEventListener("mouseup", function () {
+            navigate({ source: "button" });
+          });
+        } else if (eventParam === "mousedown") {
+          btn.addEventListener("mousedown", function (e) {
+            // Only left mouse button
+            if (e.button === 0) navigate({ source: "button" });
+          });
+        } else if (eventParam === "mousedownright") {
+          // Right mouse button: use mousedown button===2 and also prevent the context menu.
+          btn.addEventListener("contextmenu", function (e) {
+            e.preventDefault();
+          });
+          btn.addEventListener("mousedown", function (e) {
+            if (e.button === 2) navigate({ source: "button" });
+          });
+        } else if (eventParam === "clickat") {
+          // "clickat" uses the click event, but captures x/y offset of the click within the button.
+          btn.addEventListener("click", function (e) {
+            // Prevent default submit so we can add x/y parameters.
+            e.preventDefault();
+            e.stopPropagation();
+
+            const rect = btn.getBoundingClientRect();
+            const x = Math.round(e.clientX - rect.left);
+            const y = Math.round(e.clientY - rect.top);
+
+            navigate({ source: "button", x: x, y: y });
+          });
+        }
+      })();
+    </script>
+  </body>
+</html>
