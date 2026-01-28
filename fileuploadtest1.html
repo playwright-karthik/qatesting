@@ -289,7 +289,6 @@
   const resetBtn   = document.getElementById('resetBtn');
 
   const statusEl   = document.getElementById('status');
-  const assertTok  = document.getElementById('assertToken');
 
   const fName = document.getElementById('fName');
   const fType = document.getElementById('fType');
@@ -329,7 +328,6 @@
   function showPreview(file){
     clearPreview();
 
-    // Image preview
     if (file.type && file.type.startsWith("image/")) {
       const img = document.createElement("img");
       img.alt = "Uploaded image preview";
@@ -339,7 +337,6 @@
       return;
     }
 
-    // Text preview for small-ish files
     const isTextLike = (file.type && (file.type.startsWith("text/") || file.type.includes("json") || file.type.includes("xml")))
                        || /\.(txt|log|csv|json|xml|yaml|yml|md)$/i.test(file.name);
 
@@ -380,6 +377,27 @@
 
   fileInput.addEventListener('change', updateFileDetails);
 
+  // --- NEW: parse URL hash parameters like #timeout=45&mode=fail ---
+  function getHashParams(){
+    // supports: #timeout=45 or #timeout=45&mode=success
+    const raw = (location.hash || "").replace(/^#/, "");
+    const params = new URLSearchParams(raw);
+
+    // Back-compat: plain "#fail" (your existing behavior)
+    const isFailFlag = raw.toLowerCase() === "fail";
+
+    const timeoutSec = Number(params.get("timeout"));
+    const mode = (params.get("mode") || "fail").toLowerCase(); // "fail" or "success"
+
+    return {
+      isFailFlag,
+      timeoutMs: Number.isFinite(timeoutSec) && timeoutSec > 0 ? Math.round(timeoutSec * 1000) : 0,
+      mode
+    };
+  }
+
+  const sleep = (ms) => new Promise(r => setTimeout(r, ms));
+
   uploadBtn.addEventListener('click', async () => {
     const file = fileInput.files && fileInput.files[0];
     if (!file) {
@@ -387,17 +405,45 @@
       return;
     }
 
-    // Simulate upload latency (so filmstrip shows transition)
-    setStatus("warn", "UPLOADING…", "Simulating upload (client-side).", "UPLOAD_IN_PROGRESS", "UPLOADING");
-    await new Promise(r => setTimeout(r, 650));
+    const { isFailFlag, timeoutMs, mode } = getHashParams();
 
-    // Optional forced fail for negative testing: add #fail to URL
-    if (location.hash.toLowerCase() === "#fail") {
+    // Forced "legacy" fail: #fail
+    if (isFailFlag) {
+      setStatus("warn", "UPLOADING…", "Simulating upload (client-side).", "UPLOAD_IN_PROGRESS", "UPLOADING");
+      await sleep(650);
       setStatus("err", "UPLOAD FAILED", "Forced failure mode (#fail).", "UPLOAD_FAIL_FORCED", "FAIL");
       return;
     }
 
-    // Success
+    // NEW: Forced long delay + timeout outcome via #timeout=45
+    if (timeoutMs > 0) {
+      setStatus(
+        "warn",
+        "UPLOADING…",
+        `Simulating slow upload for ${(timeoutMs/1000).toFixed(0)}s (hash timeout).`,
+        "UPLOAD_IN_PROGRESS",
+        "UPLOADING"
+      );
+
+      await sleep(timeoutMs);
+
+      if (mode === "success") {
+        setStatus("ok", "UPLOAD SUCCESS ✅", "Completed after simulated latency.", "UPLOAD_OK", "SUCCESS");
+      } else {
+        setStatus(
+          "err",
+          "UPLOAD FAILED",
+          `Simulated timeout after ${(timeoutMs/1000).toFixed(0)}s.`,
+          "UPLOAD_FAIL_TIMEOUT",
+          "TIMEOUT"
+        );
+      }
+      return;
+    }
+
+    // Default behavior (your original 650ms success path)
+    setStatus("warn", "UPLOADING…", "Simulating upload (client-side).", "UPLOAD_IN_PROGRESS", "UPLOADING");
+    await sleep(650);
     setStatus("ok", "UPLOAD SUCCESS ✅", "File accepted and processed (simulated).", "UPLOAD_OK", "SUCCESS");
   });
 
@@ -406,8 +452,8 @@
     updateFileDetails();
   });
 
-  // Initialize
   updateFileDetails();
 </script>
+
 </body>
 </html>
