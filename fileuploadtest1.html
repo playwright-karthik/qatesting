@@ -1,0 +1,413 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>QA File Upload Test (Client-side)</title>
+  <style>
+    :root{
+      --bg1:#1b1b3a;
+      --bg2:#693668;
+      --card:#ffffffee;
+      --text:#1b1b3a;
+      --ok:#19c37d;
+      --warn:#ffb020;
+      --err:#ff4d4f;
+      --accent:#5b8cff;
+    }
+    body{
+      margin:0;
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      background: radial-gradient(1200px 600px at 20% 10%, #2b2d77 0%, transparent 60%),
+                  radial-gradient(1000px 700px at 80% 0%, #9b2fae 0%, transparent 55%),
+                  linear-gradient(135deg, var(--bg1), var(--bg2));
+      min-height:100vh;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      padding:24px;
+      color:#fff;
+    }
+    .wrap{
+      width:min(980px, 100%);
+      display:grid;
+      grid-template-columns: 1.2fr 0.8fr;
+      gap:18px;
+    }
+    @media (max-width: 900px){
+      .wrap{ grid-template-columns: 1fr; }
+    }
+    .card{
+      background: var(--card);
+      color: var(--text);
+      border-radius: 18px;
+      box-shadow: 0 20px 60px rgba(0,0,0,.25);
+      overflow:hidden;
+      border: 1px solid rgba(255,255,255,.35);
+    }
+    .hdr{
+      padding:18px 18px 14px;
+      background: linear-gradient(135deg, rgba(91,140,255,.18), rgba(25,195,125,.12));
+      border-bottom: 1px solid rgba(0,0,0,.08);
+    }
+    .hdr h1{
+      margin:0;
+      font-size: 18px;
+      letter-spacing:.2px;
+    }
+    .hdr p{
+      margin:6px 0 0;
+      font-size: 13px;
+      opacity:.8;
+    }
+    .content{ padding:18px; }
+    .row{ display:flex; gap:12px; flex-wrap:wrap; align-items:center; }
+    .btn{
+      appearance:none;
+      border:0;
+      border-radius: 12px;
+      padding: 10px 14px;
+      cursor:pointer;
+      font-weight: 700;
+      color:white;
+      background: linear-gradient(135deg, var(--accent), #7a5cff);
+      box-shadow: 0 10px 24px rgba(91,140,255,.25);
+      transition: transform .05s ease-in-out;
+    }
+    .btn:active{ transform: translateY(1px); }
+    .btn.secondary{
+      background: linear-gradient(135deg, #ff5bbf, #ff8a5b);
+      box-shadow: 0 10px 24px rgba(255,91,191,.2);
+    }
+    input[type="file"]{
+      border: 2px dashed rgba(27,27,58,.22);
+      border-radius: 14px;
+      padding: 14px;
+      background:#fff;
+      width:min(520px, 100%);
+    }
+
+    /* BIG status banner for screenshots/filmstrip */
+    .status{
+      margin-top:14px;
+      border-radius: 16px;
+      padding: 14px 14px;
+      font-weight: 900;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:12px;
+      border: 2px solid rgba(0,0,0,.08);
+    }
+    .status .tag{
+      font-size: 12px;
+      padding: 6px 10px;
+      border-radius: 999px;
+      background: rgba(0,0,0,.06);
+      font-weight: 800;
+    }
+    .status.ok{
+      background: linear-gradient(135deg, rgba(25,195,125,.25), rgba(25,195,125,.08));
+      border-color: rgba(25,195,125,.45);
+    }
+    .status.ok .tag{ background: rgba(25,195,125,.18); }
+    .status.warn{
+      background: linear-gradient(135deg, rgba(255,176,32,.26), rgba(255,176,32,.08));
+      border-color: rgba(255,176,32,.5);
+    }
+    .status.warn .tag{ background: rgba(255,176,32,.20); }
+    .status.err{
+      background: linear-gradient(135deg, rgba(255,77,79,.22), rgba(255,77,79,.08));
+      border-color: rgba(255,77,79,.5);
+    }
+    .status.err .tag{ background: rgba(255,77,79,.18); }
+
+    .mono{
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+      font-size: 12px;
+      background: rgba(0,0,0,.04);
+      padding: 2px 6px;
+      border-radius: 8px;
+    }
+    .kvs{
+      margin-top: 14px;
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      gap:10px;
+    }
+    .kv{
+      background: rgba(0,0,0,.04);
+      border-radius: 14px;
+      padding: 10px 12px;
+      border: 1px solid rgba(0,0,0,.06);
+    }
+    .kv .k{ font-size: 12px; opacity:.7; margin-bottom:4px; }
+    .kv .v{ font-weight: 800; overflow-wrap:anywhere; }
+    .preview{
+      margin-top: 14px;
+      background: rgba(0,0,0,.04);
+      border-radius: 14px;
+      padding: 12px;
+      border: 1px solid rgba(0,0,0,.06);
+    }
+    .preview h3{
+      margin:0 0 8px;
+      font-size: 13px;
+      opacity:.8;
+    }
+    .preview img{
+      max-width:100%;
+      border-radius: 12px;
+      border: 1px solid rgba(0,0,0,.12);
+      background:#fff;
+    }
+    textarea{
+      width:100%;
+      height: 180px;
+      border-radius: 12px;
+      border: 1px solid rgba(0,0,0,.12);
+      padding: 10px;
+      resize: vertical;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+      font-size: 12px;
+      background:#fff;
+    }
+
+    .side .content{ padding:18px; }
+    .tips{
+      font-size: 13px;
+      line-height: 1.45;
+      opacity:.9;
+    }
+    .tips code{ font-weight:800; }
+    .chiprow{ display:flex; gap:8px; flex-wrap:wrap; margin-top:10px; }
+    .chip{
+      font-size: 12px;
+      padding: 6px 10px;
+      border-radius: 999px;
+      background: rgba(91,140,255,.18);
+      border: 1px solid rgba(91,140,255,.25);
+      font-weight: 800;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="wrap">
+    <section class="card main">
+      <div class="hdr">
+        <h1>QA File Upload Test Page (Client-side)</h1>
+        <p>Select any file type. Click “Simulate Upload”. You’ll get a stable status message to assert in Playwright/Puppeteer.</p>
+      </div>
+
+      <div class="content">
+        <div class="row">
+          <input id="fileInput" type="file" aria-label="Choose a file to upload" />
+          <button id="uploadBtn" class="btn" type="button">Simulate Upload</button>
+          <button id="resetBtn" class="btn secondary" type="button">Reset</button>
+        </div>
+
+        <!-- Stable assertion target -->
+        <div id="status"
+             class="status warn"
+             data-testid="upload-status"
+             data-status="NO_FILE">
+          <div>
+            <div style="font-size:16px;">NO FILE SELECTED</div>
+            <div style="font-size:12px; opacity:.75; margin-top:2px;">
+              Choose a file to enable upload.
+            </div>
+          </div>
+          <span class="tag mono" id="assertToken">UPLOAD_NOT_READY</span>
+        </div>
+
+        <div class="kvs" aria-label="File details">
+          <div class="kv">
+            <div class="k">File name</div>
+            <div class="v" id="fName">—</div>
+          </div>
+          <div class="kv">
+            <div class="k">MIME type</div>
+            <div class="v" id="fType">—</div>
+          </div>
+          <div class="kv">
+            <div class="k">Size</div>
+            <div class="v" id="fSize">—</div>
+          </div>
+          <div class="kv">
+            <div class="k">Last modified</div>
+            <div class="v" id="fMod">—</div>
+          </div>
+        </div>
+
+        <div class="preview" id="previewBox" style="display:none;">
+          <h3>Preview</h3>
+          <div id="previewContent"></div>
+        </div>
+      </div>
+    </section>
+
+    <aside class="card side">
+      <div class="hdr">
+        <h1>Automation hints</h1>
+        <p>Designed for easy filmstrip + stable assertions.</p>
+      </div>
+      <div class="content tips">
+        <div>
+          Assert success using:
+          <div class="chiprow">
+            <span class="chip">data-testid="upload-status"</span>
+            <span class="chip">data-status="SUCCESS"</span>
+            <span class="chip">text: UPLOAD_OK</span>
+          </div>
+        </div>
+
+        <hr style="border:0;border-top:1px solid rgba(0,0,0,.08); margin:14px 0;">
+
+        <div>
+          Notes:
+          <ul>
+            <li>This page does <b>not</b> upload to a server. It’s a <b>client-side simulated upload</b> (perfect for automation).</li>
+            <li>It accepts <b>any file type</b>. MIME is shown as detected by the browser.</li>
+            <li>For filmstrip: status banner changes color and shows a big message.</li>
+          </ul>
+        </div>
+
+        <hr style="border:0;border-top:1px solid rgba(0,0,0,.08); margin:14px 0;">
+
+        <div>
+          Optional: If you want a forced failure to test error paths, set the URL hash to <code>#fail</code>.
+          Example: <span class="mono">.../fileuploadtest1.html#fail</span>
+        </div>
+      </div>
+    </aside>
+  </div>
+
+<script>
+  const fileInput = document.getElementById('fileInput');
+  const uploadBtn  = document.getElementById('uploadBtn');
+  const resetBtn   = document.getElementById('resetBtn');
+
+  const statusEl   = document.getElementById('status');
+  const assertTok  = document.getElementById('assertToken');
+
+  const fName = document.getElementById('fName');
+  const fType = document.getElementById('fType');
+  const fSize = document.getElementById('fSize');
+  const fMod  = document.getElementById('fMod');
+
+  const previewBox = document.getElementById('previewBox');
+  const previewContent = document.getElementById('previewContent');
+
+  function bytesToHuman(bytes){
+    if (bytes === 0) return "0 B";
+    const k = 1024;
+    const sizes = ["B","KB","MB","GB"];
+    const i = Math.floor(Math.log(bytes)/Math.log(k));
+    const v = (bytes/Math.pow(k,i)).toFixed(i === 0 ? 0 : 2);
+    return `${v} ${sizes[i]}`;
+  }
+
+  function setStatus(type, headline, sub, token, dataStatus){
+    statusEl.classList.remove('ok','warn','err');
+    statusEl.classList.add(type);
+    statusEl.setAttribute('data-status', dataStatus);
+    statusEl.innerHTML = `
+      <div>
+        <div style="font-size:16px;">${headline}</div>
+        <div style="font-size:12px; opacity:.75; margin-top:2px;">${sub}</div>
+      </div>
+      <span class="tag mono" id="assertToken">${token}</span>
+    `;
+  }
+
+  function clearPreview(){
+    previewContent.innerHTML = "";
+    previewBox.style.display = "none";
+  }
+
+  function showPreview(file){
+    clearPreview();
+
+    // Image preview
+    if (file.type && file.type.startsWith("image/")) {
+      const img = document.createElement("img");
+      img.alt = "Uploaded image preview";
+      img.src = URL.createObjectURL(file);
+      previewContent.appendChild(img);
+      previewBox.style.display = "block";
+      return;
+    }
+
+    // Text preview for small-ish files
+    const isTextLike = (file.type && (file.type.startsWith("text/") || file.type.includes("json") || file.type.includes("xml")))
+                       || /\.(txt|log|csv|json|xml|yaml|yml|md)$/i.test(file.name);
+
+    if (isTextLike && file.size <= 300 * 1024) {
+      const ta = document.createElement("textarea");
+      ta.readOnly = true;
+      ta.value = "Loading preview...";
+      previewContent.appendChild(ta);
+      previewBox.style.display = "block";
+
+      const reader = new FileReader();
+      reader.onload = () => { ta.value = String(reader.result || ""); };
+      reader.onerror = () => { ta.value = "Could not read file for preview."; };
+      reader.readAsText(file);
+    }
+  }
+
+  function updateFileDetails(){
+    const file = fileInput.files && fileInput.files[0];
+    if (!file) {
+      fName.textContent = "—";
+      fType.textContent = "—";
+      fSize.textContent = "—";
+      fMod.textContent  = "—";
+      clearPreview();
+      setStatus("warn", "NO FILE SELECTED", "Choose a file to enable upload.", "UPLOAD_NOT_READY", "NO_FILE");
+      return;
+    }
+
+    fName.textContent = file.name;
+    fType.textContent = file.type || "(unknown / browser did not provide)";
+    fSize.textContent = bytesToHuman(file.size);
+    fMod.textContent  = file.lastModified ? new Date(file.lastModified).toLocaleString() : "—";
+
+    showPreview(file);
+    setStatus("warn", "READY TO UPLOAD", "Click “Simulate Upload” to complete.", "UPLOAD_READY", "READY");
+  }
+
+  fileInput.addEventListener('change', updateFileDetails);
+
+  uploadBtn.addEventListener('click', async () => {
+    const file = fileInput.files && fileInput.files[0];
+    if (!file) {
+      setStatus("err", "UPLOAD FAILED", "No file selected.", "UPLOAD_FAIL_NO_FILE", "FAIL");
+      return;
+    }
+
+    // Simulate upload latency (so filmstrip shows transition)
+    setStatus("warn", "UPLOADING…", "Simulating upload (client-side).", "UPLOAD_IN_PROGRESS", "UPLOADING");
+    await new Promise(r => setTimeout(r, 650));
+
+    // Optional forced fail for negative testing: add #fail to URL
+    if (location.hash.toLowerCase() === "#fail") {
+      setStatus("err", "UPLOAD FAILED", "Forced failure mode (#fail).", "UPLOAD_FAIL_FORCED", "FAIL");
+      return;
+    }
+
+    // Success
+    setStatus("ok", "UPLOAD SUCCESS ✅", "File accepted and processed (simulated).", "UPLOAD_OK", "SUCCESS");
+  });
+
+  resetBtn.addEventListener('click', () => {
+    fileInput.value = "";
+    updateFileDetails();
+  });
+
+  // Initialize
+  updateFileDetails();
+</script>
+</body>
+</html>
