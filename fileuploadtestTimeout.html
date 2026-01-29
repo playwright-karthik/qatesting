@@ -2,77 +2,300 @@
 <html lang="en">
 <head>
   <meta charset="utf-8" />
-  <title>QA Upload Timeout Test</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>QA Upload Timeout Test — Timer + URL Notes</title>
 
   <style>
-    body {
-      font-family: Arial, sans-serif;
-      padding: 40px;
+    :root{
+      --bg:#f4f6fb;
+      --card:#ffffff;
+      --accent:#0b61ff;
+      --ok:#19c37d;
+      --err:#ff4d4f;
+      --warn:#ffb020;
+      --muted:#666;
     }
-    button {
-      padding: 10px 16px;
-      font-size: 14px;
-      cursor: pointer;
+    body{
+      margin:0;
+      font-family: Inter, Roboto, "Segoe UI", Arial, sans-serif;
+      background: linear-gradient(180deg,#eef2ff 0%, #f7fafc 100%);
+      padding:28px;
+      color:#10203b;
     }
-    .status {
-      margin-top: 20px;
-      font-weight: bold;
+    .container{
+      max-width:980px;
+      margin:0 auto;
+      display:grid;
+      grid-template-columns: 1fr 360px;
+      gap:20px;
+      align-items:start;
     }
+    @media (max-width:920px){
+      .container{ grid-template-columns: 1fr; }
+    }
+    .card{
+      background:var(--card);
+      border-radius:12px;
+      box-shadow: 0 8px 30px rgba(16,32,59,0.06);
+      padding:18px;
+      border:1px solid rgba(16,32,59,0.04);
+    }
+
+    h1{
+      margin:0 0 10px;
+      font-size:18px;
+      letter-spacing:0.1px;
+    }
+    p.lead{
+      margin:0 0 14px;
+      color:var(--muted);
+      font-size:13px;
+    }
+
+    .controls{ display:flex; gap:12px; align-items:center; flex-wrap:wrap; margin-top:12px; }
+    input[type="file"]{ padding:10px; border-radius:8px; border:1px dashed rgba(0,0,0,0.08); background:#fff; }
+    button{ border:0; background:var(--accent); color:#fff; padding:10px 14px; border-radius:10px; cursor:pointer; font-weight:700; }
+    button.ghost{ background:transparent; color:var(--accent); border:1px solid rgba(11,97,255,0.12); font-weight:700; }
+
+    /* Timer + status */
+    .statusWrap{ margin-top:20px; display:flex; gap:18px; align-items:center; flex-wrap:wrap; }
+    .bigTimer{
+      font-size:40px;
+      font-weight:800;
+      color:var(--accent);
+      min-width:180px;
+      text-align:center;
+      background:linear-gradient(180deg, rgba(11,97,255,0.06), rgba(11,97,255,0.02));
+      padding:12px;
+      border-radius:10px;
+      border:1px solid rgba(11,97,255,0.06);
+    }
+    .statusBox{
+      flex:1;
+      min-width:220px;
+      padding:12px;
+      border-radius:10px;
+      font-weight:800;
+      text-align:center;
+      border:1px solid rgba(0,0,0,0.04);
+    }
+    .statusBox.idle{ background:transparent; color:var(--muted); }
+    .statusBox.uploading{ background:linear-gradient(135deg, rgba(255,176,32,0.12), rgba(255,176,32,0.04)); color:var(--warn); border-color:rgba(255,176,32,0.12); }
+    .statusBox.success{ background:linear-gradient(135deg, rgba(25,195,125,0.12), rgba(25,195,125,0.04)); color:var(--ok); border-color:rgba(25,195,125,0.12); }
+    .statusBox.timeout{ background:linear-gradient(135deg, rgba(255,77,79,0.12), rgba(255,77,79,0.04)); color:var(--err); border-color:rgba(255,77,79,0.12); }
+
+    /* Right column notes */
+    .notes h3{ margin:0 0 8px; font-size:14px; }
+    .note{ font-size:13px; color:var(--muted); line-height:1.45; margin-bottom:10px; }
+    .example{ font-family: ui-monospace, Menlo, monospace; font-size:13px; background:#f6f8ff; padding:8px; border-radius:8px; display:block; margin-top:8px; color:#07327a; border:1px solid rgba(11,97,255,0.06); }
+
+    .meta{ margin-top:12px; font-size:12px; color:var(--muted); }
+
+    .small{ font-size:12px; color:var(--muted); margin-top:8px; }
+    .footer{ margin-top:14px; font-size:12px; color:var(--muted); text-align:right; }
   </style>
 </head>
-
 <body>
-  <h2>File Upload Timeout Test</h2>
 
-  <input id="fileInput" type="file" aria-label="Choose a file to upload" />
-  <br><br>
-  <button id="uploadBtn">Simulate Upload</button>
+  <div class="container">
+    <!-- MAIN -->
+    <section class="card">
+      <h1>QA Upload Timeout Test — Live Timer</h1>
+      <p class="lead">Click <strong>Simulate Upload</strong>. Timer starts immediately (seconds.milliseconds). Page respects URL hash instructions for controlled slow/success/fail scenarios — perfect for filmstrips and automation.</p>
 
-  <div id="status"
-       class="status"
-       data-testid="upload-status"
-       data-status="IDLE">
-    IDLE
+      <div class="controls">
+        <input id="fileInput" type="file" aria-label="Choose a file to upload" />
+        <button id="uploadBtn">Simulate Upload</button>
+        <button id="resetBtn" class="ghost">Reset</button>
+      </div>
+
+      <div class="statusWrap" style="margin-top:18px;">
+        <div id="timer" class="bigTimer">00.000 s</div>
+
+        <div id="statusBox" class="statusBox idle"
+             data-testid="upload-status"
+             data-status="IDLE">
+          IDLE
+          <div id="assertToken" style="font-weight:700; margin-top:8px; font-size:12px; color:var(--muted);">TOKEN: -</div>
+        </div>
+      </div>
+
+      <div class="meta">
+        <div class="small"><strong>Notes for filmstrip</strong>: make sure to capture the whole banner and timer area. Timer updates every 50ms so you get visible increments between frames.</div>
+      </div>
+    </section>
+
+    <!-- NOTES -->
+    <aside class="card notes">
+      <h3>How to control behavior (URL hash)</h3>
+
+      <div class="note">
+        Use the URL hash to force long delays and control the final outcome. The page reads the hash as URLSearchParams.
+        <div class="example">#timeout=50</div>
+        <div class="example">#timeout=50&mode=fail</div>
+        <div class="example">#timeout=50&mode=success</div>
+        <div class="example">#fail</div>
+      </div>
+
+      <div class="note"><strong>Meaning:</strong>
+        <ul style="margin:6px 0 0 18px;">
+          <li><code>#timeout=X</code> — simulate X seconds of upload (X = seconds). e.g. <code>#timeout=50</code> waits 50s.</li>
+          <li><code>mode=success</code> — after the simulated delay, the page will end in <strong>SUCCESS</strong> (token: <code>UPLOAD_OK</code>).</li>
+          <li><code>mode=fail</code> — after the delay the page will end in <strong>TIMEOUT</strong> (token: <code>UPLOAD_FAIL_TIMEOUT</code>).</li>
+          <li><code>#fail</code> — legacy quick forced failure (short fail path).</li>
+        </ul>
+      </div>
+
+      <div class="note">
+        Examples for testing:
+        <div class="example">.../fileuploadtestTimeout.html#timeout=50&mode=fail  <!-- slow then TIMEOUT --></div>
+        <div class="example">.../fileuploadtestTimeout.html#timeout=50&mode=success  <!-- slow then SUCCESS --></div>
+        <div class="example">.../fileuploadtestTimeout.html#fail  <!-- immediate forced fail --></div>
+      </div>
+
+      <div class="note">
+        Playwright/Catchpoint assertions (sample):
+        <div class="example">await expect(page.getByTestId('upload-status')).toHaveAttribute('data-status', 'TIMEOUT');</div>
+        <div class="example">await expect(page.getByTestId('upload-status')).toHaveText(/TIMEOUT|SUCCESS/);</div>
+      </div>
+
+      <div class="footer">Keep this file in your test repo for consistent filmstrip captures.</div>
+    </aside>
   </div>
 
 <script>
-  const uploadBtn = document.getElementById('uploadBtn');
   const fileInput = document.getElementById('fileInput');
-  const statusEl  = document.getElementById('status');
+  const uploadBtn  = document.getElementById('uploadBtn');
+  const resetBtn   = document.getElementById('resetBtn');
+  const timerEl    = document.getElementById('timer');
+  const statusBox  = document.getElementById('statusBox');
+  const assertToken = document.getElementById('assertToken');
 
-  const sleep = (ms) => new Promise(r => setTimeout(r, ms));
+  let timerInterval = null;
+  let startPerf = 0;
 
-  function getTimeoutFromHash() {
-    // Example: #timeout=50
-    const hash = location.hash.replace('#', '');
-    const params = new URLSearchParams(hash);
-    const t = Number(params.get('timeout'));
-    return Number.isFinite(t) && t > 0 ? t * 1000 : 500; // default 500ms
+  function parseHash(){
+    // Supports: #timeout=45&mode=fail  or plain #fail
+    const raw = (location.hash || "").replace(/^#/, "");
+    const params = new URLSearchParams(raw);
+    const isFailOnly = raw.toLowerCase() === "fail";
+
+    const timeoutSec = Number(params.get('timeout'));
+    const mode = (params.get('mode') || "fail").toLowerCase();
+
+    return {
+      isFailOnly,
+      timeoutMs: Number.isFinite(timeoutSec) && timeoutSec > 0 ? Math.round(timeoutSec * 1000) : 0,
+      mode
+    };
+  }
+
+  function formatElapsed(ms){
+    const s = (ms / 1000).toFixed(3);
+    return `${s} s`;
+  }
+
+  function startTimer(){
+    startPerf = performance.now();
+    timerEl.textContent = '00.000 s';
+    if (timerInterval) clearInterval(timerInterval);
+    timerInterval = setInterval(() => {
+      const elapsed = performance.now() - startPerf;
+      timerEl.textContent = formatElapsed(elapsed);
+    }, 50); // 50ms refresh
+  }
+
+  function stopTimer(){
+    if (timerInterval) {
+      clearInterval(timerInterval);
+      timerInterval = null;
+    }
+  }
+
+  function setStatus(type, headline, tokenText){
+    // type: idle | uploading | success | timeout | fail
+    statusBox.classList.remove('idle','uploading','success','timeout');
+    statusBox.classList.add(type);
+    statusBox.textContent = headline;
+    statusBox.setAttribute('data-status', headline.toUpperCase());
+    // re-add token node
+    if (tokenText){
+      const tok = document.createElement('div');
+      tok.style.fontWeight = '700';
+      tok.style.marginTop = '8px';
+      tok.style.fontSize = '12px';
+      tok.style.color = 'var(--muted)';
+      tok.textContent = `TOKEN: ${tokenText}`;
+      statusBox.appendChild(tok);
+    } else {
+      const tok = document.createElement('div');
+      tok.style.fontWeight = '700';
+      tok.style.marginTop = '8px';
+      tok.style.fontSize = '12px';
+      tok.style.color = 'var(--muted)';
+      tok.textContent = `TOKEN: -`;
+      statusBox.appendChild(tok);
+    }
   }
 
   uploadBtn.addEventListener('click', async () => {
-    if (!fileInput.files.length) {
-      statusEl.textContent = 'NO_FILE';
-      statusEl.dataset.status = 'NO_FILE';
+    if (!fileInput.files || !fileInput.files.length){
+      setStatus('idle', 'NO_FILE', 'UPLOAD_FAIL_NO_FILE');
       return;
     }
 
-    const delayMs = getTimeoutFromHash();
+    const { isFailOnly, timeoutMs, mode } = parseHash();
 
-    statusEl.textContent = 'UPLOADING';
-    statusEl.dataset.status = 'UPLOADING';
-
-    await sleep(delayMs);
-
-    if (delayMs > 45000) {
-      statusEl.textContent = 'TIMEOUT';
-      statusEl.dataset.status = 'TIMEOUT';
-    } else {
-      statusEl.textContent = 'SUCCESS';
-      statusEl.dataset.status = 'SUCCESS';
+    // Legacy forced fail (#fail)
+    if (isFailOnly){
+      setStatus('uploading', 'UPLOADING', 'UPLOAD_IN_PROGRESS');
+      startTimer();
+      await new Promise(r => setTimeout(r, 650));
+      stopTimer();
+      setStatus('timeout', 'FAIL', 'UPLOAD_FAIL_FORCED');
+      return;
     }
+
+    // If timeout param present -> forced long path
+    if (timeoutMs > 0){
+      setStatus('uploading', 'UPLOADING', 'UPLOAD_IN_PROGRESS');
+      startTimer();
+
+      await new Promise(r => setTimeout(r, timeoutMs));
+
+      stopTimer();
+
+      if (mode === 'success'){
+        setStatus('success', 'SUCCESS', 'UPLOAD_OK');
+      } else {
+        // Consider anything > 45s as a true "timeout" for your product checks
+        if (timeoutMs > 45000){
+          setStatus('timeout', 'TIMEOUT', 'UPLOAD_FAIL_TIMEOUT');
+        } else {
+          setStatus('success', 'SUCCESS', 'UPLOAD_OK');
+        }
+      }
+      return;
+    }
+
+    // Default quick success path
+    setStatus('uploading', 'UPLOADING', 'UPLOAD_IN_PROGRESS');
+    startTimer();
+    await new Promise(r => setTimeout(r, 650));
+    stopTimer();
+    setStatus('success', 'SUCCESS', 'UPLOAD_OK');
   });
+
+  resetBtn.addEventListener('click', () => {
+    fileInput.value = "";
+    stopTimer();
+    timerEl.textContent = '00.000 s';
+    setStatus('idle', 'IDLE', '-');
+  });
+
+  // Initialize state
+  setStatus('idle', 'IDLE', '-');
+  timerEl.textContent = '00.000 s';
 </script>
 
 </body>
