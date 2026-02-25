@@ -23,6 +23,7 @@
     <button onclick="openNewWindow('https://badssl.com')">Open BadSSL</button>
     <button onclick="openNewWindow('https://client.badssl.com')">Open Badssl-certificate</button>
     </br>
+    
     <button onclick="openDelayedWindow('https://www.airtel.com', 5000)">Open Airtel (5s Delay)</button>
     <button onclick="openNewWindow('https://httpbin.org/status/403')">AccessDenied</button>
     <button onclick="openNewWindow('https://httpbin.org/status/404')">status404</button>
@@ -30,39 +31,40 @@
     <button onclick="openNewWindow('https://httpbin.org/status/503')">status503</button>
     <button onclick="openNewWindow('https://expired.badssl.com/')">ExpiredSsl</button>
     </br>
+    
     <button onclick="openNewWindow('http://scc.catchpoint.tools/login')">SCC catchpoint</button>
     <button onclick="openNewWindow('https://sqa.3genlabs.net/hawksyntheticpageserver/')">SQA 3genlabs</button>
     <button onclick="openNewWindow('https://httpstat.us/')">httpStat</button>
     </br>
+    
     <button onclick="openNewWindow('https://authenticationtest.com/')">Auth test/Token</button>
     <button onclick="openNewWindow('https://www.globalsqa.com/demo-site/')">GlobalSqa</button>
     <button onclick="openNewWindow('https://playwright-karthik.github.io/qatesting/spapage.html')">spapage</button>
     </br>
+    
     <button onclick="openNewWindow('https://playwright-karthik.github.io/qatesting/mychild.html')">favicontest</button>
     <button onclick="openNewWindow('https://ipa.demo1.freeipa.org/ipa/session/login_kerberos?_=1747310036')">Kerberostest</button>
     <button onclick="openNewWindow('https://playwright-karthik.github.io/qatesting/windowpopups.html')">Again popup</button>
-
     <br/>
-    <p>
-        Run the beforeafterresponse.sh in the local VM before clickin on the button
-        and enable the cross-Origin in the test Settings
-    </p>
+    
+    <p>Run the beforeafterresponse.sh in the local VM before clickin on the button
+        and enable the cross-Origin in the test Settings</p>
     <button onclick="openNewWindow('http://localhost:8000/abort-before-response')">Before-Response</button>
     <button onclick="openNewWindow('http://localhost:8000/abort-after-response')">After-Response</button>
     </br>
 
-    <p>
-        Run the VSCODE script in 192.168.128.109 machine [with respect to port numbers]
-    </p>
+    <p>Run the VSCODE script in 192.168.128.109 machine [with respect to port numbers]</p>
     <button onclick="openNewWindow('http://192.168.128.109:8127/status/502')">8127-status502</button>
     <button onclick="openNewWindow('http://192.168.128.109:8127/delay/5')">8127-delay5</button>
     </br>
 
-    <p>
-        SPA in popups
-    </p>
+    <p>SPA in popups</p>
     <button onclick="openNewWindow('https://playwright-karthik.github.io/qatesting/vctest/index.html')">spa-popup1</button>
     <button onclick="openNewWindow('https://react.dev/reference/react/hooks')">spa-popup2</button>
+    </br>
+
+    <p> Popup UserAgent Testing </p>
+    <button onclick="openNewWindow('https://www.w3schools.com/js/tryit.asp?filename=tryjs_nav_userAgent')">popup-ua</button>
     </br>
 </body>
 </html>
