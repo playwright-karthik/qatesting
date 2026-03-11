@@ -1,0 +1,62 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <title>Streaming Test</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
+  <style>
+    body { font-family: sans-serif; padding: 16px; }
+    video { width: 100%; max-width: 960px; background: #000; }
+    pre { max-width: 960px; white-space: pre-wrap; }
+  </style>
+</head>
+<body>
+  <h2>Streaming Test Page</h2>
+
+  <label>Stream URL (HLS .m3u8):</label><br />
+  <input id="url" style="width:100%;max-width:960px"
+         value="https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8" />
+  <button id="load">Load</button>
+
+  <div style="margin-top:12px">
+    <video id="video" controls autoplay muted playsinline></video>
+  </div>
+
+  <h3>Events</h3>
+  <pre id="log"></pre>
+
+  <script>
+    const logEl = document.getElementById('log');
+    const v = document.getElementById('video');
+    const log = (m) => logEl.textContent = `[${new Date().toISOString()}] ${m}\n` + logEl.textContent;
+
+    function attachVideoEvents() {
+      ["loadstart","loadedmetadata","canplay","playing","waiting","stalled","error","ended","pause"]
+        .forEach(e => v.addEventListener(e, () => log(`video:${e} t=${v.currentTime.toFixed(2)}`)));
+    }
+
+    function loadStream(url) {
+      log(`Loading: ${url}`);
+      if (Hls.isSupported()) {
+        const hls = new Hls({
+          enableWorker: true,
+          lowLatencyMode: true
+        });
+        hls.on(Hls.Events.ERROR, (_, data) => log(`hls:error ${data.type}/${data.details} fatal=${data.fatal}`));
+        hls.on(Hls.Events.FRAG_BUFFERED, () => log(`hls:frag_buffered`));
+        hls.loadSource(url);
+        hls.attachMedia(v);
+      } else if (v.canPlayType('application/vnd.apple.mpegurl')) {
+        v.src = url; // Safari native HLS
+      } else {
+        log("HLS not supported in this browser.");
+      }
+    }
+
+    attachVideoEvents();
+    document.getElementById('load').onclick = () => loadStream(document.getElementById('url').value.trim());
+    loadStream(document.getElementById('url').value.trim());
+  </script>
+</body>
+</html>
