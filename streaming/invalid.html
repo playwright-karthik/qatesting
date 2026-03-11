@@ -1,0 +1,35 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <title>invalidurl - Bad HLS URL</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
+</head>
+<body style="font-family:sans-serif;padding:16px">
+  <h2>invalidurl.html (FAIL)</h2>
+  <p>Loads an invalid HLS URL to trigger network/manifest errors.</p>
+
+  <video id="video" autoplay muted playsinline style="width:100%;max-width:960px;background:#000"></video>
+  <pre id="log" style="max-width:960px;white-space:pre-wrap"></pre>
+
+  <script>
+    const logEl = document.getElementById('log');
+    const video = document.getElementById('video');
+    const log = (m)=> logEl.textContent = `[${new Date().toISOString()}] ${m}\n` + logEl.textContent;
+
+    const url = "https://example.com/not-a-real-stream.m3u8";
+    log("Loading (invalid): " + url);
+
+    if (Hls.isSupported()) {
+      const hls = new Hls();
+      hls.on(Hls.Events.ERROR, (_, d) => log(`hls:error ${d.type}/${d.details} fatal=${d.fatal}`));
+      hls.loadSource(url);
+      hls.attachMedia(video);
+      hls.on(Hls.Events.MANIFEST_PARSED, () => video.play().catch(()=>{}));
+    } else {
+      video.src = url;
+    }
+  </script>
+</body>
+</html>
