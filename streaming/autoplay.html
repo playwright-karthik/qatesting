@@ -1,0 +1,125 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <title>Streaming Valid Test</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <!-- HLS.js -->
+  <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
+
+  <style>
+    body { font-family: sans-serif; padding: 16px; }
+    video { width: 100%; max-width: 960px; background: #000; border-radius: 10px; }
+    input { width: 100%; max-width: 960px; padding: 8px; }
+    button { padding: 8px 14px; margin-top: 8px; }
+    pre { max-width: 960px; background: #fafafa; border: 1px solid #eee; padding: 10px; border-radius: 10px; white-space: pre-wrap; }
+    .row { max-width: 960px; display: flex; gap: 8px; align-items: center; }
+    .row input { flex: 1; }
+  </style>
+</head>
+<body>
+  <h2>Streaming Valid Test</h2>
+  <p>This page is designed to <b>autoplay reliably</b> in LogicMonitor's Chrome (muted + programmatic play).</p>
+
+  <div class="row">
+    <input id="url" value="https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8" />
+    <button id="load">Load</button>
+  </div>
+
+  <!-- IMPORTANT: muted + autoplay + playsinline -->
+  <div style="margin-top:12px">
+    <video id="video" autoplay muted playsinline></video>
+  </div>
+
+  <h3>Events</h3>
+  <pre id="log"></pre>
+
+  <script>
+    const logEl = document.getElementById('log');
+    const video = document.getElementById('video');
+
+    function log(msg) {
+      const line = `[${new Date().toISOString()}] ${msg}\n`;
+      logEl.textContent = line + logEl.textContent;
+      console.log(msg);
+    }
+
+    function safePlay() {
+      const p = video.play();
+      if (p && typeof p.then === "function") {
+        p.then(() => log("video.play() success"))
+         .catch(err => log("video.play() failed: " + err));
+      }
+    }
+
+    // Helpful video event logs
+    ["loadstart","loadedmetadata","canplay","playing","waiting","stalled","error","ended","pause"]
+      .forEach(e => video.addEventListener(e, () => {
+        log(`video:${e} t=${video.currentTime.toFixed(2)}`);
+      }));
+
+    let hls = null;
+
+    function cleanup() {
+      if (hls) {
+        try { hls.destroy(); } catch (e) {}
+        hls = null;
+      }
+      video.removeAttribute("src");
+      video.load();
+    }
+
+    function loadStream(url) {
+      cleanup();
+      log(`Loading: ${url}`);
+
+      // If browser supports HLS.js
+      if (window.Hls && Hls.isSupported()) {
+        hls = new Hls({
+          enableWorker: true,
+          lowLatencyMode: true
+        });
+
+        hls.on(Hls.Events.ERROR, (_, data) => {
+          log(`hls:error type=${data.type} details=${data.details} fatal=${data.fatal}`);
+        });
+
+        // Attach + force play after manifest parsed (key for LM)
+        hls.attachMedia(video);
+
+        hls.on(Hls.Events.MEDIA_ATTACHED, () => {
+          log("hls:media_attached");
+          hls.loadSource(url);
+        });
+
+        hls.on(Hls.Events.MANIFEST_PARSED, () => {
+          log("hls:manifest_parsed -> forcing play()");
+          safePlay();
+        });
+
+      } else if (video.canPlayType("application/vnd.apple.mpegurl")) {
+        // Safari native HLS
+        video.src = url;
+        log("native HLS supported -> setting video.src");
+        safePlay();
+      } else {
+        log("HLS not supported in this browser.");
+      }
+    }
+
+    document.getElementById('load').addEventListener('click', () => {
+      loadStream(document.getElementById('url').value.trim());
+    });
+
+    // Auto-load on open
+    loadStream(document.getElementById('url').value.trim());
+
+    // Extra nudge: some environments need a delayed play call too
+    setTimeout(() => {
+      log("delayed safePlay() nudge");
+      safePlay();
+    }, 2000);
+  </script>
+</body>
+</html>
