@@ -1,0 +1,48 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <title>bufferstress - Seek to trigger buffering</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
+</head>
+<body style="font-family:sans-serif;padding:16px">
+  <h2>bufferstress.html (STRESS)</h2>
+  <p>Plays stream, then seeks periodically to trigger buffering/waiting.</p>
+
+  <video id="video" autoplay muted playsinline style="width:100%;max-width:960px;background:#000"></video>
+  <pre id="log" style="max-width:960px;white-space:pre-wrap"></pre>
+
+  <script>
+    const logEl = document.getElementById('log');
+    const video = document.getElementById('video');
+    const log = (m)=> logEl.textContent = `[${new Date().toISOString()}] ${m}\n` + logEl.textContent;
+
+    const url = "https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8";
+
+    ["playing","waiting","stalled","error"].forEach(e => video.addEventListener(e, ()=>log("video:" + e)));
+
+    function safePlay(){
+      const p=video.play(); if(p&&p.then) p.catch(e=>log("play failed: "+e));
+    }
+
+    if (Hls.isSupported()) {
+      const hls = new Hls();
+      hls.on(Hls.Events.ERROR, (_, d) => log(`hls:error ${d.type}/${d.details}`));
+      hls.on(Hls.Events.MANIFEST_PARSED, () => { log("manifest parsed -> play"); safePlay(); });
+      hls.loadSource(url);
+      hls.attachMedia(video);
+    } else {
+      video.src = url; safePlay();
+    }
+
+    // every 8s seek forward a bit (may cause rebuffer)
+    setInterval(() => {
+      if (!isFinite(video.duration) || video.duration <= 0) return;
+      const jump = Math.min(video.currentTime + 30, video.duration - 1);
+      log("seeking to " + jump.toFixed(2));
+      try { video.currentTime = jump; } catch(e) {}
+    }, 8000);
+  </script>
+</body>
+</html>
