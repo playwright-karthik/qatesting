@@ -1,0 +1,44 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <title>QA Streaming Test Pages</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    body { font-family: sans-serif; padding: 24px; max-width: 900px; margin: 0 auto; }
+    h1 { margin-bottom: 8px; }
+    .hint { color: #444; margin-top: 0; }
+    ul { line-height: 1.9; padding-left: 18px; }
+    a { text-decoration: none; }
+    a:hover { text-decoration: underline; }
+    code { background: #f3f3f3; padding: 2px 6px; border-radius: 6px; }
+    .box { background: #fafafa; border: 1px solid #eee; padding: 12px 14px; border-radius: 10px; }
+  </style>
+</head>
+<body>
+  <h1>QA Streaming Test Pages</h1>
+  <p class="hint">Use these pages as <code>Test URL</code> targets in LogicMonitor Streaming monitor.</p>
+
+  <div class="box">
+    <h3>Pages</h3>
+    <ul>
+      <li>
+        <a href="./valid.html">valid.html</a>
+        — Known-good autoplay (muted + programmatic play). Should PASS.
+      </li>
+      <li>
+        <a href="./responsefailure.html">responsefailure.html</a>
+        — Your older page (renamed from index.html).
+      </li>
+      <!-- Add more as you create them -->
+      <!-- <li><a href="./buffering.html">buffering.html</a> — Buffer simulation</li> -->
+      <!-- <li><a href="./invalidurl.html">invalidurl.html</a> — Invalid stream URL</li> -->
+    </ul>
+  </div>
+
+  <p style="margin-top:16px;">
+    Tip: In LM, set the Streaming test URL to one of these pages directly, e.g.
+    <code>.../streaming/valid.html</code>
+  </p>
+</body>
+</html>
