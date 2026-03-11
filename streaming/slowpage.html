@@ -1,0 +1,40 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <title>slowpage - Delayed player init</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
+</head>
+<body style="font-family:sans-serif;padding:16px">
+  <h2>slowpage.html (DELAY)</h2>
+  <p>Waits 15s before loading the stream.</p>
+
+  <video id="video" autoplay muted playsinline style="width:100%;max-width:960px;background:#000"></video>
+  <pre id="log" style="max-width:960px;white-space:pre-wrap"></pre>
+
+  <script>
+    const logEl = document.getElementById('log');
+    const video = document.getElementById('video');
+    const log = (m)=> logEl.textContent = `[${new Date().toISOString()}] ${m}\n` + logEl.textContent;
+
+    const url = "https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8";
+    log("Delaying 15s before loading stream...");
+
+    setTimeout(() => {
+      log("Now loading: " + url);
+
+      if (Hls.isSupported()) {
+        const hls = new Hls();
+        hls.on(Hls.Events.MANIFEST_PARSED, () => video.play().catch(()=>{}));
+        hls.on(Hls.Events.ERROR, (_, d) => log(`hls:error ${d.type}/${d.details}`));
+        hls.loadSource(url);
+        hls.attachMedia(video);
+      } else {
+        video.src = url;
+        video.play().catch(()=>{});
+      }
+    }, 15000);
+  </script>
+</body>
+</html>
