@@ -163,22 +163,14 @@
 <div>
   <h2> Testing Proxy with PAC files </h2>
   <p>
-    How to use this?</br>
-    Run the below commands as it is in the Agent machine, change PAC-filenames in URL, Credentials are dependent </br>
-    1. To Configure</br>
-    catchpoint proxy --type=PAC --host=https://playwright-karthik.github.io/qatesting/p1.pac --user=proxyuser --password=cpuser123 </br>
-    2. To Remove</br>
-    catchpoint proxy --type=DIRECT</br>
-    catchpoint restart</br>
-
-Setting PAC-Authenticated:</br>
-[forcing all requests to pass through 243]</br>
-catchpoint proxy --type=PAC --host=https://playwright-karthik.github.io/qatesting/p6.pac --user=proxyuser --password=cpuser123
-</br>
-3) Setting PAC-Non Authenticated:</br>
-[forcing all requests to pass through 241]</br>
-catchpoint proxy --type=PAC --host=https://playwright-karthik.github.io/qatesting/p7.pac</br>
-</br>
+    Setting PAC-Authenticated:</br>
+    [forcing all requests to pass through 243]</br>
+    catchpoint proxy --type=PAC --host=https://playwright-karthik.github.io/qatesting/p6.pac --user=proxyuser --password=cpuser123
+    </br>
+    Setting PAC-Non Authenticated:</br>
+    [forcing all requests to pass through 241]</br>
+    catchpoint proxy --type=PAC --host=https://playwright-karthik.github.io/qatesting/p7.pac</br>
+    </br>
   ===============</br>
   </p>
   <h3> Proxy servers .243 is With-Authentication </h3>
