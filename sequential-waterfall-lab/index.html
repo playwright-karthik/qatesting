@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sequential Waterfall Lab</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --bg: #f6f7fb;
+      --card: #ffffff;
+      --text: #152033;
+      --muted: #58657a;
+      --accent: #0f766e;
+      --accent-strong: #115e59;
+      --border: #d8deea;
+      --ok: #1d4ed8;
+    }
+
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(180deg, #eef4ff 0%, var(--bg) 30%, #f8fafc 100%);
+      color: var(--text);
+    }
+
+    main {
+      max-width: 1080px;
+      margin: 0 auto;
+      padding: 32px 20px 48px;
+    }
+
+    .hero, .panel {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      box-shadow: 0 18px 50px rgba(21, 32, 51, 0.08);
+    }
+
+    .hero {
+      padding: 28px;
+      margin-bottom: 20px;
+    }
+
+    h1 {
+      margin: 0 0 12px;
+      font-size: 2rem;
+      line-height: 1.15;
+    }
+
+    p {
+      margin: 0 0 12px;
+      color: var(--muted);
+      line-height: 1.5;
+    }
+
+    .controls {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-top: 20px;
+    }
+
+    button {
+      border: 0;
+      border-radius: 999px;
+      padding: 12px 18px;
+      background: var(--accent);
+      color: #fff;
+      font-size: 0.95rem;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    button:hover { background: var(--accent-strong); }
+    button:disabled {
+      cursor: progress;
+      opacity: 0.75;
+    }
+
+    .ghost {
+      background: #e8eef8;
+      color: var(--text);
+    }
+
+    .grid {
+      display: grid;
+      gap: 20px;
+      grid-template-columns: 1.15fr 0.85fr;
+    }
+
+    .panel {
+      padding: 22px;
+    }
+
+    .status {
+      margin-top: 14px;
+      font-weight: 600;
+      color: var(--ok);
+    }
+
+    .meta {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+      margin-top: 18px;
+    }
+
+    .meta-card {
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 14px;
+      background: #f8fafc;
+    }
+
+    .meta-card strong {
+      display: block;
+      margin-bottom: 6px;
+      font-size: 0.85rem;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      color: var(--muted);
+    }
+
+    .compact-list {
+      margin: 0;
+      padding-left: 18px;
+      color: var(--muted);
+      line-height: 1.5;
+    }
+
+    .compact-list li {
+      margin: 4px 0;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 14px;
+      font-variant-numeric: tabular-nums;
+    }
+
+    th, td {
+      border-bottom: 1px solid var(--border);
+      padding: 10px 8px;
+      text-align: left;
+      font-size: 0.92rem;
+    }
+
+    th {
+      color: var(--muted);
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+
+    code {
+      padding: 2px 6px;
+      border-radius: 6px;
+      background: #eef2ff;
+      color: #1e3a8a;
+    }
+
+    @media (max-width: 860px) {
+      .grid { grid-template-columns: 1fr; }
+      .meta { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <section class="hero">
+      <h1>Sequential Waterfall Lab</h1>
+      <p>This page issues a strictly sequential chain of small fetches so the waterfall should appear as clean stair-steps. It is meant for isolating browser-side delay between requests, especially when you suspect CPU affinity, event-loop starvation, or resource balancing side effects.</p>
+      <p>Use <code>Run Network-Only Chain</code> first. Then use <code>Run CPU-Between-Requests Chain</code> to amplify any browser scheduling weakness without changing the server behavior.</p>
+      <div class="controls">
+        <button id="run-network">Run Network-Only Chain</button>
+        <button id="run-cpu">Run CPU-Between-Requests Chain</button>
+        <button id="reset" class="ghost">Reset Results</button>
+      </div>
+      <div id="status" class="status">Ready.</div>
+      <div class="meta">
+        <div class="meta-card">
+          <strong>How It Works</strong>
+          <span id="request-pattern-copy">50 sequential requests to one tiny payload URL with cache-busting query strings and <code>cache: 'no-store'</code>.</span>
+        </div>
+        <div class="meta-card">
+          <strong>Modes</strong>
+          <ul class="compact-list">
+            <li><code>Network-only</code>: fires the next request immediately after the previous one finishes.</li>
+            <li><code>CPU-between-requests</code>: adds main-thread CPU work between requests.</li>
+          </ul>
+        </div>
+        <div class="meta-card">
+          <strong>Read The Results</strong>
+          If request durations stay similar but the gap before the next request grows, the delay is likely browser-side rather than network-side.
+        </div>
+        <div class="meta-card">
+          <strong>URL Controls</strong>
+          <ul class="compact-list">
+            <li><code>?mode=network</code> or <code>?mode=cpu</code></li>
+            <li><code>&amp;requests=50</code> to <code>&amp;requests=200</code></li>
+            <li><code>mode=cpu</code> uses <code>cpudelay=75</code> by default</li>
+            <li><code>&amp;cpudelay=25</code>, <code>&amp;cpudelay=75</code>, or <code>&amp;cpudelay=150</code> to override CPU mode</li>
+            <li><code>cpudelay</code> is ignored in <code>mode=network</code></li>
+            <li>Examples: <code>?mode=cpu</code>, <code>?mode=cpu&amp;cpudelay=25</code>, <code>?mode=cpu&amp;requests=100&amp;cpudelay=75</code>, <code>?mode=cpu&amp;requests=200&amp;cpudelay=150</code></li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section class="grid">
+      <div class="panel">
+        <h2>Per-request timing</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>Request</th>
+              <th>Start (ms)</th>
+              <th>End (ms)</th>
+              <th>Duration (ms)</th>
+              <th>Gap From Prior End (ms)</th>
+            </tr>
+          </thead>
+          <tbody id="results-body">
+          </tbody>
+        </table>
+      </div>
+
+      <div class="panel">
+        <h2>Run summary</h2>
+        <table>
+          <tbody>
+            <tr><th>Mode</th><td id="summary-mode">Not run yet</td></tr>
+            <tr><th>Requests</th><td id="summary-count">0</td></tr>
+            <tr><th>Total duration</th><td id="summary-total">0 ms</td></tr>
+            <tr><th>Average request duration</th><td id="summary-avg-duration">0 ms</td></tr>
+            <tr><th>Average inter-request gap</th><td id="summary-avg-gap">0 ms</td></tr>
+            <tr><th>Largest inter-request gap</th><td id="summary-max-gap">0 ms</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    const maxRequestCount = 200;
+    const defaultRequestCount = 50;
+    const defaultCpuDelayMs = 75;
+    const maxCpuDelayMs = 1000;
+    const statusEl = document.getElementById('status');
+    const requestPatternCopyEl = document.getElementById('request-pattern-copy');
+    const resultsBody = document.getElementById('results-body');
+    const runNetworkButton = document.getElementById('run-network');
+    const runCpuButton = document.getElementById('run-cpu');
+    const resetButton = document.getElementById('reset');
+    const params = new URLSearchParams(window.location.search);
+
+    const summary = {
+      mode: document.getElementById('summary-mode'),
+      count: document.getElementById('summary-count'),
+      total: document.getElementById('summary-total'),
+      avgDuration: document.getElementById('summary-avg-duration'),
+      avgGap: document.getElementById('summary-avg-gap'),
+      maxGap: document.getElementById('summary-max-gap')
+    };
+
+    function parseRequestCount() {
+      const parsed = Number.parseInt(params.get('requests') || String(defaultRequestCount), 10);
+      if (Number.isNaN(parsed)) {
+        return defaultRequestCount;
+      }
+      return Math.min(maxRequestCount, Math.max(1, parsed));
+    }
+
+    function parseCpuDelay() {
+      const parsed = Number.parseInt(params.get('cpudelay') || String(defaultCpuDelayMs), 10);
+      if (Number.isNaN(parsed)) {
+        return defaultCpuDelayMs;
+      }
+      return Math.min(maxCpuDelayMs, Math.max(0, parsed));
+    }
+
+    const requestCount = parseRequestCount();
+    const cpuDelayMs = parseCpuDelay();
+    const payloadName = 'payload.txt';
+    const requestNames = Array.from(
+      { length: requestCount },
+      () => payloadName
+    );
+    requestPatternCopyEl.innerHTML = `${requestCount} sequential requests to one tiny payload URL with cache-busting query strings and <code>cache: 'no-store'</code>.`;
+
+    function setBusy(isBusy) {
+      runNetworkButton.disabled = isBusy;
+      runCpuButton.disabled = isBusy;
+    }
+
+    function format(value) {
+      return `${value.toFixed(2)} ms`;
+    }
+
+    function resetResults() {
+      resultsBody.innerHTML = '';
+      summary.mode.textContent = 'Not run yet';
+      summary.count.textContent = '0';
+      summary.total.textContent = '0 ms';
+      summary.avgDuration.textContent = '0 ms';
+      summary.avgGap.textContent = '0 ms';
+      summary.maxGap.textContent = '0 ms';
+      statusEl.textContent = 'Ready.';
+    }
+
+    function renderResults(mode, samples) {
+      resultsBody.innerHTML = '';
+
+      let totalDuration = 0;
+      let totalGap = 0;
+      let maxGap = 0;
+
+      for (const sample of samples) {
+        totalDuration += sample.duration;
+        totalGap += sample.gap;
+        maxGap = Math.max(maxGap, sample.gap);
+
+        const row = document.createElement('tr');
+        row.innerHTML = `
+          <td>${sample.name}</td>
+          <td>${sample.start.toFixed(2)}</td>
+          <td>${sample.end.toFixed(2)}</td>
+          <td>${sample.duration.toFixed(2)}</td>
+          <td>${sample.gap.toFixed(2)}</td>
+        `;
+        resultsBody.appendChild(row);
+      }
+
+      const runStart = samples[0]?.start ?? 0;
+      const runEnd = samples[samples.length - 1]?.end ?? 0;
+      const total = Math.max(0, runEnd - runStart);
+      const avgDuration = samples.length ? totalDuration / samples.length : 0;
+      const avgGap = samples.length > 1 ? totalGap / (samples.length - 1) : 0;
+
+      summary.mode.textContent = mode;
+      summary.count.textContent = String(samples.length);
+      summary.total.textContent = format(total);
+      summary.avgDuration.textContent = format(avgDuration);
+      summary.avgGap.textContent = format(avgGap);
+      summary.maxGap.textContent = format(maxGap);
+    }
+
+    function busyLoop(durationMs) {
+      const end = performance.now() + durationMs;
+      while (performance.now() < end) {
+        Math.sqrt(Math.random() * 1000);
+      }
+    }
+
+    async function runSequentialChain(mode, cpuDelayMs) {
+      setBusy(true);
+      statusEl.textContent = `${mode} is running...`;
+
+      const samples = [];
+      let previousEnd = 0;
+
+      try {
+        for (const [index, requestName] of requestNames.entries()) {
+          if (cpuDelayMs > 0 && index > 0) {
+            busyLoop(cpuDelayMs);
+          }
+
+          const start = performance.now();
+          const response = await fetch(`${requestName}?run=${Date.now()}-${index}`, { cache: 'no-store' });
+          await response.text();
+          const end = performance.now();
+          const duration = end - start;
+          const gap = previousEnd ? Math.max(0, start - previousEnd) : 0;
+          previousEnd = end;
+
+          samples.push({
+            name: requestName,
+            start,
+            end,
+            duration,
+            gap
+          });
+        }
+
+        renderResults(mode, samples);
+        statusEl.textContent = `${mode} completed.`;
+      } catch (error) {
+        statusEl.textContent = `${mode} failed: ${error.message}`;
+      } finally {
+        setBusy(false);
+      }
+    }
+
+    runNetworkButton.addEventListener('click', () => runSequentialChain('Network-only chain', 0));
+    runCpuButton.addEventListener('click', () => runSequentialChain(`CPU-between-requests chain (${cpuDelayMs} ms delay)`, cpuDelayMs));
+    resetButton.addEventListener('click', resetResults);
+
+    const mode = params.get('mode');
+    if (mode === 'network') {
+      runSequentialChain('Network-only chain', 0);
+    } else if (mode === 'cpu') {
+      runSequentialChain(`CPU-between-requests chain (${cpuDelayMs} ms delay)`, cpuDelayMs);
+    }
+  </script>
+</body>
+</html>
