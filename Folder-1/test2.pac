@@ -10,8 +10,8 @@ function FindProxyForURL(url, host) {
 
     // Rule-2: Google traffic via port 50000
     if (
-        shExpMatch(host, "www.google.com") ||
-        isInNet(dnsResolve(host), "142.250.196.0", "255.255.255.0")
+        shExpMatch(host, "a0.muscache.com") ||
+        isInNet(dnsResolve(host), "23.216.6.108", "255.255.255.0")
     ) {
         return "PROXY 172.21.61.107:50000";
     }
