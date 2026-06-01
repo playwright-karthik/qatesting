@@ -1,0 +1,139 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Selector Priority - Recorder Conversion Lab</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header class="site-header">
+    <div class="brand-block">
+      <img src="fixture-badge.svg" width="44" height="44" alt="">
+      <div>
+        <h1>Selector Priority</h1>
+        <p>Use this page to validate locator fallback order.</p>
+      </div>
+    </div>
+    <nav class="top-nav" aria-label="Lab pages">
+      <a href="index.html">How To Use</a>
+      <a href="basic-elements.html">Basic Interactions</a>
+      <a aria-current="page" href="selector-priority.html">Selector Priority</a>
+      <a href="edge-cases.html">Edge Cases</a>
+    </nav>
+  </header>
+
+  <main class="page-shell">
+    <section class="help-panel">
+      <h2>Expected Fallback Order</h2>
+      <p>If advanced selectors exist, Agent should use only advanced selectors in priority order. Otherwise the normal order is:</p>
+      <p class="priority-line">role + name -> label -> test id -> text -> css id -> css stable ancestor -> css class -> xpath -> tag fallback</p>
+      <ol class="checklist">
+        <li>Interact with every row from top to bottom.</li>
+        <li>Run the generated JSON and script through the analyser.</li>
+        <li>Open the Selector Priority tab and confirm the actual script order matches expected order.</li>
+      </ol>
+    </section>
+
+    <section class="priority-table">
+      <article class="priority-row">
+        <div>
+          <h2>Role + Name</h2>
+          <p>Expected first selector: role + accessible name.</p>
+        </div>
+        <button type="button" role="button" aria-label="Priority Role Name Button">Priority Role Name Button</button>
+      </article>
+
+      <article class="priority-row">
+        <div>
+          <h2>Label</h2>
+          <p>Expected first selector: label.</p>
+        </div>
+        <label for="priority-label-input">Priority Label Input</label>
+        <input id="priority-label-input" type="text">
+      </article>
+
+      <article class="priority-row">
+        <div>
+          <h2>Test ID</h2>
+          <p>Expected selector: test id when role/name and label are absent.</p>
+        </div>
+        <button type="button" data-testid="priority-testid-button">Priority TestId Button</button>
+      </article>
+
+      <article class="priority-row">
+        <div>
+          <h2>Text</h2>
+          <p>Expected selector: visible text.</p>
+        </div>
+        <button type="button">Priority Text Button</button>
+      </article>
+
+      <article class="priority-row">
+        <div>
+          <h2>CSS ID</h2>
+          <p>Expected selector: css id.</p>
+        </div>
+        <input id="priority-css-id-only" type="text" aria-hidden="true">
+      </article>
+
+      <article class="priority-row stable-priority-wrapper">
+        <div>
+          <h2>Stable Ancestor</h2>
+          <p>Expected selector: stable ancestor CSS path.</p>
+        </div>
+        <div class="stable-host">
+          <span>
+            <button type="button">Stable Ancestor Action</button>
+          </span>
+        </div>
+      </article>
+
+      <article class="priority-row">
+        <div>
+          <h2>CSS Class</h2>
+          <p>Expected selector: unique class.</p>
+        </div>
+        <button type="button" class="priority-class-only">Class Only Action</button>
+      </article>
+
+      <article class="priority-row">
+        <div>
+          <h2>XPath</h2>
+          <p>Expected selector: XPath fallback.</p>
+        </div>
+        <section>
+          <div>
+            <span>
+              <button type="button">XPath Fallback Action</button>
+            </span>
+          </div>
+        </section>
+      </article>
+
+      <article class="priority-row tag-only-zone">
+        <div>
+          <h2>Tag Fallback</h2>
+          <p>Expected selector: tag fallback when it is the only available selector.</p>
+        </div>
+        <input type="search">
+      </article>
+
+      <article class="priority-row">
+        <div>
+          <h2>Advanced Selector Candidate</h2>
+          <p>Use this row when the recorder emits advanced selectors. If advanced selectors are present in JSON, normal selector fallbacks should not appear in script.</p>
+        </div>
+        <button type="button" data-advanced-selector="advanced-primary" data-testid="advanced-normal-testid" id="advanced-normal-id">Advanced Selector Action</button>
+      </article>
+    </section>
+
+    <section class="event-log">
+      <h2>Event Log</h2>
+      <pre id="event-log" aria-live="polite">Ready</pre>
+    </section>
+  </main>
+
+  <script src="lab.js"></script>
+</body>
+</html>

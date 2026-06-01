@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Recorder Conversion Lab</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header class="site-header">
+    <div class="brand-block">
+      <img src="fixture-badge.svg" width="44" height="44" alt="">
+      <div>
+        <h1>Recorder Conversion Lab</h1>
+        <p>Static fixture pages for validating FE recorder JSON to Agent Playwright script conversion.</p>
+      </div>
+    </div>
+    <nav class="top-nav" aria-label="Lab pages">
+      <a aria-current="page" href="index.html">How To Use</a>
+      <a href="basic-elements.html">Basic Interactions</a>
+      <a href="selector-priority.html">Selector Priority</a>
+      <a href="edge-cases.html">Edge Cases</a>
+    </nav>
+  </header>
+
+  <main class="page-shell">
+    <section class="help-panel">
+      <h2>How To Use This Lab</h2>
+      <ol class="checklist">
+        <li>Open one lab page in the browser.</li>
+        <li>Start the FE recorder.</li>
+        <li>Perform the listed interactions in order.</li>
+        <li>Save the captured recorder JSON.</li>
+        <li>Let Agent convert the JSON into Playwright script.</li>
+        <li>Upload the JSON and script into the Json-To-Script-Analyser.</li>
+        <li>Review the Verb Summary, Action Mapping, and Selector Priority tabs.</li>
+      </ol>
+    </section>
+
+    <section class="grid-three">
+      <article class="test-card">
+        <h2>Basic Interactions</h2>
+        <p>Inputs, checkboxes, radio buttons, dropdowns, buttons, links, double click, right click, hover, keyboard, file upload, date, color, number, range, contenteditable, alert, confirm, and scroll.</p>
+        <a class="button-link" href="basic-elements.html">Open Basic Page</a>
+      </article>
+
+      <article class="test-card">
+        <h2>Selector Priority</h2>
+        <p>Elements designed around the expected fallback order: role + name, label, test id, text, css id, stable ancestor, css class, xpath, and tag fallback.</p>
+        <a class="button-link" href="selector-priority.html">Open Selector Page</a>
+      </article>
+
+      <article class="test-card">
+        <h2>Edge Cases</h2>
+        <p>Duplicate labels, duplicate text, dynamic ids, delayed elements, hidden elements, iframe interactions, long text, and special characters.</p>
+        <a class="button-link" href="edge-cases.html">Open Edge Page</a>
+      </article>
+    </section>
+
+    <section class="notes-panel">
+      <h2>Recommended Recording Strategy</h2>
+      <p>Record one page at a time first. After each recording, run the analyser. Once each page is clean, record a larger end-to-end flow across multiple pages.</p>
+      <p>The selector priority page is the most important one for proving whether a failure is an Agent conversion issue or a FE JSON issue.</p>
+    </section>
+  </main>
+</body>
+</html>

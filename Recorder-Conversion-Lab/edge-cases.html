@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Edge Cases - Recorder Conversion Lab</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header class="site-header">
+    <div class="brand-block">
+      <img src="fixture-badge.svg" width="44" height="44" alt="">
+      <div>
+        <h1>Edge Cases</h1>
+        <p>Use this page to expose ambiguous selector and runtime conversion problems.</p>
+      </div>
+    </div>
+    <nav class="top-nav" aria-label="Lab pages">
+      <a href="index.html">How To Use</a>
+      <a href="basic-elements.html">Basic Interactions</a>
+      <a href="selector-priority.html">Selector Priority</a>
+      <a aria-current="page" href="edge-cases.html">Edge Cases</a>
+    </nav>
+  </header>
+
+  <main class="page-shell">
+    <section class="help-panel">
+      <h2>Recording Steps</h2>
+      <ol class="checklist">
+        <li>Click duplicate label, duplicate text, and duplicate class controls.</li>
+        <li>Click the dynamic id and delayed controls.</li>
+        <li>Reveal the hidden element and click it.</li>
+        <li>Interact inside the iframe.</li>
+        <li>Use the special-character field and long text button.</li>
+      </ol>
+    </section>
+
+    <section class="form-grid">
+      <div class="section-block">
+        <h2>Ambiguous Selectors</h2>
+        <label for="duplicate-one">Duplicate Label</label>
+        <input id="duplicate-one" type="text">
+        <label for="duplicate-two">Duplicate Label</label>
+        <input id="duplicate-two" type="text">
+
+        <button type="button" class="duplicate-text">Duplicate Text</button>
+        <button type="button" class="duplicate-text">Duplicate Text</button>
+        <button type="button" class="shared-action-class">Shared Class One</button>
+        <button type="button" class="shared-action-class">Shared Class Two</button>
+      </div>
+
+      <div class="section-block">
+        <h2>Dynamic And Hidden</h2>
+        <button id="dynamic-id-button" type="button">Dynamic Id Button</button>
+        <button id="create-delayed-edge" type="button">Create Delayed Edge Button</button>
+        <div id="delayed-edge-zone" class="dynamic-zone"></div>
+
+        <button id="reveal-hidden" type="button">Reveal Hidden Button</button>
+        <button id="hidden-target" class="hidden" type="button">Hidden Target Button</button>
+      </div>
+
+      <div class="section-block">
+        <h2>Special Text</h2>
+        <label for="special-text">Quotes And Symbols</label>
+        <input id="special-text" type="text" value="Karthik's &quot;quoted&quot; / slash text">
+
+        <button type="button" id="long-text-button">Very Long Button Text For Recorder Conversion Selector Stability Validation</button>
+      </div>
+    </section>
+
+    <section class="section-block">
+      <h2>Iframe</h2>
+      <iframe id="lab-iframe" src="iframe-content.html" title="Recorder iframe fixture"></iframe>
+    </section>
+
+    <section class="event-log">
+      <h2>Event Log</h2>
+      <pre id="event-log" aria-live="polite">Ready</pre>
+    </section>
+  </main>
+
+  <script src="lab.js"></script>
+</body>
+</html>
