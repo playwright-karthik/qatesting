@@ -1,0 +1,134 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Basic Interactions - Recorder Conversion Lab</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header class="site-header">
+    <div class="brand-block">
+      <img src="fixture-badge.svg" width="44" height="44" alt="">
+      <div>
+        <h1>Basic Interactions</h1>
+        <p>Use this page to validate action verb conversion.</p>
+      </div>
+    </div>
+    <nav class="top-nav" aria-label="Lab pages">
+      <a href="index.html">How To Use</a>
+      <a aria-current="page" href="basic-elements.html">Basic Interactions</a>
+      <a href="selector-priority.html">Selector Priority</a>
+      <a href="edge-cases.html">Edge Cases</a>
+    </nav>
+  </header>
+
+  <main class="page-shell">
+    <section class="help-panel">
+      <h2>Recording Steps</h2>
+      <ol class="checklist">
+        <li>Fill text, password, textarea, date, color, number, and contenteditable fields.</li>
+        <li>Check and uncheck checkboxes.</li>
+        <li>Select radio buttons, single dropdown, and multi dropdown.</li>
+        <li>Click, double-click, right-click, hover, type with keyboard, upload a file, and scroll to the bottom.</li>
+        <li>Trigger alert and confirm dialogs.</li>
+      </ol>
+    </section>
+
+    <section class="form-grid" aria-label="Input controls">
+      <div class="section-block">
+        <h2>Inputs</h2>
+        <label for="basic-text">Text Input</label>
+        <input id="basic-text" type="text" placeholder="Enter text">
+
+        <label for="basic-password">Password Input</label>
+        <input id="basic-password" type="password" placeholder="Enter password">
+
+        <label for="basic-textarea">Text Area</label>
+        <textarea id="basic-textarea" rows="4" placeholder="Enter a message"></textarea>
+
+        <label for="basic-date">Date Picker</label>
+        <input id="basic-date" type="date">
+
+        <label for="basic-color">Color Picker</label>
+        <input id="basic-color" type="color" value="#2864c8">
+
+        <label for="basic-number">Number Input</label>
+        <input id="basic-number" type="number" min="1" max="10" value="1">
+
+        <label for="basic-range">Range Slider</label>
+        <input id="basic-range" type="range" min="0" max="100" value="50">
+        <output id="range-output" for="basic-range">50</output>
+      </div>
+
+      <div class="section-block">
+        <h2>Choices</h2>
+        <label class="inline-control"><input id="newsletter" type="checkbox"> Subscribe to newsletter</label>
+        <label class="inline-control"><input id="terms" type="checkbox"> Accept terms and conditions</label>
+
+        <fieldset>
+          <legend>Radio Group</legend>
+          <label class="inline-control"><input id="radio-alpha" type="radio" name="basic-radio" value="alpha"> Alpha</label>
+          <label class="inline-control"><input id="radio-beta" type="radio" name="basic-radio" value="beta"> Beta</label>
+          <label class="inline-control"><input id="radio-gamma" type="radio" name="basic-radio" value="gamma"> Gamma</label>
+        </fieldset>
+
+        <label for="single-select">Single Select</label>
+        <select id="single-select">
+          <option value="">Choose one</option>
+          <option value="us">United States</option>
+          <option value="ca">Canada</option>
+          <option value="uk">United Kingdom</option>
+        </select>
+
+        <label for="multi-select">Multi Select</label>
+        <select id="multi-select" multiple size="4">
+          <option value="red">Red</option>
+          <option value="green">Green</option>
+          <option value="blue">Blue</option>
+          <option value="black">Black</option>
+        </select>
+      </div>
+
+      <div class="section-block">
+        <h2>Clicks And Keyboard</h2>
+        <button id="click-button" type="button">Click Me</button>
+        <button id="double-click-button" type="button">Double Click Me</button>
+        <button id="right-click-button" type="button">Right Click Me</button>
+        <button id="hover-button" type="button">Hover Over Me</button>
+        <a id="sample-link" href="#link-target">Visit Link Target</a>
+
+        <label for="keyboard-input">Keyboard Input</label>
+        <input id="keyboard-input" type="text" placeholder="Type keys here">
+
+        <label for="file-upload">File Upload</label>
+        <input id="file-upload" type="file">
+
+        <label for="editable-box">Contenteditable</label>
+        <div id="editable-box" class="editable" contenteditable="true">Edit this text</div>
+      </div>
+    </section>
+
+    <section class="section-block">
+      <h2>Dialogs And Scroll</h2>
+      <button id="alert-button" type="button">Open Alert</button>
+      <button id="confirm-button" type="button">Open Confirm</button>
+      <button id="delayed-button" type="button">Create Delayed Button</button>
+      <div id="delayed-target" class="dynamic-zone"></div>
+      <div class="scroll-box" tabindex="0">
+        <p>Scroll inside this box until the bottom action appears.</p>
+        <div class="spacer"></div>
+        <button id="bottom-scroll-button" type="button">Bottom Scroll Button</button>
+      </div>
+      <p id="link-target" class="target-text">Link target reached.</p>
+    </section>
+
+    <section class="event-log">
+      <h2>Event Log</h2>
+      <pre id="event-log" aria-live="polite">Ready</pre>
+    </section>
+  </main>
+
+  <script src="lab.js"></script>
+</body>
+</html>
