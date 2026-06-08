@@ -1,0 +1,125 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Json To Script Analyser</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <main class="shell">
+      <header class="hero">
+        <div>
+          <p class="eyebrow">Recorder JSON to Playwright script conversion diagnosis</p>
+          <h1>Json To Script Analyser</h1>
+        </div>
+        <div class="privacy-note">Files are processed locally in your browser.</div>
+      </header>
+
+      <section class="panel input-panel" aria-label="Inputs">
+        <div class="field-grid">
+          <label class="file-card">
+            <span>Recorder JSON</span>
+            <input id="recorderFile" type="file" accept=".json,application/json" />
+          </label>
+
+          <label class="file-card">
+            <span>Generated Script</span>
+            <input id="scriptFile" type="file" accept=".js,.ts,text/javascript,text/plain" />
+          </label>
+
+          <label class="file-card">
+            <span>Core Diagnostic JSON Optional</span>
+            <input id="diagnosticFile" type="file" accept=".json,application/json,text/plain" />
+          </label>
+        </div>
+
+        <label class="text-field">
+          <span>Paste Core Diagnostic Text Optional</span>
+          <textarea
+            id="diagnosticText"
+            rows="5"
+            placeholder="Paste diagnostic_results.json output or terminal text that contains it."
+          ></textarea>
+        </label>
+
+        <div class="actions">
+          <button id="analyzeBtn" type="button">Analyze</button>
+          <button id="resetBtn" class="secondary" type="button">Reset</button>
+        </div>
+      </section>
+
+      <section id="statusCards" class="status-grid" aria-label="Status summary">
+        <article class="metric-card">
+          <span>Status</span>
+          <strong id="statusValue">WAITING_FOR_INPUT</strong>
+        </article>
+        <article class="metric-card">
+          <span>Recorder Actions</span>
+          <strong id="recorderCount">0</strong>
+        </article>
+        <article class="metric-card">
+          <span>Script Verbs</span>
+          <strong id="scriptCount">0</strong>
+        </article>
+        <article class="metric-card">
+          <span>Matched</span>
+          <strong id="matchedCount">0</strong>
+        </article>
+        <article class="metric-card">
+          <span>Selector Issues</span>
+          <strong id="selectorIssueCount">0</strong>
+        </article>
+      </section>
+
+      <section class="panel result-panel" aria-label="Results">
+        <div class="tabs" role="tablist">
+          <button class="tab active" type="button" data-tab="interpretation">Interpretation</button>
+          <button class="tab" type="button" data-tab="verbs">Verb Summary</button>
+          <button class="tab" type="button" data-tab="mapping">Action Mapping</button>
+          <button class="tab" type="button" data-tab="selectors">Selector Priority</button>
+          <button class="tab" type="button" data-tab="runtime">Runtime/Core</button>
+          <button class="tab" type="button" data-tab="json">JSON</button>
+          <button class="tab" type="button" data-tab="csv">CSV</button>
+        </div>
+
+        <div id="interpretation" class="tab-panel active">
+          <h2>Interpretation</h2>
+          <div id="interpretationContent" class="content-block muted">Upload recorder.json and script.js, then analyze.</div>
+        </div>
+
+        <div id="verbs" class="tab-panel">
+          <h2>Verb Summary</h2>
+          <div id="verbContent" class="content-block muted">No analysis yet.</div>
+        </div>
+
+        <div id="mapping" class="tab-panel">
+          <h2>Action Mapping</h2>
+          <div id="mappingContent" class="content-block muted">No analysis yet.</div>
+        </div>
+
+        <div id="selectors" class="tab-panel">
+          <h2>Selector Priority</h2>
+          <div id="selectorContent" class="content-block muted">No analysis yet.</div>
+        </div>
+
+        <div id="runtime" class="tab-panel">
+          <h2>Runtime/Core</h2>
+          <div id="runtimeContent" class="content-block muted">No diagnostic data supplied.</div>
+        </div>
+
+        <div id="json" class="tab-panel">
+          <h2>JSON</h2>
+          <pre id="jsonContent" class="code-block">{}</pre>
+        </div>
+
+        <div id="csv" class="tab-panel">
+          <h2>CSV</h2>
+          <pre id="csvContent" class="code-block"></pre>
+        </div>
+      </section>
+    </main>
+
+    <script src="app.js"></script>
+  </body>
+</html>
