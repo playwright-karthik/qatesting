@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Bug 306913 Delayed Filmstrip Regression</title>
+  <link rel="stylesheet" href="assets/filmstrip-test.css">
+</head>
+<body>
+  <main class="page">
+    <header class="header">
+      <div>
+        <h1>Delayed Filmstrip Regression</h1>
+        <p>The loader appears immediately, the page changes in visible phases, and the load event is held open so Doc Complete takes longer.</p>
+      </div>
+      <div class="state-badge" id="stateBadge" data-testid="state-badge">BOOT</div>
+    </header>
+
+    <section class="stage" aria-label="Controlled visual regression stage">
+      <div class="hero phase-loading" id="hero">
+        <div class="primary-panel">
+          <p class="status-kicker" id="kicker">Phase 1 of 4</p>
+          <h2 class="main-title" id="titleText">Preparing visual content</h2>
+          <p class="main-copy" id="bodyText">This first state is intentionally visible at step start so the filmstrip should include an early loader frame.</p>
+
+          <div class="loader-row" id="loaderRow" data-testid="loader">
+            <div class="spinner" aria-hidden="true"></div>
+            <span>Loading controlled fixture...</span>
+          </div>
+
+          <div class="progress-shell" aria-label="Progress">
+            <div class="progress-bar" id="progressBar"></div>
+          </div>
+
+          <div class="visual-grid" aria-label="Changing visual tiles">
+            <div class="visual-tile hot" id="tile1"></div>
+            <div class="visual-tile" id="tile2"></div>
+            <div class="visual-tile" id="tile3"></div>
+            <div class="visual-tile" id="tile4"></div>
+            <div class="visual-tile" id="tile5"></div>
+          </div>
+
+          <div class="final-banner" id="readyMarker" data-testid="ready-marker">READY: final visual state reached</div>
+        </div>
+
+        <aside class="side-panel">
+          <div class="metric">
+            <strong id="elapsedMs">0ms</strong>
+            <span>Elapsed page time</span>
+          </div>
+          <div class="metric">
+            <strong id="loaderMsLabel">800ms</strong>
+            <span>Configured loader duration</span>
+          </div>
+          <div class="metric">
+            <strong id="docCompleteMsLabel">5000ms</strong>
+            <span>Target Doc Complete</span>
+          </div>
+          <div class="metric">
+            <strong id="requestCountLabel">8</strong>
+            <span>Load-blocking requests</span>
+          </div>
+          <div class="metric">
+            <strong id="phaseLabel">loader</strong>
+            <span>Current visual phase</span>
+          </div>
+        </aside>
+      </div>
+
+      <div class="timeline" aria-label="Expected filmstrip phases">
+        <div class="active" id="stepBoot">
+          <strong>0ms</strong>
+          Loader visible
+        </div>
+        <div id="stepContent">
+          <strong>After loader</strong>
+          Main content appears
+        </div>
+        <div id="stepTiles">
+          <strong>Mid step</strong>
+          Tile colors change
+        </div>
+        <div id="stepReady">
+          <strong>Final</strong>
+          Ready marker visible
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    (function writeNetworkLoadBlockers() {
+      var params = new URLSearchParams(window.location.search);
+      var docCompleteMs = Number(params.get('docCompleteMs') || 5000);
+      var networkDelayMs = Number(params.get('networkDelayMs') || docCompleteMs);
+      var requestCount = Number(params.get('requestCount') || 8);
+      var delaySeconds = Math.max(1, Math.ceil(networkDelayMs / 1000));
+      var safeRequestCount = Math.max(0, Math.min(20, requestCount));
+      var cacheBust = Date.now() + '-' + Math.random().toString(36).slice(2);
+      var blockerHtml = '';
+
+      for (var index = 1; index <= safeRequestCount; index += 1) {
+        blockerHtml += '<img ' +
+          'src="https://httpbin.org/delay/' + delaySeconds + '?bug306913=' + index + '&cb=' + cacheBust + '" ' +
+          'alt="" ' +
+          'style="width:1px;height:1px;" ' +
+        '>';
+      }
+
+      window.__filmstripNetworkBlockers = {
+        requestCount: safeRequestCount,
+        delaySeconds: delaySeconds
+      };
+
+      document.write(
+        '<div id="networkLoadBlockers" aria-hidden="true" ' +
+        'style="position:absolute;left:-9999px;top:0;width:1px;height:1px;overflow:hidden;opacity:0;pointer-events:none;">' +
+        blockerHtml +
+        '</div>'
+      );
+    })();
+  </script>
+
+  <script>
+    const params = new URLSearchParams(window.location.search);
+    const docCompleteMs = Number(params.get('docCompleteMs') || 5000);
+    const loaderMs = Number(params.get('loaderMs') || 800);
+    const contentMs = Number(params.get('contentMs') || loaderMs + 1000);
+    const tileMs = Number(params.get('tileMs') || loaderMs + 2200);
+    const finalMs = Number(params.get('finalMs') || loaderMs + 3200);
+    const tickMs = Number(params.get('tickMs') || 100);
+    const startedAt = performance.now();
+    window.__filmstripStartedAt = startedAt;
+
+    const state = {
+      phase: 'loader',
+      docCompleteMs,
+      loaderMs,
+      contentMs,
+      tileMs,
+      finalMs,
+      networkBlockers: window.__filmstripNetworkBlockers || null
+    };
+
+    window.__filmstripRegressionState = state;
+
+    const hero = document.getElementById('hero');
+    const stateBadge = document.getElementById('stateBadge');
+    const kicker = document.getElementById('kicker');
+    const titleText = document.getElementById('titleText');
+    const bodyText = document.getElementById('bodyText');
+    const loaderRow = document.getElementById('loaderRow');
+    const progressBar = document.getElementById('progressBar');
+    const elapsedMs = document.getElementById('elapsedMs');
+    const loaderMsLabel = document.getElementById('loaderMsLabel');
+    const docCompleteMsLabel = document.getElementById('docCompleteMsLabel');
+    const requestCountLabel = document.getElementById('requestCountLabel');
+    const phaseLabel = document.getElementById('phaseLabel');
+    const readyMarker = document.getElementById('readyMarker');
+    const tiles = [
+      document.getElementById('tile1'),
+      document.getElementById('tile2'),
+      document.getElementById('tile3'),
+      document.getElementById('tile4'),
+      document.getElementById('tile5')
+    ];
+
+    loaderMsLabel.textContent = loaderMs + 'ms';
+    docCompleteMsLabel.textContent = docCompleteMs + 'ms';
+    requestCountLabel.textContent = String((window.__filmstripNetworkBlockers || {}).requestCount || 0);
+
+    function setPhase(name) {
+      state.phase = name;
+      stateBadge.textContent = name.toUpperCase();
+      phaseLabel.textContent = name;
+      document.body.setAttribute('data-phase', name);
+    }
+
+    function markTimeline(id, className) {
+      document.getElementById(id).className = className;
+    }
+
+    function showContentPhase() {
+      hero.className = 'hero phase-content';
+      setPhase('content');
+      kicker.textContent = 'Phase 2 of 4';
+      titleText.textContent = 'Primary content rendered';
+      bodyText.textContent = 'This visible change should appear after the loader frame in the filmstrip timeline.';
+      loaderRow.style.display = 'none';
+      tiles[1].classList.add('cool');
+      markTimeline('stepBoot', 'done');
+      markTimeline('stepContent', 'active');
+    }
+
+    function showTilePhase() {
+      setPhase('tiles');
+      kicker.textContent = 'Phase 3 of 4';
+      titleText.textContent = 'Visual elements are still changing';
+      bodyText.textContent = 'Color and layout changes continue after the script can already see the page content.';
+      tiles.forEach((tile, index) => {
+        tile.classList.toggle('cool', index % 2 === 0);
+        tile.classList.toggle('hot', index % 2 === 1);
+      });
+      markTimeline('stepContent', 'done');
+      markTimeline('stepTiles', 'active');
+    }
+
+    function showReadyPhase() {
+      hero.className = 'hero phase-final';
+      setPhase('ready');
+      kicker.textContent = 'Phase 4 of 4';
+      titleText.textContent = 'Final state is ready';
+      bodyText.textContent = 'The ready marker is now visible. The page load event is still held open so Step2 can collect more filmstrip frames.';
+      readyMarker.classList.add('visible');
+      tiles.forEach((tile) => {
+        tile.classList.remove('hot', 'cool');
+        tile.classList.add('done');
+      });
+      markTimeline('stepTiles', 'done');
+      markTimeline('stepReady', 'done');
+    }
+
+    function showLoadHoldPhase() {
+      if (state.phase !== 'ready') {
+        return;
+      }
+
+      setPhase('holding-load');
+      kicker.textContent = 'Doc Complete hold';
+      titleText.textContent = 'Waiting on slow child requests';
+      bodyText.textContent = 'Visual content is stable now, but hidden load-blocking requests are still active so Doc Complete stays open for filmstrip capture.';
+    }
+
+    function updateClock() {
+      const elapsed = Math.round(performance.now() - startedAt);
+      elapsedMs.textContent = elapsed + 'ms';
+      progressBar.style.width = Math.min(100, Math.round((elapsed / docCompleteMs) * 100)) + '%';
+    }
+
+    setPhase('loader');
+    setTimeout(showContentPhase, loaderMs);
+    setTimeout(showTilePhase, contentMs);
+    setTimeout(showReadyPhase, finalMs);
+    if (docCompleteMs > finalMs + 700) {
+      setTimeout(showLoadHoldPhase, finalMs + 500);
+    }
+    setInterval(updateClock, tickMs);
+    updateClock();
+  </script>
+</body>
+</html>
