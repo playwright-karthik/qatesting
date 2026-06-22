@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Bug 306913 Filmstrip Test Pages</title>
+  <link rel="stylesheet" href="assets/filmstrip-test.css">
+</head>
+<body>
+  <main class="page">
+    <header class="header">
+      <div>
+        <h1>Bug 306913 Filmstrip Test Pages</h1>
+        <p>Static pages for validating initial loader frames, delayed visual changes, and fast Playwright step completion without extra waits.</p>
+      </div>
+      <div class="state-badge">GitHub Pages Ready</div>
+    </header>
+
+    <section class="link-grid" aria-label="Filmstrip test pages">
+      <article class="link-card">
+        <h2>Delayed Loader Regression</h2>
+        <p>Primary page. Shows a loader first, changes visual state after a controlled delay, and ends with a ready marker.</p>
+        <a href="filmstrip-delay-regression.html">Open delayed loader page</a>
+      </article>
+
+      <article class="link-card">
+        <h2>Fast SPA Transition</h2>
+        <p>Stress page for the case where Playwright reaches the indicator quickly while visual updates are still happening.</p>
+        <a href="filmstrip-fast-spa.html">Open fast transition page</a>
+      </article>
+
+      <article class="link-card">
+        <h2>Low Visual Change</h2>
+        <p>Small visual delta page to verify initial and final frame capture even when the page is mostly static.</p>
+        <a href="filmstrip-low-visual-change.html">Open low-change page</a>
+      </article>
+    </section>
+
+    <section class="stage" style="margin-top: 24px;">
+      <div class="hero phase-content" style="min-height: 280px;">
+        <div class="primary-panel">
+          <p class="status-kicker">Recommended validation</p>
+          <h2 class="main-title">Use the delayed loader page first.</h2>
+          <p class="main-copy">The default loader is visible for 600ms so the filmstrip should capture the early state. For edge validation, pass <strong>?loaderMs=150</strong>.</p>
+        </div>
+        <aside class="side-panel">
+          <div class="metric">
+            <strong>No iframe</strong>
+            <span>Top-level page capture only</span>
+          </div>
+          <div class="metric">
+            <strong>No network</strong>
+            <span>No third-party requests</span>
+          </div>
+        </aside>
+      </div>
+    </section>
+  </main>
+</body>
+</html>
