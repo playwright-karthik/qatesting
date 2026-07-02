@@ -1,67 +1,169 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Recorder Conversion Lab</title>
-  <link rel="stylesheet" href="styles.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Karthik HTML Sandbox - Test Environment</title>
+    <style>
+        :root {
+            --primary-color: #2b6cb0;
+            --primary-hover: #1a446c;
+            --bg-color: #f7fafc;
+            --border-color: #e2e8f0;
+            --text-color: #2d3748;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.5;
+            padding: 20px;
+        }
+
+        .app-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: #ffffff;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+            padding: 24px;
+        }
+
+        header {
+            margin-bottom: 20px;
+            border-bottom: 2px solid var(--border-color);
+            padding-bottom: 15px;
+        }
+
+        h1 {
+            color: var(--primary-color);
+            font-size: 24px;
+            margin-bottom: 5px;
+        }
+
+        p {
+            color: #718096;
+            font-size: 14px;
+        }
+
+        .workspace {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .editor-section, .output-section {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        label {
+            font-weight: 600;
+            font-size: 14px;
+            color: #4a5568;
+        }
+
+        textarea {
+            width: 100%;
+            height: 280px;
+            font-family: "Fira Code", Monaco, Consolas, "Courier New", monospace;
+            font-size: 13px;
+            padding: 12px;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            background-color: #f8fafc;
+            color: #1a202c;
+            resize: vertical;
+        }
+
+        textarea:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(66, 153, 225, 0.15);
+        }
+
+        .actions {
+            display: flex;
+            justify-content: flex-start;
+        }
+
+        button {
+            padding: 10px 24px;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 6px;
+            transition: background-color 0.2s, transform 0.1s;
+        }
+
+        button:hover {
+            background-color: var(--primary-hover);
+        }
+
+        button:active {
+            transform: scale(0.98);
+        }
+
+        iframe {
+            width: 100%;
+            height: 450px;
+            border: 2px dashed #cbd5e1;
+            border-radius: 6px;
+            background-color: #ffffff;
+        }
+    </style>
 </head>
 <body>
-  <header class="site-header">
-    <div class="brand-block">
-      <img src="fixture-badge.svg" width="44" height="44" alt="">
-      <div>
-        <h1>Recorder Conversion Lab</h1>
-        <p>Static fixture pages for validating FE recorder JSON to Agent Playwright script conversion.</p>
-      </div>
+
+    <div class="app-container">
+        <header>
+            <h1>Karthik's HTML Testing Sandbox</h1>
+            <p>Paste dynamic HTML templates below and hit Run to test them immediately with Playwright using Approach A (iframe execution).</p>
+        </header>
+
+        <div class="workspace">
+            <div class="editor-section">
+                <label for="html-input">HTML Source Code:</label>
+                <textarea id="html-input" placeholder="&#10;&#10;<div id='card'>KarthikLocal---Assertions</div>"></textarea>
+            </div>
+
+            <div class="actions">
+                <button id="run-iframe">Run inside Frame</button>
+            </div>
+
+            <div class="output-section">
+                <label>Rendered Target Output (Iframe View):</label>
+                <iframe id="output-frame" name="sandbox-frame" sandbox="allow-scripts allow-same-origin"></iframe>
+            </div>
+        </div>
     </div>
-    <nav class="top-nav" aria-label="Lab pages">
-      <a aria-current="page" href="index.html">How To Use</a>
-      <a href="basic-elements.html">Basic Interactions</a>
-      <a href="selector-priority.html">Selector Priority</a>
-      <a href="edge-cases.html">Edge Cases</a>
-    </nav>
-  </header>
 
-  <main class="page-shell">
-    <section class="help-panel">
-      <h2>How To Use This Lab</h2>
-      <ol class="checklist">
-        <li>Open one lab page in the browser.</li>
-        <li>Start the FE recorder.</li>
-        <li>Perform the listed interactions in order.</li>
-        <li>Save the captured recorder JSON.</li>
-        <li>Let Agent convert the JSON into Playwright script.</li>
-        <li>Upload the JSON and script into the Json-To-Script-Analyser.</li>
-        <li>Review the Verb Summary, Action Mapping, and Selector Priority tabs.</li>
-      </ol>
-    </section>
+    <script>
+        const htmlInput = document.getElementById('html-input');
+        const outputFrame = document.getElementById('output-frame');
+        const runBtn = document.getElementById('run-iframe');
 
-    <section class="grid-three">
-      <article class="test-card">
-        <h2>Basic Interactions</h2>
-        <p>Inputs, checkboxes, radio buttons, dropdowns, buttons, links, double click, right click, hover, keyboard, file upload, date, color, number, range, contenteditable, alert, confirm, and scroll.</p>
-        <a class="button-link" href="basic-elements.html">Open Basic Page</a>
-      </article>
-
-      <article class="test-card">
-        <h2>Selector Priority</h2>
-        <p>Elements designed around the expected fallback order: role + name, label, test id, text, css id, stable ancestor, css class, xpath, and tag fallback.</p>
-        <a class="button-link" href="selector-priority.html">Open Selector Page</a>
-      </article>
-
-      <article class="test-card">
-        <h2>Edge Cases</h2>
-        <p>Duplicate labels, duplicate text, dynamic ids, delayed elements, hidden elements, iframe interactions, long text, and special characters.</p>
-        <a class="button-link" href="edge-cases.html">Open Edge Page</a>
-      </article>
-    </section>
-
-    <section class="notes-panel">
-      <h2>Recommended Recording Strategy</h2>
-      <p>Record one page at a time first. After each recording, run the analyser. Once each page is clean, record a larger end-to-end flow across multiple pages.</p>
-      <p>The selector priority page is the most important one for proving whether a failure is an Agent conversion issue or a FE JSON issue.</p>
-    </section>
-  </main>
+        runBtn.addEventListener('click', () => {
+            const userCode = htmlInput.value;
+            
+            // Secure cross-browser frame context selection
+            const frameDoc = outputFrame.contentDocument || outputFrame.contentWindow.document;
+            
+            frameDoc.open();
+            frameDoc.write(userCode);
+            frameDoc.close();
+        });
+    </script>
 </body>
 </html>
