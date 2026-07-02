@@ -1,33 +1,44 @@
-# Recorder Conversion Lab
+# testme2 - Playwright Testing Sandbox App (Approach B)
 
-Static GitHub Pages-ready fixture pages for testing frontend recorder JSON to Agent Playwright script conversion.
+This setup uses **Approach B**, launching an isolated browser tab window containing your dynamically injected HTML workspace payload.
 
-## Pages
+## Playwright Target Interaction Script Template
 
-| Page | Purpose |
-| --- | --- |
-| `index.html` | Help and recording workflow. |
-| `basic-elements.html` | Common web interactions and action verbs. |
-| `selector-priority.html` | Selector fallback priority validation. |
-| `edge-cases.html` | Ambiguous selectors, dynamic elements, hidden elements, iframe, and special text. |
-| `iframe-content.html` | Fixture page loaded inside the edge-case iframe. |
+When working with popups/new tabs, you must watch the page context events to intercept and switch to the newly spawned page pointer.
 
-## Recommended Flow
+```javascript
+import { test, expect } from '@playwright/test';
 
-1. Open one page in the browser.
-2. Start the FE recorder.
-3. Perform the listed interactions.
-4. Save the generated `recorder.json`.
-5. Let Agent convert it into `script.js`.
-6. Upload both files into the Json-To-Script-Analyser.
-7. Review Verb Summary, Action Mapping, Selector Priority, and Findings.
+test('Dynamic assertion inside target popup tab', async ({ page, context }) => {
+  // 1. Navigate to your new Approach B GitHub page path
+  await page.goto('[https://playwright-karthik.github.io/qatesting/testme2/](https://playwright-karthik.github.io/qatesting/testme2/)');
 
-## Selector Priority
+  // 2. Clear template structure definitions
+  const testHTML = `
+    <!doctype html>
+    <html>
+      <head><title>Popup Target Sandbox</title></head>
+      <body>
+        <div id="card">KarthikLocal---Assertions</div>
+        <button id="submit-button">Submit</button>
+      </body>
+    </html>
+  `;
+  
+  // 3. Populate code canvas input area
+  await page.locator('#html-input').fill(testHTML);
 
-Expected normal selector order:
+  // 4. Start waiting for the popup page event BEFORE clicking the launch button
+  const pagePromise = context.waitForEvent('page');
+  
+  // 5. Click the button that triggers the window popup
+  await page.locator('#run-popup').click();
+  
+  // 6. Resolve the page promise to gain access to the new tab window
+  const newTab = await pagePromise;
+  await newTab.waitForLoadState(); // Ensure the injected markup finishes loading
 
-```text
-role + name -> label -> test id -> text -> css id -> css stable ancestor -> css class -> xpath -> tag fallback
-```
-
-If advanced selectors exist in recorder JSON, Agent should use only advanced selectors in priority order.
+  // 7. Assert matching elements directly on the new page instance!
+  await expect(newTab.locator('#card')).toBeAttached();
+  await expect(newTab.locator('#card')).toHaveText('KarthikLocal---Assertions');
+});
