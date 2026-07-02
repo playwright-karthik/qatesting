@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tables, Lists & Semantic Structure</title>
+    <style>
+    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; margin: 40px; color: #333; background: #f9f9f9; }
+    h1 { color: #111; border-bottom: 2px solid #ddd; padding-bottom: 10px; }
+    h2 { color: #0066cc; margin-top: 30px; font-size: 1.2rem; border-left: 4px solid #0066cc; padding-left: 8px;}
+    .btn, button { padding: 8px 16px; margin: 4px 4px 4px 0; border: 1px solid #ccc; border-radius: 4px; background: white; cursor: pointer; display: inline-block;}
+    .btn:disabled, button:disabled { background: #eee; cursor: not-allowed; color: #999; }
+    input[type="text"], input[type="password"], input[type="number"], input[type="email"], input[type="url"], input[type="tel"], input[type="search"], select { display: block; width: 100%; max-width: 320px; padding: 8px; margin: 8px 0; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box; }
+    input[type="date"], input[type="time"], input[type="datetime-local"], input[type="month"], input[type="week"] { display: block; margin: 8px 0; padding: 6px; border: 1px solid #ccc; border-radius: 4px;}
+    .back-link { display: inline-block; margin-bottom: 20px; color: #0066cc; text-decoration: none; font-weight: 500; }
+    .back-link:hover { text-decoration: underline; }
+    form { background: white; padding: 20px; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
+</style>
+</head>
+<body>
+    <a href="index.html" class="back-link">← Back to Dashboard Index</a>
+    <h1>Tables, Lists & Semantic Structure</h1>
+    <form onsubmit="event.preventDefault();">
+        
+            <h2>Data Table</h2>
+            <table id="test-table" border="1" style="width:100%; border-collapse: collapse; text-align: left;">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Name</th>
+                        <th>Role</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>1</td>
+                        <td>Alice Smith</td>
+                        <td>Admin</td>
+                        <td><button class="table-btn" onclick="alert('Editing Alice')">Edit</button></td>
+                    </tr>
+                    <tr>
+                        <td>2</td>
+                        <td>Bob Jones</td>
+                        <td>User</td>
+                        <td><button class="table-btn" onclick="alert('Editing Bob')">Edit</button></td>
+                    </tr>
+                    <tr>
+                        <td>3</td>
+                        <td>Charlie Brown</td>
+                        <td>Guest</td>
+                        <td><button class="table-btn" onclick="alert('Editing Charlie')">Edit</button></td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h2>Lists (Ordered & Unordered)</h2>
+            <ul id="test-ul">
+                <li>Item A</li>
+                <li>Item B</li>
+                <li>Item C</li>
+            </ul>
+            <ol id="test-ol">
+                <li>First Step</li>
+                <li>Second Step</li>
+            </ol>
+        
+    </form>
+</body>
+</html>
