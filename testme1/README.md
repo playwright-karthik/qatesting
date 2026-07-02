@@ -1,33 +1,35 @@
-# Recorder Conversion Lab
+# testme1 - Playwright Testing Sandbox App (Approach A)
 
-Static GitHub Pages-ready fixture pages for testing frontend recorder JSON to Agent Playwright script conversion.
+This folder contains a dynamic workspace configuration allowing testing execution to target runtime injected layouts inside an iframe window container cleanly.
 
-## Pages
+## Playwright Target Interaction Script Template
 
-| Page | Purpose |
-| --- | --- |
-| `index.html` | Help and recording workflow. |
-| `basic-elements.html` | Common web interactions and action verbs. |
-| `selector-priority.html` | Selector fallback priority validation. |
-| `edge-cases.html` | Ambiguous selectors, dynamic elements, hidden elements, iframe, and special text. |
-| `iframe-content.html` | Fixture page loaded inside the edge-case iframe. |
+```javascript
+import { test, expect } from '@playwright/test';
 
-## Recommended Flow
+test('Dynamic assertion inside sandbox iframe', async ({ page }) => {
+  // 1. Navigate to your new GitHub page path
+  await page.goto('[https://playwright-karthik.github.io/qatesting/testme1/](https://playwright-karthik.github.io/qatesting/testme1/)');
 
-1. Open one page in the browser.
-2. Start the FE recorder.
-3. Perform the listed interactions.
-4. Save the generated `recorder.json`.
-5. Let Agent convert it into `script.js`.
-6. Upload both files into the Json-To-Script-Analyser.
-7. Review Verb Summary, Action Mapping, Selector Priority, and Findings.
+  // 2. Clear template structure definitions
+  const testHTML = `
+    <!doctype html>
+    <html>
+      <body>
+        <div class="header-box" id="card">KarthikLocal---Assertions</div>
+        <button id="submit-button">Submit</button>
+      </body>
+    </html>
+  `;
+  
+  // 3. Populate code canvas
+  await page.locator('#html-input').fill(testHTML);
+  await page.locator('#run-iframe').click();
 
-## Selector Priority
-
-Expected normal selector order:
-
-```text
-role + name -> label -> test id -> text -> css id -> css stable ancestor -> css class -> xpath -> tag fallback
-```
-
-If advanced selectors exist in recorder JSON, Agent should use only advanced selectors in priority order.
+  // 4. Scope selectors directly into the isolated sandbox canvas iframe
+  const sandbox = page.frameLocator('#output-frame');
+  
+  // 5. Assert matching elements directly inside without switching browser windows!
+  await expect(sandbox.locator('#card')).toBeAttached();
+  await expect(sandbox.locator('#card')).toHaveText('KarthikLocal---Assertions');
+});
