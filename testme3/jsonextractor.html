@@ -5,147 +5,202 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>JSON RequestData Extractor</title>
     <style>
+        * {
+            box-sizing: border-box;
+        }
         body {
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-            background-color: #f4f6f8;
-            color: #333;
+            background-color: #0f172a;
+            color: #e2e8f0;
             margin: 0;
+            padding: 0;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+        header {
+            background-color: #1e293b;
+            padding: 15px 24px;
+            border-bottom: 1px solid #334155;
+            flex-shrink: 0;
+        }
+        header h1 {
+            margin: 0;
+            font-size: 20px;
+            color: #f8fafc;
+        }
+        header p {
+            margin: 5px 0 0 0;
+            font-size: 13px;
+            color: #94a3b8;
+        }
+        .main-container {
+            display: flex;
+            flex: 1;
+            overflow: hidden;
+            background-color: #0f172a;
+        }
+        /* Left Pane Styling */
+        .left-pane {
+            width: 45%;
+            border-right: 1px solid #334155;
+            display: flex;
+            flex-direction: column;
             padding: 20px;
+            background-color: #1e293b;
         }
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            background: #fff;
-            padding: 30px;
-            border-radius: 8px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
-        }
-        h1 {
-            margin-top: 0;
-            color: #1e293b;
-            font-size: 24px;
-        }
-        p {
-            color: #64748b;
-            margin-bottom: 20px;
+        .pane-title {
+            font-size: 14px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: #94a3b8;
+            margin-bottom: 12px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
         }
         textarea {
+            flex: 1;
             width: 100%;
-            height: 200px;
-            padding: 12px;
-            border: 1px solid #cbd5e1;
+            padding: 15px;
+            border: 1px solid #475569;
             border-radius: 6px;
-            font-family: monospace;
-            font-size: 14px;
-            box-sizing: border-box;
-            resize: vertical;
-            background-color: #f8fafc;
+            font-family: 'Fira Code', Consolas, Monaco, monospace;
+            font-size: 13px;
+            background-color: #0f172a;
+            color: #e2e8f0;
+            resize: none;
+            outline: none;
         }
-        .btn-container {
-            margin: 15px 0;
+        textarea:focus {
+            border-color: #3b82f6;
         }
-        button {
+        .action-area {
+            margin-top: 15px;
+            flex-shrink: 0;
+        }
+        .btn-process {
+            width: 100%;
             background-color: #2563eb;
             color: white;
             border: none;
-            padding: 10px 20px;
-            font-size: 15px;
+            padding: 12px;
+            font-size: 14px;
             font-weight: 600;
             border-radius: 6px;
             cursor: pointer;
             transition: background-color 0.2s;
         }
-        button:hover {
+        .btn-process:hover {
             background-color: #1d4ed8;
         }
-        .error {
-            color: #dc2626;
-            background-color: #fee2e2;
+        /* Right Pane Styling */
+        .right-pane {
+            width: 55%;
+            display: flex;
+            flex-direction: column;
+            padding: 20px;
+            background-color: #0f172a;
+        }
+        .copy-btn {
+            background-color: #10b981;
+            color: white;
+            border: none;
+            padding: 6px 14px;
+            font-size: 12px;
+            font-weight: 600;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .copy-btn:hover {
+            background-color: #059669;
+        }
+        pre {
+            flex: 1;
+            margin: 0;
+            background-color: #1e293b;
+            color: #38bdf8;
+            padding: 15px;
+            border-radius: 6px;
+            border: 1px solid #334155;
+            overflow: auto;
+            font-family: 'Fira Code', Consolas, Monaco, monospace;
+            font-size: 13px;
+            line-height: 1.5;
+            white-space: pre-wrap;
+            word-break: break-all;
+        }
+        .error-message {
+            color: #ef4444;
+            background-color: #451a1a;
+            border: 1px solid #7f1d1d;
             padding: 12px;
             border-radius: 6px;
             margin-top: 15px;
+            font-size: 13px;
             display: none;
-            font-weight: 500;
-        }
-        .output-header {
-            margin-top: 30px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        .output-header h2 {
-            font-size: 18px;
-            color: #1e293b;
-            margin: 0;
-        }
-        pre {
-            background-color: #0f172a;
-            color: #38bdf8;
-            padding: 20px;
-            border-radius: 8px;
-            overflow-x: auto;
-            font-family: 'Courier New', Courier, monospace;
-            font-size: 14px;
-            line-height: 1.5;
-            max-height: 600px;
         }
     </style>
 </head>
 <body>
 
-<div class="container">
-    <h1>RequestData JSON Extractor & Unescaper</h1>
-    <p>Paste your raw JSON payload below to extract and automatically format the escaped <code>requestData</code> string.</p>
-    
-    <textarea id="jsonInput" placeholder="Paste your full JSON here..."></textarea>
-    
-    <div class="btn-container">
-        <button onclick="processJSON()">Extract & Clean JSON</button>
+<header>
+    <h1>RequestData JSON Extractor</h1>
+    <p>Paste the raw payload on the left to unpack, clean, and format the escaped inner request layout on the right.</p>
+</header>
+
+<div class="main-container">
+    <div class="left-pane">
+        <div class="pane-title">Raw JSON Payload Input</div>
+        <textarea id="jsonInput" placeholder="Paste your massive wrapped JSON here..."></textarea>
+        
+        <div class="action-area">
+            <button class="btn-process" onclick="processJSON()">Extract & Parse RequestData →</button>
+        </div>
+        <div id="errorMessage" class="error-message"></div>
     </div>
 
-    <div id="errorMessage" class="error"></div>
-
-    <div class="output-header">
-        <h2>Unescaped, Formatted Output:</h2>
+    <div class="right-pane">
+        <div class="pane-title">
+            <span>Unescaped, Pretty-Printed Target</span>
+            <button id="copyBtn" class="copy-btn" onclick="copyToClipboard()">Copy JSON</button>
+        </div>
+        <pre id="jsonOutput">// Extracted JSON hierarchy will display here...</pre>
     </div>
-    <pre id="jsonOutput">// Formatted JSON will appear here...</pre>
 </div>
 
 <script>
 function processJSON() {
-    const inputTextArea = document.getElementById('jsonInput').value.trim();
+    const inputData = document.getElementById('jsonInput').value.trim();
     const errorDiv = document.getElementById('errorMessage');
-    const outputPre = document.getElementById('jsonOutput');
+    const outputDiv = document.getElementById('jsonOutput');
     
-    // Reset states
+    // Reset output panels
     errorDiv.style.display = 'none';
     errorDiv.innerText = '';
     
-    if (!inputTextArea) {
-        showError("Please paste your JSON first.");
+    if (!inputData) {
+        showError("The source content area cannot be empty.");
         return;
     }
 
     try {
-        // Step 1: Parse the main copied JSON wrapper
-        const parsedMain = JSON.parse(inputTextArea);
+        const rootJson = JSON.parse(inputData);
+        const nestedStringifiedData = rootJson?.data?.testUpdate?.testRequestData?.requestData;
         
-        // Step 2: Safely access the deeply nested requestData property
-        const escapedRequestData = parsedMain?.data?.testUpdate?.testRequestData?.requestData;
-        
-        if (!escapedRequestData) {
-            showError("Could not find 'requestData' in the expected JSON pathway (data -> testUpdate -> testRequestData -> requestData).");
+        if (!nestedStringifiedData) {
+            showError("JSON parsed successfully, but 'requestData' could not be targeted in the expected inner nested path.");
             return;
         }
         
-        // Step 3: Parse the stringified/escaped inner JSON
-        const cleanInnerJSON = JSON.parse(escapedRequestData);
+        const finalizedOutputJson = JSON.parse(nestedStringifiedData);
+        outputDiv.textContent = JSON.stringify(finalizedOutputJson, null, 4);
         
-        // Step 4: Output it pretty-printed (4 spaces indentation)
-        outputPre.textContent = JSON.stringify(cleanInnerJSON, null, 4);
-        
-    } catch (e) {
-        showError("Invalid JSON structure: " + e.message);
+    } catch (err) {
+        showError("JSON structure validation failure: " + err.message);
     }
 }
 
@@ -153,7 +208,29 @@ function showError(msg) {
     const errorDiv = document.getElementById('errorMessage');
     errorDiv.innerText = msg;
     errorDiv.style.display = 'block';
-    document.getElementById('jsonOutput').textContent = '// Error parsing JSON.';
+    document.getElementById('jsonOutput').textContent = '// Operation aborted due to script errors.';
+}
+
+function copyToClipboard() {
+    const content = document.getElementById('jsonOutput').textContent;
+    const btn = document.getElementById('copyBtn');
+    
+    if (content.startsWith('//')) {
+        alert("The editor contains no parseable data structures to clone.");
+        return;
+    }
+
+    navigator.clipboard.writeText(content).then(() => {
+        btn.innerText = "Copied!";
+        btn.style.backgroundColor = "#059669";
+        
+        setTimeout(() => {
+            btn.innerText = "Copy JSON";
+            btn.style.backgroundColor = "#10b981";
+        }, 1800);
+    }).catch(error => {
+        alert("System restricted clipboard operational channel access: " + error);
+    });
 }
 </script>
 
