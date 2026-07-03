@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mouse Scroll-Wheel Interactions</title>
+    <title>Advanced Scroll, Trackpad & Gesture Sandbox</title>
     <style>
         body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; margin: 30px; color: #333; background: #f0f2f5; }
         h1 { color: #1a1a1a; margin-bottom: 5px; font-size: 1.8rem; }
@@ -11,64 +11,146 @@
         .back-link { display: inline-block; margin-bottom: 15px; color: #0066cc; text-decoration: none; font-weight: 500; }
         .back-link:hover { text-decoration: underline; }
         
-        .test-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; margin-bottom: 25px; }
+        .test-grid { display: grid; grid-template-columns: 1fr; gap: 20px; margin-bottom: 25px; }
         .card { background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); border: 1px solid #e1e4e8; }
-        .card h3 { margin-top: 0; margin-bottom: 15px; font-size: 1rem; color: #444; }
         
-        .scroll-box { display: block; width: 100%; height: 150px; overflow-y: scroll; border: 2px dashed #e67e22; background: #fdf6f0; border-radius: 6px; box-sizing: border-box; padding: 10px;}
-        .scroll-content { height: 600px; background: linear-gradient(#fdf6f0, #e67e22); padding: 10px; color: #d35400; font-weight: bold; text-align: center;}
-        
+        /* The Infinite 2D Workspace Container */
+        .scroll-container { 
+            display: block; 
+            width: 100%; 
+            height: 400px; 
+            overflow: auto; 
+            border: 3px dashed #e67e22; 
+            background: #fafafa; 
+            border-radius: 8px; 
+            position: relative;
+        }
+
+        /* Large canvas area to allow true X, Y, and Diagonal scrolling */
+        .scroll-canvas { 
+            width: 3000px; 
+            height: 3000px; 
+            position: relative;
+            background-image: 
+                linear-gradient(to right, #e2e8f0 1px, transparent 1px),
+                linear-gradient(to bottom, #e2e8f0 1px, transparent 1px);
+            background-size: 100px 100px;
+            transform-origin: 0 0;
+            transition: transform 0.1s ease-out;
+        }
+
+        /* Distinct, visible milestone elements for Playwright to assert on */
+        .scroll-target-item {
+            position: absolute;
+            padding: 15px;
+            background: #0066cc;
+            color: white;
+            font-weight: bold;
+            border-radius: 6px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            font-size: 0.9rem;
+            white-space: nowrap;
+        }
+        .scroll-target-item.center   { background: #9b59b6; left: 1400px; top: 1400px; }
+        .scroll-target-item.right    { background: #27ae60; left: 2600px; top: 50px; }
+        .scroll-target-item.bottom   { background: #c0392b; left: 50px; top: 2600px; }
+        .scroll-target-item.diagonal { background: #e67e22; left: 2600px; top: 2600px; }
+
         .live-monitor { background: #1e1e1e; color: #a9b7c6; padding: 20px; border-radius: 8px; font-family: 'Courier New', Courier, monospace; box-shadow: 0 4px 12px rgba(0,0,0,0.15); }
         .live-monitor h3 { color: #fff; margin-top:0; border-bottom: 1px solid #333; padding-bottom: 8px; font-size: 1.1rem; }
         .live-monitor p { margin: 10px 0; font-size: 0.95rem; }
         .badge { padding: 3px 8px; border-radius: 4px; font-size: 0.85rem; font-weight: bold; color: white; display: inline-block;}
         .badge.orange { background: #e67e22; }
         .badge.blue { background: #0066cc; }
+        .badge.purple { background: #9b59b6; }
     </style>
 </head>
 <body>
     <a href="index.html" class="back-link">← Back to Device Interaction Index</a>
-    <h1>Mouse Scroll-Wheel Interactions</h1>
+    <h1>Advanced Scroll, Trackpad & Gesture Sandbox</h1>
     <hr style="border:0; border-top: 1px solid #d1d5db; margin-bottom: 20px;">
     
-    <p class="instruction">Place your cursor inside the orange dashed box and use your mouse scroll wheel, or execute a Playwright wheel scroll script command.</p>
+    <p class="instruction">Use your mouse wheel, trackpad gestures, or Playwright's <code>page.mouse.wheel(x, y)</code> step injections inside the workspace to locate hidden landmarks.</p>
     
     <div class="test-grid">
         <div class="card">
-            <h3>Target Scroll Sandbox</h3>
-            <div id="scroll-target" class="scroll-box">
-                <div class="scroll-content">Scroll down down down...</div>
+            <div id="scroll-workspace" class="scroll-container">
+                <div id="canvas-plane" class="scroll-canvas">
+                    <div id="item-start" class="scroll-target-item" style="left: 20px; top: 20px;">📍 [01] Start Target (Top-Left)</div>
+                    <div id="item-right" class="scroll-target-item right">➡️ [02] Horizontal Target (Far-Right)</div>
+                    <div id="item-bottom" class="scroll-target-item bottom">⬇️ [03] Vertical Target (Far-Bottom)</div>
+                    <div id="item-center" class="scroll-target-item center">🎯 [04] Center Core Target</div>
+                    <div id="item-diagonal" class="scroll-target-item diagonal">↘️ [05] Diagonal Target (Far-Bottom-Right)</div>
+                </div>
             </div>
         </div>
     </div>
 
     <div class="live-monitor">
-        <h3>Captured Live Scroll Metrics:</h3>
-        <p><strong>Last Event Target:</strong> <span id="scroll-event" class="badge orange">None</span></p>
-        <p><strong>Scroll Direction:</strong> <span id="scroll-dir" class="badge blue">None</span></p>
-        <p><strong>Delta Y (Vertical Distance):</strong> <span id="scroll-delta-y">0</span></p>
-        <p><strong>Delta X (Horizontal Distance):</strong> <span id="scroll-delta-x">0</span></p>
+        <h3>Captured Live Gesture Metrics:</h3>
+        <p><strong>Action Mode:</strong> <span id="gesture-action" class="badge blue">None</span></p>
+        <p><strong>Vector Directions:</strong> <span id="gesture-dir-y" class="badge gray">Y: Idle</span> <span id="gesture-dir-x" class="badge gray">X: Idle</span></p>
+        <p><strong>Delta Distances:</strong> <span>X: <span id="delta-x">0</span> | Y: <span id="delta-y">0</span></span></p>
+        <p><strong>Trackpad Zoom Level:</strong> <span id="zoom-factor" class="badge purple">1.0x (No Pinch)</span></p>
     </div>
 
     <script>
-        const sEvent = document.getElementById('scroll-event');
-        const sDir = document.getElementById('scroll-dir');
-        const sDeltaY = document.getElementById('scroll-delta-y');
-        const sDeltaX = document.getElementById('scroll-delta-x');
+        const gAction = document.getElementById('gesture-action');
+        const gDirY = document.getElementById('gesture-dir-y');
+        const gDirX = document.getElementById('gesture-dir-x');
+        const gDeltaX = document.getElementById('delta-x');
+        const gDeltaY = document.getElementById('delta-y');
+        const gZoom = document.getElementById('zoom-factor');
+        const canvasPlane = document.getElementById('canvas-plane');
 
-        document.getElementById('scroll-target').addEventListener('wheel', (e) => {
-            sEvent.innerText = 'Wheel Event Captured';
-            sDeltaY.innerText = e.deltaY + 'px';
-            sDeltaX.innerText = e.deltaX + 'px';
-            
-            if (e.deltaY > 0) {
-                sDir.className = 'badge orange';
-                sDir.innerText = 'Scrolled Down ⬇';
-            } else if (e.deltaY < 0) {
-                sDir.className = 'badge blue';
-                sDir.innerText = 'Scrolled Up ⬆';
+        let currentScale = 1;
+
+        document.getElementById('scroll-workspace').addEventListener('wheel', (e) => {
+            // Stop page bounce behaviors
+            e.preventDefault();
+
+            gDeltaX.innerText = e.deltaX.toFixed(1);
+            gDeltaY.innerText = e.deltaY.toFixed(1);
+
+            // 1. PINCH-TO-ZOOM TRACKPAD EMULATION DETECTION
+            // Browsers route trackpad pinch gestures as a wheel event paired with the Ctrl modifier key
+            if (e.ctrlKey) {
+                gAction.innerText = "Trackpad Pinch Zooming";
+                gAction.className = "badge purple";
+                
+                currentScale -= e.deltaY * 0.01;
+                currentScale = Math.min(Math.max(0.5, currentScale), 3); // lock scale dimensions
+                canvasPlane.style.transform = `scale(${currentScale})`;
+                gZoom.innerText = currentScale.toFixed(2) + 'x';
+                return;
             }
-        });
+
+            // 2. SCROLLING DIRECTION CAPTURE MACHINE
+            let verticalState = "Y: Idle";
+            let horizontalState = "X: Idle";
+
+            if (e.deltaY > 0) verticalState = "Down ⬇️";
+            if (e.deltaY < 0) verticalState = "Up ⬆️";
+            if (e.deltaX > 0) horizontalState = "Right ➡️";
+            if (e.deltaX < 0) horizontalState = "Left ⬅️";
+
+            // Diagonal scenario assignment handling logic
+            if (e.deltaX !== 0 && e.deltaY !== 0) {
+                gAction.innerText = "Diagonal Vector Matrix Scroll";
+                gAction.className = "badge orange";
+            } else if (e.deltaX !== 0) {
+                gAction.innerText = "Pure Horizontal Scrolling";
+                gAction.className = "badge blue";
+            } else {
+                gAction.innerText = "Pure Vertical Scrolling";
+                gAction.className = "badge blue";
+            }
+
+            gDirY.innerText = verticalState;
+            gDirY.className = e.deltaY !== 0 ? "badge orange" : "badge gray";
+            gDirX.innerText = horizontalState;
+            gDirX.className = e.deltaX !== 0 ? "badge orange" : "badge gray";
+        }, { passive: false });
     </script>
 </body>
 </html>
