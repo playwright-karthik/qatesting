@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JSON Data Extractor</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background-color: #f4f6f8;
+            color: #333;
+            margin: 0;
+            padding: 20px;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: #ffffff;
+            padding: 25px;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        h1 {
+            margin-top: 0;
+            color: #2c3e50;
+            font-size: 24px;
+            border-bottom: 2px solid #eaedf1;
+            padding-bottom: 10px;
+        }
+        label {
+            display: block;
+            font-weight: bold;
+            margin-top: 15px;
+            margin-bottom: 5px;
+            color: #555;
+        }
+        textarea, input[type="text"] {
+            width: 100%;
+            box-sizing: border-box;
+            border: 1px solid #ccd1d9;
+            border-radius: 4px;
+            padding: 10px;
+            font-family: "Courier New", Courier, monospace;
+            font-size: 14px;
+        }
+        textarea {
+            resize: vertical;
+            height: 180px;
+        }
+        input[type="text"] {
+            font-family: inherit;
+        }
+        .btn-group {
+            margin-top: 15px;
+        }
+        button {
+            background-color: #3498db;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            font-size: 14px;
+            font-weight: bold;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        button:hover {
+            background-color: #2980b9;
+        }
+        .error {
+            color: #e74c3c;
+            background: #fadbd8;
+            padding: 10px;
+            border-radius: 4px;
+            margin-top: 15px;
+            display: none;
+            font-weight: 500;
+        }
+        .output-box {
+            margin-top: 20px;
+            background: #282c34;
+            color: #abb2bf;
+            padding: 15px;
+            border-radius: 4px;
+            overflow-x: auto;
+            white-space: pre-wrap;
+            font-family: "Courier New", Courier, monospace;
+            min-height: 50px;
+            border: 1px solid #1e222b;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>JSON Extractor</h1>
+    
+    <label for="jsonInput">Paste JSON Data:</label>
+    <textarea id="jsonInput" placeholder='{\n  "user": {\n    "name": "Alex",\n    "roles": ["admin", "editor"]\n  }\n}'></textarea>
+    
+    <label for="pathInput">Extraction Path (e.g., user.name or user.roles[0]):</label>
+    <input type="text" id="pathInput" placeholder="Leave blank to format/validate entire JSON">
+    
+    <div class="btn-group">
+        <button onclick="extractData()">Extract & Format</button>
+    </div>
+    
+    <div id="errorMessage" class="error"></div>
+    
+    <label>Result:</label>
+    <div id="output" class="output-box">Output will appear here...</div>
+</div>
+
+<script>
+    function getValueByPath(obj, path) {
+        if (!path) return obj;
+        
+        // Convert brackets to dots: user[0].name -> user.0.name
+        const cleanPath = path.replace(/\[(\w+)\]/g, '.$1').replace(/^\./, '');
+        const keys = cleanPath.split('.');
+        
+        let current = obj;
+        for (const key of keys) {
+            if (current == null) return undefined;
+            current = current[key];
+        }
+        return current;
+    }
+
+    function extractData() {
+        const jsonText = document.getElementById('jsonInput').value.trim();
+        const pathText = document.getElementById('pathInput').value.trim();
+        const errorDiv = document.getElementById('errorMessage');
+        const outputDiv = document.getElementById('output');
+        
+        // Reset view
+        errorDiv.style.display = 'none';
+        outputDiv.textContent = '';
+
+        if (!jsonText) {
+            showError('Please paste some JSON data first.');
+            return;
+        }
+
+        try {
+            const parsedJson = JSON.parse(jsonText);
+            const extracted = getValueByPath(parsedJson, pathText);
+            
+            if (extracted === undefined) {
+                showError(`Path "${pathText}" could not be found in the JSON object.`);
+                outputDiv.textContent = 'undefined';
+                return;
+            }
+            
+            // Format output nicely if it's an object/array, or just show text/number
+            if (typeof extracted === 'object' && extracted !== null) {
+                outputDiv.textContent = JSON.stringify(extracted, null, 2);
+            } else {
+                outputDiv.textContent = String(extracted);
+            }
+            
+        } catch (e) {
+            showError('Invalid JSON format: ' + e.message);
+        }
+    }
+
+    function showError(msg) {
+        const errorDiv = document.getElementById('errorMessage');
+        errorDiv.textContent = msg;
+        errorDiv.style.display = 'block';
+    }
+</script>
+
+</body>
+</html>
