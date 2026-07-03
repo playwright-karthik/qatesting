@@ -3,172 +3,247 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>JSON Data Extractor</title>
+    <title>JSON RequestData Extractor</title>
     <style>
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-            background-color: #f4f6f8;
-            color: #333;
-            margin: 0;
-            padding: 20px;
-        }
-        .container {
-            max-width: 800px;
-            margin: 0 auto;
-            background: #ffffff;
-            padding: 25px;
-            border-radius: 8px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-        }
-        h1 {
-            margin-top: 0;
-            color: #2c3e50;
-            font-size: 24px;
-            border-bottom: 2px solid #eaedf1;
-            padding-bottom: 10px;
-        }
-        label {
-            display: block;
-            font-weight: bold;
-            margin-top: 15px;
-            margin-bottom: 5px;
-            color: #555;
-        }
-        textarea, input[type="text"] {
-            width: 100%;
+        * {
             box-sizing: border-box;
-            border: 1px solid #ccd1d9;
-            border-radius: 4px;
-            padding: 10px;
-            font-family: "Courier New", Courier, monospace;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: #0f172a;
+            color: #e2e8f0;
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+        header {
+            background-color: #1e293b;
+            padding: 15px 24px;
+            border-bottom: 1px solid #334155;
+            flex-shrink: 0;
+        }
+        header h1 {
+            margin: 0;
+            font-size: 20px;
+            color: #f8fafc;
+        }
+        header p {
+            margin: 5px 0 0 0;
+            font-size: 13px;
+            color: #94a3b8;
+        }
+        .main-container {
+            display: flex;
+            flex: 1;
+            overflow: hidden;
+            background-color: #0f172a;
+        }
+        /* Left Pane Styling */
+        .left-pane {
+            width: 45%;
+            border-right: 1px solid #334155;
+            display: flex;
+            flex-direction: column;
+            padding: 20px;
+            background-color: #1e293b;
+        }
+        .pane-title {
             font-size: 14px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: #94a3b8;
+            margin-bottom: 12px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
         }
         textarea {
-            resize: vertical;
-            height: 180px;
+            flex: 1;
+            width: 100%;
+            padding: 15px;
+            border: 1px solid #475569;
+            border-radius: 6px;
+            font-family: 'Fira Code', Consolas, Monaco, monospace;
+            font-size: 13px;
+            background-color: #0f172a;
+            color: #e2e8f0;
+            resize: none;
+            outline: none;
         }
-        input[type="text"] {
-            font-family: inherit;
+        textarea:focus {
+            border-color: #3b82f6;
         }
-        .btn-group {
+        .action-area {
             margin-top: 15px;
+            flex-shrink: 0;
         }
-        button {
-            background-color: #3498db;
+        .btn-process {
+            width: 100%;
+            background-color: #2563eb;
             color: white;
             border: none;
-            padding: 10px 20px;
+            padding: 12px;
             font-size: 14px;
-            font-weight: bold;
+            font-weight: 600;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+        .btn-process:hover {
+            background-color: #1d4ed8;
+        }
+        /* Right Pane Styling */
+        .right-pane {
+            width: 55%;
+            display: flex;
+            flex-direction: column;
+            padding: 20px;
+            background-color: #0f172a;
+        }
+        .copy-btn {
+            background-color: #10b981;
+            color: white;
+            border: none;
+            padding: 6px 14px;
+            font-size: 12px;
+            font-weight: 600;
             border-radius: 4px;
             cursor: pointer;
-            transition: background 0.2s;
+            transition: all 0.2s;
         }
-        button:hover {
-            background-color: #2980b9;
+        .copy-btn:hover {
+            background-color: #059669;
         }
-        .error {
-            color: #e74c3c;
-            background: #fadbd8;
-            padding: 10px;
-            border-radius: 4px;
-            margin-top: 15px;
-            display: none;
-            font-weight: 500;
-        }
-        .output-box {
-            margin-top: 20px;
-            background: #282c34;
-            color: #abb2bf;
+        pre {
+            flex: 1;
+            margin: 0;
+            background-color: #1e293b;
+            color: #38bdf8;
             padding: 15px;
-            border-radius: 4px;
-            overflow-x: auto;
+            border-radius: 6px;
+            border: 1px solid #334155;
+            overflow: auto;
+            font-family: 'Fira Code', Consolas, Monaco, monospace;
+            font-size: 13px;
+            line-height: 1.5;
             white-space: pre-wrap;
-            font-family: "Courier New", Courier, monospace;
-            min-height: 50px;
-            border: 1px solid #1e222b;
+            word-break: break-all;
+        }
+        .error-message {
+            color: #ef4444;
+            background-color: #451a1a;
+            border: 1px solid #7f1d1d;
+            padding: 12px;
+            border-radius: 6px;
+            margin-top: 15px;
+            font-size: 13px;
+            display: none;
         }
     </style>
 </head>
 <body>
 
-<div class="container">
-    <h1>JSON Extractor</h1>
-    
-    <label for="jsonInput">Paste JSON Data:</label>
-    <textarea id="jsonInput" placeholder='{\n  "user": {\n    "name": "Alex",\n    "roles": ["admin", "editor"]\n  }\n}'></textarea>
-    
-    <label for="pathInput">Extraction Path (e.g., user.name or user.roles[0]):</label>
-    <input type="text" id="pathInput" placeholder="Leave blank to format/validate entire JSON">
-    
-    <div class="btn-group">
-        <button onclick="extractData()">Extract & Format</button>
+<header>
+    <h1>RequestData JSON Extractor</h1>
+    <p>Paste the raw payload on the left to unpack, clean, and format the escaped inner request layout on the right.</p>
+</header>
+
+<div class="main-container">
+    <div class="left-pane">
+        <div class="pane-title">Raw JSON Payload Input</div>
+        <textarea id="jsonInput" placeholder="Paste your massive wrapped JSON here..."></textarea>
+        
+        <div class="action-area">
+            <button class="btn-process" onclick="processJSON()">Extract & Parse RequestData →</button>
+        </div>
+        <div id="errorMessage" class="error-message"></div>
     </div>
-    
-    <div id="errorMessage" class="error"></div>
-    
-    <label>Result:</label>
-    <div id="output" class="output-box">Output will appear here...</div>
+
+    <div class="right-pane">
+        <div class="pane-title">
+            <span>Unescaped, Pretty-Printed Target</span>
+            <button id="copyBtn" class="copy-btn" onclick="copyToClipboard()">Copy JSON</button>
+        </div>
+        <pre id="jsonOutput">// Extracted JSON hierarchy will display here...</pre>
+    </div>
 </div>
 
 <script>
-    function getValueByPath(obj, path) {
-        if (!path) return obj;
-        
-        // Convert brackets to dots: user[0].name -> user.0.name
-        const cleanPath = path.replace(/\[(\w+)\]/g, '.$1').replace(/^\./, '');
-        const keys = cleanPath.split('.');
-        
-        let current = obj;
-        for (const key of keys) {
-            if (current == null) return undefined;
-            current = current[key];
-        }
-        return current;
+function processJSON() {
+    const inputData = document.getElementById('jsonInput').value.trim();
+    const errorDiv = document.getElementById('errorMessage');
+    const outputDiv = document.getElementById('jsonOutput');
+    
+    errorDiv.style.display = 'none';
+    errorDiv.innerText = '';
+    
+    if (!inputData) {
+        showError("The source content area cannot be empty.");
+        return;
     }
 
-    function extractData() {
-        const jsonText = document.getElementById('jsonInput').value.trim();
-        const pathText = document.getElementById('pathInput').value.trim();
-        const errorDiv = document.getElementById('errorMessage');
-        const outputDiv = document.getElementById('output');
+    try {
+        const rootJson = JSON.parse(inputData);
         
-        // Reset view
-        errorDiv.style.display = 'none';
-        outputDiv.textContent = '';
+        // Dynamic search: unwraps "data" if it exists, otherwise checks the root level object
+        const container = rootJson.data || rootJson;
+        let targetRequestDataNode = null;
 
-        if (!jsonText) {
-            showError('Please paste some JSON data first.');
+        // Scans fields dynamically (works for testUpdate, testCreate, etc.)
+        for (const key in container) {
+            if (container[key] && typeof container[key] === 'object' && container[key].testRequestData) {
+                targetRequestDataNode = container[key].testRequestData;
+                break;
+            }
+        }
+        
+        const escapedRequestData = targetRequestDataNode?.requestData;
+        
+        if (!escapedRequestData) {
+            showError("Could not dynamically locate 'testRequestData.requestData' anywhere inside the provided payload.");
             return;
         }
+        
+        const finalizedOutputJson = JSON.parse(escapedRequestData);
+        outputDiv.textContent = JSON.stringify(finalizedOutputJson, null, 4);
+        
+    } catch (err) {
+        showError("JSON structure validation failure: " + err.message);
+    }
+}
 
-        try {
-            const parsedJson = JSON.parse(jsonText);
-            const extracted = getValueByPath(parsedJson, pathText);
-            
-            if (extracted === undefined) {
-                showError(`Path "${pathText}" could not be found in the JSON object.`);
-                outputDiv.textContent = 'undefined';
-                return;
-            }
-            
-            // Format output nicely if it's an object/array, or just show text/number
-            if (typeof extracted === 'object' && extracted !== null) {
-                outputDiv.textContent = JSON.stringify(extracted, null, 2);
-            } else {
-                outputDiv.textContent = String(extracted);
-            }
-            
-        } catch (e) {
-            showError('Invalid JSON format: ' + e.message);
-        }
+function showError(msg) {
+    const errorDiv = document.getElementById('errorMessage');
+    errorDiv.innerText = msg;
+    errorDiv.style.display = 'block';
+    document.getElementById('jsonOutput').textContent = '// Operation aborted due to script errors.';
+}
+
+function copyToClipboard() {
+    const content = document.getElementById('jsonOutput').textContent;
+    const btn = document.getElementById('copyBtn');
+    
+    if (content.startsWith('//')) {
+        alert("The editor contains no parseable data structures to clone.");
+        return;
     }
 
-    function showError(msg) {
-        const errorDiv = document.getElementById('errorMessage');
-        errorDiv.textContent = msg;
-        errorDiv.style.display = 'block';
-    }
+    navigator.clipboard.writeText(content).then(() => {
+        btn.innerText = "Copied!";
+        btn.style.backgroundColor = "#059669";
+        
+        setTimeout(() => {
+            btn.innerText = "Copy JSON";
+            btn.style.backgroundColor = "#10b981";
+        }, 1800);
+    }).catch(error => {
+        alert("System restricted clipboard operational channel access: " + error);
+    });
+}
 </script>
 
 </body>
