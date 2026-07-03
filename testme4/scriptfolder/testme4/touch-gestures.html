@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Touchscreen & Mobile Emulation Gestures</title>
+    <style>
+    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; margin: 30px; color: #333; background: #f0f2f5; }
+    h1 { color: #1a1a1a; margin-bottom: 5px; font-size: 1.8rem; }
+    .instruction { color: #666; margin-bottom: 20px; font-size: 0.95rem; }
+    .back-link { display: inline-block; margin-bottom: 15px; color: #0066cc; text-decoration: none; font-weight: 500; }
+    .back-link:hover { text-decoration: underline; }
+    
+    .test-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; margin-bottom: 25px; }
+    .card { background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); border: 1px solid #e1e4e8; }
+    .card h3 { margin-top: 0; margin-bottom: 15px; font-size: 1rem; color: #444; }
+    
+    .interactive-box { display: block; width: 100%; padding: 15px; text-align: center; border: 2px dashed #0066cc; background: #e6f0fa; color: #0066cc; font-weight: bold; font-size: 1rem; border-radius: 6px; cursor: pointer; box-sizing: border-box; transition: all 0.2s; }
+    .interactive-box:active { background: #b3d4f5; }
+    .interactive-box.zone { height: 120px; display: flex; align-items: center; justify-content: center; border-color: #28a745; background: #e8f5e9; color: #28a745; cursor: crosshair; }
+    
+    .live-monitor { background: #1e1e1e; color: #a9b7c6; padding: 20px; border-radius: 8px; font-family: 'Courier New', Courier, monospace; box-shadow: 0 4px 12px rgba(0,0,0,0.15); }
+    .live-monitor h3 { color: #fff; margin-top:0; border-bottom: 1px solid #333; padding-bottom: 8px; font-size: 1.1rem; }
+    .live-monitor p { margin: 10px 0; font-size: 0.95rem; }
+    
+    .badge { padding: 3px 8px; border-radius: 4px; font-size: 0.85rem; font-weight: bold; color: white; display: inline-block;}
+    .badge.gray { background: #555; }
+    .badge.blue { background: #0066cc; }
+    .badge.orange { background: #e67e22; }
+    .badge.green { background: #27ae60; }
+    .badge.red { background: #c0392b; }
+</style>
+</head>
+<body>
+    <a href="index.html" class="back-link">← Back to Device Interaction Index</a>
+    <h1>Touchscreen & Mobile Emulation Gestures</h1>
+    <hr style="border:0; border-top: 1px solid #d1d5db; margin-bottom: 20px;">
+    
+            <p class="instruction">Test your device emulation settings here. Works with real mobile hardware or Playwright's emulated touchscreens via <code>hasTouch: true</code>.</p>
+            
+            <div class="test-grid">
+                <div class="card">
+                    <h3>Multi-Touch Sandbox Area</h3>
+                    <div id="touch-zone" class="interactive-box zone" style="height:180px; background:#fff3cd; border-color:#ffecb5;">Perform Touch Tap or Swipe Gestures Here</div>
+                </div>
+            </div>
+
+            <div class="live-monitor">
+                <h3>Captured Live Touch Metrics:</h3>
+                <p><strong>Touch Support Detected on Browser:</strong> <span id="touch-supported" class="badge">Checking...</span></p>
+                <p><strong>Last Touch Event Type:</strong> <span id="touch-event-type" class="badge blue">None</span></p>
+                <p><strong>Active Touch Points count:</strong> <span id="touch-points" class="badge orange">0</span></p>
+                <p><strong>Primary Touch Position:</strong> <span id="touch-pos">X: 0, Y: 0</span></p>
+            </div>
+
+            <script>
+                const tSupport = document.getElementById('touch-supported');
+                const tType = document.getElementById('touch-event-type');
+                const tPoints = document.getElementById('touch-points');
+                const tPos = document.getElementById('touch-pos');
+
+                const isTouchActive = ('ontouchstart' in window) || (navigator.maxTouchPoints > 0);
+                tSupport.innerText = isTouchActive ? 'YES (Touch Capable)' : 'NO (Desktop Mouse Mode Only)';
+                tSupport.className = isTouchActive ? 'badge green' : 'badge red';
+
+                const touchZone = document.getElementById('touch-zone');
+
+                function handleTouch(e, label) {
+                    e.preventDefault();
+                    tType.innerText = label;
+                    tPoints.innerText = e.touches.length;
+                    if(e.touches.length > 0) {
+                        tPos.innerText = 'X: ' + Math.round(e.touches[0].clientX) + 'px, Y: ' + Math.round(e.touches[0].clientY) + 'px';
+                    }
+                }
+
+                touchZone.addEventListener('touchstart', (e) => handleTouch(e, 'Touch Start (Finger Down)'), {passive: false});
+                touchZone.addEventListener('touchmove', (e) => handleTouch(e, 'Touch Move (Dragging/Swiping)'), {passive: false});
+                touchZone.addEventListener('touchend', (e) => {
+                    tType.innerText = 'Touch End (Finger Lifted)';
+                    tPoints.innerText = e.touches.length;
+                });
+            </script>
+        
+</body>
+</html>
