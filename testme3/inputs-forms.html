@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inputs, Text Fields & Submissions</title>
+    <style>
+    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; margin: 40px; color: #333; background: #f9f9f9; }
+    h1 { color: #111; border-bottom: 2px solid #ddd; padding-bottom: 10px; }
+    h2 { color: #0066cc; margin-top: 30px; font-size: 1.2rem; border-left: 4px solid #0066cc; padding-left: 8px;}
+    .btn, button { padding: 8px 16px; margin: 4px 4px 4px 0; border: 1px solid #ccc; border-radius: 4px; background: white; cursor: pointer; display: inline-block;}
+    .btn:disabled, button:disabled { background: #eee; cursor: not-allowed; color: #999; }
+    input[type="text"], input[type="password"], input[type="number"], input[type="email"], input[type="url"], input[type="tel"], input[type="search"], select { display: block; width: 100%; max-width: 320px; padding: 8px; margin: 8px 0; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box; }
+    input[type="date"], input[type="time"], input[type="datetime-local"], input[type="month"], input[type="week"] { display: block; margin: 8px 0; padding: 6px; border: 1px solid #ccc; border-radius: 4px;}
+    .back-link { display: inline-block; margin-bottom: 20px; color: #0066cc; text-decoration: none; font-weight: 500; }
+    .back-link:hover { text-decoration: underline; }
+    .test-container { background: white; padding: 20px; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
+</style>
+</head>
+<body>
+    <a href="index.html" class="back-link">← Back to Dashboard Index</a>
+    <h1>Inputs, Text Fields & Submissions</h1>
+    <div class="test-container">
+        
+            <h2>Text Fields</h2>
+            <input type="text" id="inp-text" placeholder="Standard text input">
+            <input type="text" id="inp-disabled" value="Disabled text" disabled>
+            <input type="text" id="inp-readonly" value="Readonly text" readonly>
+            <input type="text" id="inp-required" placeholder="Required field" required>
+            <input type="password" id="inp-pass" placeholder="Password input">
+            
+            <h2>Numeric & Constraints</h2>
+            <input type="number" id="inp-num" min="1" max="10" value="5">
+            <input type="text" id="inp-pattern" pattern="[A-Z]{3}" title="3 Upper Case Letters" value="ABC">
+
+            <h2>HTML5 Specific Inputs</h2>
+            <input type="email" id="inp-email" placeholder="email@domain.com">
+            <input type="url" id="inp-url" placeholder="https://example.com">
+            <input type="tel" id="inp-tel" placeholder="123-456-7890">
+            <input type="search" id="inp-search" placeholder="Search query...">
+            
+            <h2>Date & Time Pickers</h2>
+            <input type="date" id="inp-date">
+            <input type="time" id="inp-time">
+            <input type="datetime-local" id="inp-datetime">
+            <input type="month" id="inp-month">
+            <input type="week" id="inp-week">
+
+            <h2>Color Picker & Sliders</h2>
+            <input type="color" id="inp-color" value="#0066cc">
+            <input type="range" id="inp-range" min="0" max="100" value="50" oninput="this.nextElementSibling.innerText = this.value">
+            <span>50</span>
+        
+    </div>
+</body>
+</html>
