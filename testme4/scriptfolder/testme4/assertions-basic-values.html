@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Playwright Assertion Target Verification Ground</title>
+    <style>
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; margin: 30px; color: #333; background: #f0f2f5; }
+        h1 { color: #1a1a1a; margin-bottom: 5px; font-size: 1.8rem; }
+        h2 { color: #0066cc; margin-top: 25px; font-size: 1.1rem; border-left: 4px solid #0066cc; padding-left: 8px; }
+        .instruction { color: #666; margin-bottom: 20px; font-size: 0.95rem; }
+        .back-link { display: inline-block; margin-bottom: 15px; color: #0066cc; text-decoration: none; font-weight: 500; }
+        .back-link:hover { text-decoration: underline; }
+        .card { background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); border: 1px solid #e1e4e8; margin-bottom: 20px; }
+        input[type="text"], input[type="number"] { width: 100%; max-width: 300px; padding: 8px; margin: 8px 0; border: 1px solid #ccc; border-radius: 4px; display: block; }
+        .viewport-spacer { height: 1000px; background: #fafafa; border-left: 2px dashed #ccc; margin: 20px 0; padding: 10px; color: #999; }
+    </style>
+</head>
+<body>
+    <a href="index.html" class="back-link">← Back to Device Interaction Index</a>
+    <h1>Basic & Value State Assertion Elements</h1>
+    <p class="instruction">This page contains exact DOM matches to execute basic element states, numeric rules, and value coercions.</p>
+
+    <div class="card">
+        <h2>Element State Targets (Enums 7, 8, 9, 10, 12)</h2>
+        <label><input type="checkbox" id="assert-checkbox" checked> Checkbox Target (toBeChecked)</label>
+        <input type="text" id="assert-disabled" value="Locked Element Content" disabled>
+        <input type="text" id="assert-focused" value="Click me to focus state">
+        <div id="assert-hidden" style="display: none;">Hidden Frame Element (toBeHidden)</div>
+        <div id="assert-visible" style="background: #e8f5e9; padding: 10px; border-radius:4px; margin-top:5px;">Visible Content Area (toBeVisible)</div>
+    </div>
+
+    <div class="card">
+        <h2>Text & Value Matching Targets (Enums 18, 25, 26, 30, 37, 38, 39)</h2>
+        <p id="text-container-contains">Welcome back to the Playwright automated dashboard platform.</p>
+        <p id="text-container-exact">Exact Match Only</p>
+        <input type="text" id="input-with-value" value="Expected Input Text Value Ready">
+    </div>
+
+    <div class="card">
+        <h2>Numeric Comparisons (Enums 31, 32, 33, 34, 35)</h2>
+        <input type="number" id="num-approx" value="10.01">
+        <input type="number" id="num-high" value="15">
+        <input type="number" id="num-low" value="3">
+    </div>
+
+    <div class="card">
+        <h2>Falsy, Truthy, NaN, and Null Rule Evaluations (Enums 13, 14, 15, 16, 17, 36)</h2>
+        <input type="text" id="val-falsy" value="">
+        <input type="text" id="val-truthy" value="Valid Data Present">
+        <input type="text" id="val-nan" value="NotANumber123">
+        <span id="val-null"></span> <input type="text" id="val-undefined">
+    </div>
+
+    <div class="viewport-spacer">
+        Scroll down to interact with the viewport intersection bounding rectangle...
+    </div>
+
+    <div class="card" id="assert-viewport">
+        <h2>Viewport Target (Enum 11)</h2>
+        <p>I am inside the lower viewport bounding layer (toBeInViewport).</p>
+    </div>
+
+    <script>
+        // Force element focus programmatically if needed during basic test startup loops
+        document.getElementById('assert-focused').addEventListener('focus', function() {
+            this.style.borderColor = '#27ae60';
+        });
+        // Keep val-undefined element explicitly missing its attribute value
+        document.getElementById('val-undefined').removeAttribute('value');
+    </script>
+</body>
+</html>
