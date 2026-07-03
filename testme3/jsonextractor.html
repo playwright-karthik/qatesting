@@ -178,7 +178,6 @@ function processJSON() {
     const errorDiv = document.getElementById('errorMessage');
     const outputDiv = document.getElementById('jsonOutput');
     
-    // Reset output panels
     errorDiv.style.display = 'none';
     errorDiv.innerText = '';
     
@@ -189,14 +188,27 @@ function processJSON() {
 
     try {
         const rootJson = JSON.parse(inputData);
-        const nestedStringifiedData = rootJson?.data?.testUpdate?.testRequestData?.requestData;
         
-        if (!nestedStringifiedData) {
-            showError("JSON parsed successfully, but 'requestData' could not be targeted in the expected inner nested path.");
+        // Dynamic search: unwraps "data" if it exists, otherwise checks the root level object
+        const container = rootJson.data || rootJson;
+        let targetRequestDataNode = null;
+
+        // Scans fields dynamically (works for testUpdate, testCreate, etc.)
+        for (const key in container) {
+            if (container[key] && typeof container[key] === 'object' && container[key].testRequestData) {
+                targetRequestDataNode = container[key].testRequestData;
+                break;
+            }
+        }
+        
+        const escapedRequestData = targetRequestDataNode?.requestData;
+        
+        if (!escapedRequestData) {
+            showError("Could not dynamically locate 'testRequestData.requestData' anywhere inside the provided payload.");
             return;
         }
         
-        const finalizedOutputJson = JSON.parse(nestedStringifiedData);
+        const finalizedOutputJson = JSON.parse(escapedRequestData);
         outputDiv.textContent = JSON.stringify(finalizedOutputJson, null, 4);
         
     } catch (err) {
