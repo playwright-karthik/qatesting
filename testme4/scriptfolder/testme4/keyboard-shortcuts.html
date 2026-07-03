@@ -5,91 +5,87 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Keyboard Shortcuts & Hotkeys Capture</title>
     <style>
-    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; margin: 30px; color: #333; background: #f0f2f5; }
-    h1 { color: #1a1a1a; margin-bottom: 5px; font-size: 1.8rem; }
-    .instruction { color: #666; margin-bottom: 20px; font-size: 0.95rem; }
-    .back-link { display: inline-block; margin-bottom: 15px; color: #0066cc; text-decoration: none; font-weight: 500; }
-    .back-link:hover { text-decoration: underline; }
-    
-    .test-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; margin-bottom: 25px; }
-    .card { background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); border: 1px solid #e1e4e8; }
-    .card h3 { margin-top: 0; margin-bottom: 15px; font-size: 1rem; color: #444; }
-    
-    .interactive-box { display: block; width: 100%; padding: 15px; text-align: center; border: 2px dashed #0066cc; background: #e6f0fa; color: #0066cc; font-weight: bold; font-size: 1rem; border-radius: 6px; cursor: pointer; box-sizing: border-box; transition: all 0.2s; }
-    .interactive-box:active { background: #b3d4f5; }
-    .interactive-box.zone { height: 120px; display: flex; align-items: center; justify-content: center; border-color: #28a745; background: #e8f5e9; color: #28a745; cursor: crosshair; }
-    
-    .live-monitor { background: #1e1e1e; color: #a9b7c6; padding: 20px; border-radius: 8px; font-family: 'Courier New', Courier, monospace; box-shadow: 0 4px 12px rgba(0,0,0,0.15); }
-    .live-monitor h3 { color: #fff; margin-top:0; border-bottom: 1px solid #333; padding-bottom: 8px; font-size: 1.1rem; }
-    .live-monitor p { margin: 10px 0; font-size: 0.95rem; }
-    
-    .badge { padding: 3px 8px; border-radius: 4px; font-size: 0.85rem; font-weight: bold; color: white; display: inline-block;}
-    .badge.gray { background: #555; }
-    .badge.blue { background: #0066cc; }
-    .badge.orange { background: #e67e22; }
-    .badge.green { background: #27ae60; }
-    .badge.red { background: #c0392b; }
-</style>
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; margin: 30px; color: #333; background: #f0f2f5; }
+        h1 { color: #1a1a1a; margin-bottom: 5px; font-size: 1.8rem; }
+        .instruction { color: #666; margin-bottom: 20px; font-size: 0.95rem; }
+        .back-link { display: inline-block; margin-bottom: 15px; color: #0066cc; text-decoration: none; font-weight: 500; }
+        .back-link:hover { text-decoration: underline; }
+        
+        .test-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; margin-bottom: 25px; }
+        .card { background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); border: 1px solid #e1e4e8; }
+        .card h3 { margin-top: 0; margin-bottom: 15px; font-size: 1rem; color: #444; }
+        
+        .live-monitor { background: #1e1e1e; color: #a9b7c6; padding: 20px; border-radius: 8px; font-family: 'Courier New', Courier, monospace; box-shadow: 0 4px 12px rgba(0,0,0,0.15); }
+        .live-monitor h3 { color: #fff; margin-top:0; border-bottom: 1px solid #333; padding-bottom: 8px; font-size: 1.1rem; }
+        .live-monitor p { margin: 10px 0; font-size: 0.95rem; }
+        
+        .badge { padding: 3px 8px; border-radius: 4px; font-size: 0.85rem; font-weight: bold; color: white; display: inline-block;}
+        .badge.gray { background: #555; }
+        .badge.blue { background: #0066cc; }
+        .badge.orange { background: #e67e22; }
+    </style>
 </head>
 <body>
     <a href="index.html" class="back-link">← Back to Device Interaction Index</a>
     <h1>Keyboard Shortcuts & Hotkeys Capture</h1>
     <hr style="border:0; border-top: 1px solid #d1d5db; margin-bottom: 20px;">
     
-            <p class="instruction">Focus on the input field or the page canvas and fire complex hotkey combinations (e.g., Ctrl+S, Shift+Enter, Arrow Keys).</p>
-            
-            <div class="test-grid">
-                <div class="card">
-                    <h3>Active Keyboard Focus Input</h3>
-                    <input type="text" id="keyboard-input" placeholder="Click here and press keys..." style="max-width:100%;">
-                </div>
-            </div>
+    <p class="instruction">Focus anywhere on this page and execute hotkeys. Global hooks are listening to register your exact keystroke metrics.</p>
+    
+    <div class="test-grid">
+        <div class="card">
+            <h3>Focus Element (Optional Input)</h3>
+            <input type="text" id="keyboard-input" placeholder="Type hotkeys anywhere..." style="max-width:100%; width: 100%; padding: 8px; box-sizing: border-box; border: 1px solid #ccc; border-radius: 4px;">
+        </div>
+    </div>
 
-            <div class="live-monitor">
-                <h3>Captured Live Keyboard Metrics:</h3>
-                <p><strong>Key Value:</strong> <span id="key-value" class="badge">None</span></p>
-                <p><strong>Key Code:</strong> <span id="key-code" class="badge orange">None</span></p>
-                <p><strong>Modifier Keys Active:</strong></p>
-                <ul style="list-style:none; padding:0; display:flex; gap:10px;">
-                    <li><span id="mod-ctrl" class="badge gray">Ctrl</span></li>
-                    <li><span id="mod-shift" class="badge gray">Shift</span></li>
-                    <li><span id="mod-alt" class="badge gray">Alt</span></li>
-                    <li><span id="mod-meta" class="badge gray">Meta/OS</span></li>
-                </ul>
-                <p><strong>Last Command Chain Combination:</strong> <span id="key-combination" style="font-weight:bold; color:red;">None</span></p>
-            </div>
+    <div class="live-monitor">
+        <h3>Captured Live Keyboard Metrics:</h3>
+        <p><strong>Key Value:</strong> <span id="key-value" class="badge gray">None</span></p>
+        <p><strong>Key Code:</strong> <span id="key-code" class="badge orange">None</span></p>
+        <p><strong>Modifier Keys Active:</strong></p>
+        <ul style="list-style:none; padding:0; display:flex; gap:10px;">
+            <li><span id="mod-ctrl" class="badge gray">Ctrl</span></li>
+            <li><span id="mod-shift" class="badge gray">Shift</span></li>
+            <li><span id="mod-alt" class="badge gray">Alt</span></li>
+            <li><span id="mod-meta" class="badge gray">Meta/OS</span></li>
+        </ul>
+        <p><strong>Last Command Chain Combination:</strong> <span id="key-combination" style="font-weight:bold; color:#ff6b6b;">None</span></p>
+    </div>
 
-            <script>
-                const kVal = document.getElementById('key-value');
-                const kCode = document.getElementById('key-code');
-                const mCtrl = document.getElementById('mod-ctrl');
-                const mShift = document.getElementById('mod-shift');
-                const mAlt = document.getElementById('mod-alt');
-                const mMeta = document.getElementById('mod-meta');
-                const kCombo = document.getElementById('key-combination');
+    <script>
+        const kVal = document.getElementById('key-value');
+        const kCode = document.getElementById('key-code');
+        const mCtrl = document.getElementById('mod-ctrl');
+        const mShift = document.getElementById('mod-shift');
+        const mAlt = document.getElementById('mod-alt');
+        const mMeta = document.getElementById('mod-meta');
+        const kCombo = document.getElementById('key-combination');
 
-                document.getElementById('keyboard-input').addEventListener('keydown', (e) => {
-                    if (e.ctrlKey || e.metaKey) e.preventDefault();
+        // Capture keyboard events globally on the window context object
+        window.addEventListener('keydown', (e) => {
+            if (e.ctrlKey || e.metaKey || e.key === 'F5') {
+                e.preventDefault(); 
+            }
 
-                    kVal.innerText = e.key === ' ' ? 'Spacebar' : e.key;
-                    kCode.innerText = e.code;
+            kVal.innerText = e.key === ' ' ? 'Spacebar' : e.key;
+            kCode.innerText = e.code;
 
-                    e.ctrlKey ? mCtrl.className = 'badge blue' : mCtrl.className = 'badge gray';
-                    e.shiftKey ? mShift.className = 'badge blue' : mShift.className = 'badge gray';
-                    e.altKey ? mAlt.className = 'badge blue' : mAlt.className = 'badge gray';
-                    e.metaKey ? mMeta.className = 'badge blue' : mMeta.className = 'badge gray';
+            e.ctrlKey ? mCtrl.className = 'badge blue' : mCtrl.className = 'badge gray';
+            e.shiftKey ? mShift.className = 'badge blue' : mShift.className = 'badge gray';
+            e.altKey ? mAlt.className = 'badge blue' : mAlt.className = 'badge gray';
+            e.metaKey ? mMeta.className = 'badge blue' : mMeta.className = 'badge gray';
 
-                    let combos = [];
-                    if (e.ctrlKey) combos.push('Control');
-                    if (e.shiftKey) combos.push('Shift');
-                    if (e.altKey) combos.push('Alt');
-                    if (e.metaKey) combos.push('Meta');
-                    if (e.key !== 'Control' && e.key !== 'Shift' && e.key !== 'Alt' && e.key !== 'Meta') {
-                        combos.push(e.key);
-                    }
-                    kCombo.innerText = combos.join(' + ');
-                });
-            </script>
-        
+            let combos = [];
+            if (e.ctrlKey) combos.push('Control');
+            if (e.shiftKey) combos.push('Shift');
+            if (e.altKey) combos.push('Alt');
+            if (e.metaKey) combos.push('Meta');
+            if (e.key !== 'Control' && e.key !== 'Shift' && e.key !== 'Alt' && e.key !== 'Meta') {
+                combos.push(e.key);
+            }
+            kCombo.innerText = combos.join(' + ');
+        });
+    </script>
 </body>
 </html>
