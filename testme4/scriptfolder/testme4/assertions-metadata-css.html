@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Complex Metadata and CSS Style Assertion Targets</title>
+    <style>
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; margin: 30px; color: #333; background: #f0f2f5; }
+        h1 { color: #1a1a1a; margin-bottom: 5px; font-size: 1.8rem; }
+        h2 { color: #0066cc; margin-top: 25px; font-size: 1.1rem; border-left: 4px solid #0066cc; padding-left: 8px; }
+        .instruction { color: #666; margin-bottom: 20px; font-size: 0.95rem; }
+        .back-link { display: inline-block; margin-bottom: 15px; color: #0066cc; text-decoration: none; font-weight: 500; }
+        .back-link:hover { text-decoration: underline; }
+        .card { background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); border: 1px solid #e1e4e8; margin-bottom: 20px; }
+        
+        /* Specific CSS attributes used to evaluate styles and tokens */
+        .active { font-weight: bold; }
+        .primary { color: #ffffff; background-color: rgb(0, 102, 204); }
+        #style-target { font-size: 16px; color: rgb(255, 0, 0); padding: 12px; display: inline-block; }
+        select[multiple] { width: 100%; max-width: 250px; height: 100px; padding: 6px; }
+    </style>
+</head>
+<body>
+    <a href="index.html" class="back-link">← Back to Device Interaction Index</a>
+    <h1>Metadata, Class & CSS Assertions</h1>
+    <p class="instruction">This sandbox isolates complex metadata elements that rely on attributes, computed CSS, ARIA roles, or arrays.</p>
+
+    <div class="card">
+        <h2>CSS Classes & Inline Properties (Enums 19, 21, 22)</h2>
+        <div id="class-target" class="active primary">Class List Tracking Node</div>
+        
+        <div id="style-target">Computed Color Assertion Target Element</div>
+    </div>
+
+    <div class="card">
+        <h2>DOM Attribute & Element ID Targets (Enums 20, 23)</h2>
+        <div id="attribute-target" data-id="123" data-testid="submit-button" title="verification-bubble">Inspect My DOM Attributes</div>
+        
+        <button id="submit-btn">Button Target with ID Attribute</button>
+    </div>
+
+    <div class="card">
+        <h2>Aria Role Targets (Enum 24)</h2>
+        <div id="role-alert-target" role="alert" style="background:#fce8e6; color:#c0392b; padding:10px; border-radius:4px;">Critical process error message block.</div>
+        <nav id="role-nav-target">Navigation block tracking context.</nav>
+    </div>
+
+    <div class="card">
+        <h2>Select Multiple Options Values Array (Enum 27)</h2>
+        <label for="country-selector">Select Destination Countries (Hold Ctrl/Cmd to evaluate multiple values):</label><br><br>
+        <select id="country-selector" multiple>
+            <option value="us" selected>United States</option>
+            <option value="ca" selected>Canada</option>
+            <option value="uk">United Kingdom</option>
+            <option value="in">India</option>
+        </select>
+    </div>
+</body>
+</html>
