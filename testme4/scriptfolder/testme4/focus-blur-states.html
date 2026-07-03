@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Focus & Blur State Actions</title>
+    <style>
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; margin: 30px; color: #333; background: #f0f2f5; }
+        h1 { color: #1a1a1a; margin-bottom: 5px; font-size: 1.8rem; }
+        .instruction { color: #666; margin-bottom: 20px; font-size: 0.95rem; }
+        .back-link { display: inline-block; margin-bottom: 15px; color: #0066cc; text-decoration: none; font-weight: 500; }
+        .back-link:hover { text-decoration: underline; }
+        
+        .test-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; margin-bottom: 25px; }
+        .card { background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); border: 1px solid #e1e4e8; }
+        .card h3 { margin-top: 0; margin-bottom: 15px; font-size: 1rem; color: #444; }
+        
+        .interactive-input { display: block; width: 100%; padding: 12px; font-size: 1rem; border: 2px solid #ccc; border-radius: 6px; box-sizing: border-box; outline: none; transition: all 0.2s;}
+        .interactive-input:focus { border-color: #27ae60; background: #ebf7ee; }
+        
+        .live-monitor { background: #1e1e1e; color: #a9b7c6; padding: 20px; border-radius: 8px; font-family: 'Courier New', Courier, monospace; box-shadow: 0 4px 12px rgba(0,0,0,0.15); }
+        .live-monitor h3 { color: #fff; margin-top:0; border-bottom: 1px solid #333; padding-bottom: 8px; font-size: 1.1rem; }
+        .live-monitor p { margin: 10px 0; font-size: 0.95rem; }
+        .badge { padding: 3px 8px; border-radius: 4px; font-size: 0.85rem; font-weight: bold; color: white; display: inline-block;}
+        .badge.green { background: #27ae60; }
+        .badge.red { background: #c0392b; }
+    </style>
+</head>
+<body>
+    <a href="index.html" class="back-link">← Back to Device Interaction Index</a>
+    <h1>Focus & Blur State Actions</h1>
+    <hr style="border:0; border-top: 1px solid #d1d5db; margin-bottom: 20px;">
+    
+    <p class="instruction">Click inside the field below to trigger a Focus event, then click completely outside of it to fire a Blur event.</p>
+    
+    <div class="test-grid">
+        <div class="card">
+            <h3>Target Input Element</h3>
+            <input type="text" id="focus-blur-input" class="interactive-input" placeholder="Click/Focus me, then leave...">
+        </div>
+    </div>
+
+    <div class="live-monitor">
+        <h3>Captured Live Focus Metrics:</h3>
+        <p><strong>Current Active State:</strong> <span id="current-state" class="badge red">Blurred (Inactive)</span></p>
+        <p><strong>Last Element Triggered:</strong> <span id="last-element">None</span></p>
+        <p><strong>Total Focus Transitions Counter:</strong> <span id="focus-counter" style="font-weight: bold; color: #fff;">0</span></p>
+    </div>
+
+    <script>
+        const cState = document.getElementById('current-state');
+        const lElement = document.getElementById('last-element');
+        const fCounter = document.getElementById('focus-counter');
+        
+        let focusCount = 0;
+        const targetInput = document.getElementById('focus-blur-input');
+
+        targetInput.addEventListener('focus', (e) => {
+            focusCount++;
+            cState.className = 'badge green';
+            cState.innerText = 'Focused (Active)';
+            lElement.innerText = 'Input field #' + e.target.id;
+            fCounter.innerText = focusCount;
+        });
+
+        targetInput.addEventListener('blur', (e) => {
+            cState.className = 'badge red';
+            cState.innerText = 'Blurred (Inactive)';
+            lElement.innerText = 'Input field #' + e.target.id + ' (Lost Focus)';
+        });
+    </script>
+</body>
+</html>
