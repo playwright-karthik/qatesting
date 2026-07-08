@@ -4,39 +4,43 @@
     <meta charset="UTF-8">
     <title>JSON Schema Mapper</title>
     <style>
-        body { font-family: sans-serif; display: flex; height: 100vh; margin: 0; padding: 20px; box-sizing: border-box; }
+        body { font-family: sans-serif; display: flex; height: 100vh; margin: 0; padding: 20px; }
         .pane { flex: 1; display: flex; flex-direction: column; padding: 10px; }
         textarea { flex: 1; font-family: monospace; }
         #output { flex: 1; background: #f4f4f4; padding: 15px; overflow-y: auto; white-space: pre-wrap; }
-        .error { color: red; font-weight: bold; }
-        .success { color: green; }
-        .key { color: blue; }
+        .error { color: #d32f2f; font-weight: bold; }
+        .success { color: #388e3c; }
     </style>
 </head>
 <body>
 
 <div class="pane">
-    <h3>Input JSON</h3>
-    <textarea id="jsonInput" placeholder="Paste your JSON here..."></textarea>
-    <button onclick="processJSON()" style="margin-top:10px; padding: 10px;">Validate & Map</button>
+    <h3>Paste JSON to Map</h3>
+    <textarea id="jsonInput"></textarea>
+    <button onclick="processJSON()" style="margin-top:10px; padding: 10px; cursor: pointer;">Validate & Map</button>
 </div>
 
 <div class="pane">
-    <h3>Mapped Output & Errors</h3>
+    <h3>Mapped Output</h3>
     <div id="output">Results will appear here...</div>
 </div>
 
 <script>
-// Enum Definitions from your Doc
+// UPDATE THIS DICTIONARY WHENEVER THE DOC CHANGES
 const MAPPINGS = {
-    eventType: { name: "EventType", values: { 0: "Step", 1: "Action", 2: "Navigation", 3: "Javascript", 4: "Assertion" } },
-    eventSubType: { name: "EventSubType", values: { 0: "MouseClick", 1: "Type", 2: "Select", 3: "CheckUncheck", 4: "KeysAndShortcuts", 5: "FocusBlur", 6: "Scroll", 7: "ChecboxIsChecked", 8: "ElementIsDisabled", 9: "ElementIsFocused", 10: "ElementNotVisible", 11: "ElementIntersect", 12: "ElementVisible", 13: "ValueNotUndefined", 14: "ValueIsFalsy", 15: "ValueIsNaN", 16: "ValueIsNull", 17: "ValueIsTruthy", 18: "ElementWithText", 19: "ElementWithCssClasses", 20: "ElementWithDomAttribute", 21: "ElementWithCssClassProperty", 22: "ElementWithCssProperty", 23: "ElementWithID", 24: "ElementWithAriaRole", 25: "ElementMatchesText", 26: "InputWithValue", 27: "SelectWithOptionSelected", 28: "PageWithTitle", 29: "PageWithUrl", 30: "SameValue", 31: "NumberApproxEqual", 32: "NumberMoreThan", 33: "NumberMoreThanOrEqual", 34: "NumberLessThan", 35: "NumberLessThanOrEqual", 36: "ValueUndefined", 37: "StringWithSubstring", 38: "ValueSimilar", 39: "StringMatchesRegex" } }
+    "eventType": { name: "EventType", values: { 0: "Step", 1: "Action", 2: "Navigation", 3: "Javascript", 4: "Assertion" } },
+    "eventSubType": { name: "EventSubType", values: { 0: "MouseClick", 1: "Type", 2: "Select", 3: "CheckUncheck", 4: "KeysAndShortcuts", 5: "FocusBlur", 6: "Scroll", 7: "ChecboxIsChecked", 8: "ElementIsDisabled", 9: "ElementIsFocused", 10: "ElementNotVisible", 11: "ElementIntersect", 12: "ElementVisible", 13: "ValueNotUndefined", 14: "ValueIsFalsy", 15: "ValueIsNaN", 16: "ValueIsNull", 17: "ValueIsTruthy", 18: "ElementWithText", 19: "ElementWithCssClasses", 20: "ElementWithDomAttribute", 21: "ElementWithCssClassProperty", 22: "ElementWithCssProperty", 23: "ElementWithID", 24: "ElementWithAriaRole", 25: "ElementMatchesText", 26: "InputWithValue", 27: "SelectWithOptionSelected", 28: "PageWithTitle", 29: "PageWithUrl", 30: "SameValue", 31: "NumberApproxEqual", 32: "NumberMoreThan", 33: "NumberMoreThanOrEqual", 34: "NumberLessThan", 35: "NumberLessThanOrEqual", 36: "ValueUndefined", 37: "StringWithSubstring", 38: "ValueSimilar", 39: "StringMatchesRegex" } },
+    "mouseClickType": { name: "MouseClickType", values: { 0: "LeftClick", 1: "RightClick", 2: "DoubleClick" } },
+    "advancedSelectorType": { name: "AdvancedSelectorType", values: { 0: "Css", 1: "XPath" } },
+    "valueType": { name: "ValueType", values: { 0: "FreeText", 1: "LocalVariable", 2: "GlobalVariable", 3: "Username", 4: "Password" } },
+    "focusBlurType": { name: "FocusBlurType", values: { 0: "Focus", 1: "Blur" } },
+    "scrollType": { name: "ScrollType", values: { 0: "ToElement", 1: "ByAmount" } }
 };
 
 function processJSON() {
     const input = document.getElementById('jsonInput').value;
     const output = document.getElementById('output');
-    output.innerHTML = ""; // Clear
+    output.innerHTML = ""; 
     
     try {
         const data = JSON.parse(input);
@@ -46,15 +50,17 @@ function processJSON() {
             for (let key in obj) {
                 let currentPath = path ? `${path}.${key}` : key;
                 
-                // If this key is one we need to map
-                if (MAPPINGS[key]) {
+                // If the current key exists in our MAPPINGS registry
+                if (MAPPINGS.hasOwnProperty(key)) {
                     const val = obj[key];
                     const map = MAPPINGS[key].values;
                     
                     if (map.hasOwnProperty(val)) {
+                        // Success: Add the descriptive label
                         obj[key] = `${val} (${map[val]})`;
                         logs.push(`<div class="success">Mapped ${currentPath}: ${obj[key]}</div>`);
                     } else {
+                        // Error: Key exists but value is unrecognized
                         logs.push(`<div class="error">Error at ${currentPath}: Value "${val}" not found in ${MAPPINGS[key].name}</div>`);
                     }
                 }
@@ -66,7 +72,7 @@ function processJSON() {
         }
 
         traverse(data);
-        output.innerHTML = logs.join('') + "<hr><h3>Formatted JSON:</h3>" + JSON.stringify(data, null, 2);
+        output.innerHTML = logs.join('') + "<hr><h3>Formatted JSON:</h3><pre>" + JSON.stringify(data, null, 2) + "</pre>";
         
     } catch (e) {
         output.innerHTML = `<div class="error">Invalid JSON: ${e.message}</div>`;
