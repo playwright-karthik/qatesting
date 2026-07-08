@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>JSON Schema Mapper</title>
+    <style>
+        body { font-family: sans-serif; display: flex; height: 100vh; margin: 0; padding: 20px; box-sizing: border-box; }
+        .pane { flex: 1; display: flex; flex-direction: column; padding: 10px; }
+        textarea { flex: 1; font-family: monospace; }
+        #output { flex: 1; background: #f4f4f4; padding: 15px; overflow-y: auto; white-space: pre-wrap; }
+        .error { color: red; font-weight: bold; }
+        .success { color: green; }
+        .key { color: blue; }
+    </style>
+</head>
+<body>
+
+<div class="pane">
+    <h3>Input JSON</h3>
+    <textarea id="jsonInput" placeholder="Paste your JSON here..."></textarea>
+    <button onclick="processJSON()" style="margin-top:10px; padding: 10px;">Validate & Map</button>
+</div>
+
+<div class="pane">
+    <h3>Mapped Output & Errors</h3>
+    <div id="output">Results will appear here...</div>
+</div>
+
+<script>
+// Enum Definitions from your Doc
+const MAPPINGS = {
+    eventType: { name: "EventType", values: { 0: "Step", 1: "Action", 2: "Navigation", 3: "Javascript", 4: "Assertion" } },
+    eventSubType: { name: "EventSubType", values: { 0: "MouseClick", 1: "Type", 2: "Select", 3: "CheckUncheck", 4: "KeysAndShortcuts", 5: "FocusBlur", 6: "Scroll", 7: "ChecboxIsChecked", 8: "ElementIsDisabled", 9: "ElementIsFocused", 10: "ElementNotVisible", 11: "ElementIntersect", 12: "ElementVisible", 13: "ValueNotUndefined", 14: "ValueIsFalsy", 15: "ValueIsNaN", 16: "ValueIsNull", 17: "ValueIsTruthy", 18: "ElementWithText", 19: "ElementWithCssClasses", 20: "ElementWithDomAttribute", 21: "ElementWithCssClassProperty", 22: "ElementWithCssProperty", 23: "ElementWithID", 24: "ElementWithAriaRole", 25: "ElementMatchesText", 26: "InputWithValue", 27: "SelectWithOptionSelected", 28: "PageWithTitle", 29: "PageWithUrl", 30: "SameValue", 31: "NumberApproxEqual", 32: "NumberMoreThan", 33: "NumberMoreThanOrEqual", 34: "NumberLessThan", 35: "NumberLessThanOrEqual", 36: "ValueUndefined", 37: "StringWithSubstring", 38: "ValueSimilar", 39: "StringMatchesRegex" } }
+};
+
+function processJSON() {
+    const input = document.getElementById('jsonInput').value;
+    const output = document.getElementById('output');
+    output.innerHTML = ""; // Clear
+    
+    try {
+        const data = JSON.parse(input);
+        const logs = [];
+        
+        function traverse(obj, path = "") {
+            for (let key in obj) {
+                let currentPath = path ? `${path}.${key}` : key;
+                
+                // If this key is one we need to map
+                if (MAPPINGS[key]) {
+                    const val = obj[key];
+                    const map = MAPPINGS[key].values;
+                    
+                    if (map.hasOwnProperty(val)) {
+                        obj[key] = `${val} (${map[val]})`;
+                        logs.push(`<div class="success">Mapped ${currentPath}: ${obj[key]}</div>`);
+                    } else {
+                        logs.push(`<div class="error">Error at ${currentPath}: Value "${val}" not found in ${MAPPINGS[key].name}</div>`);
+                    }
+                }
+                
+                if (typeof obj[key] === 'object' && obj[key] !== null) {
+                    traverse(obj[key], currentPath);
+                }
+            }
+        }
+
+        traverse(data);
+        output.innerHTML = logs.join('') + "<hr><h3>Formatted JSON:</h3>" + JSON.stringify(data, null, 2);
+        
+    } catch (e) {
+        output.innerHTML = `<div class="error">Invalid JSON: ${e.message}</div>`;
+    }
+}
+</script>
+</body>
+</html>
