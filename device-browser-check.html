@@ -2,152 +2,217 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>Device Test</title>
+  <title>Enhanced QA Device & Browser Test</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <style>
     body {
-      font-family: sans-serif;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
       font-size: 14px;
-      padding: 10px;
+      padding: 20px;
       margin: 0;
-      line-height: 1.4;
-      background: #f9f9f9;
+      line-height: 1.5;
+      background: #f4f6f8;
+      color: #333;
+    }
+    .container {
+      max-width: 600px;
+      margin: 0 auto;
+      background: white;
+      padding: 20px;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.05);
     }
     h2 {
-      font-size: 16px;
-      margin: 0 0 10px 0;
+      font-size: 18px;
+      margin: 0 0 15px 0;
+      color: #111;
+      border-bottom: 2px solid #eaeaea;
+      padding-bottom: 8px;
     }
     table {
       width: 100%;
       border-collapse: collapse;
       table-layout: fixed;
-      margin-top: 10px;
+      margin-bottom: 20px;
     }
     td {
-      padding: 4px 6px;
-      border-bottom: 1px solid #ddd;
+      padding: 8px 10px;
+      border-bottom: 1px solid #eee;
       word-break: break-word;
+      vertical-align: top;
     }
     td.label {
-      font-weight: bold;
+      font-weight: 600;
       width: 40%;
-      background: #eee;
+      color: #555;
+      background: #fcfcfc;
     }
     .header {
       display: flex;
       align-items: center;
-      gap: 20px;
-      margin-bottom: 10px;
+      gap: 15px;
+      margin-bottom: 20px;
+      background: #eef2f5;
+      padding: 12px;
+      border-radius: 8px;
     }
     .header img {
-      height: 60px;
+      height: 48px;
+      width: 48px;
       object-fit: contain;
-      background: white;
-      border-radius: 8px;
+    }
+    .header-text {
+      font-size: 16px;
+      font-weight: bold;
     }
   </style>
 </head>
 <body>
+
+<div class="container">
   <div class="header">
-    <div>
-      <img id="device-img" src="" alt="Device" loading="eager" />
-    </div>
-    <div>
-      <img id="browser-icon" src="" alt="Browser" loading="eager" />
-    </div>
+    <img id="device-img" src="" alt="Device" loading="eager" />
+    <img id="browser-icon" src="" alt="Browser" loading="eager" />
+    <div class="header-text" id="detected-summary">Detecting Environment...</div>
   </div>
 
-  <h2>Device & Browser Details</h2>
+  <h2>Browser Environment</h2>
   <table>
-    <tr><td class="label">User-Agent</td><td id="ua"></td></tr>
-    <tr><td class="label">Platform</td><td id="platform"></td></tr>
+    <tr><td class="label">Detected Browser</td><td id="browser-name" style="font-weight:bold;"></td></tr>
+    <tr><td class="label">User-Agent</td><td id="ua" style="font-size: 11px; font-family: monospace;"></td></tr>
+    <tr><td class="label">Cookies Enabled</td><td id="cookie"></td></tr>
     <tr><td class="label">Language</td><td id="lang"></td></tr>
-    <tr><td class="label">Screen Size</td><td id="screen"></td></tr>
-    <tr><td class="label">Window Size</td><td id="window"></td></tr>
-    <tr><td class="label">Device Pixel Ratio</td><td id="dpr"></td></tr>
+  </table>
+
+  <h2>Hardware & Performance</h2>
+  <table>
+    <tr><td class="label">Platform / OS</td><td id="platform"></td></tr>
+    <tr><td class="label">CPU Cores (Logical)</td><td id="hardware-threads"></td></tr>
+    <tr><td class="label">Device Memory</td><td id="device-memory"></td></tr>
+    <tr><td class="label">Network Type / Speed</td><td id="network-speed"></td></tr>
+    <tr><td class="label">Online Status</td><td id="online"></td></tr>
+  </table>
+
+  <h2>Display & Touch</h2>
+  <table>
+    <tr><td class="label">Screen Resolution</td><td id="screen"></td></tr>
+    <tr><td class="label">Available Window Size</td><td id="window"></td></tr>
+    <tr><td class="label">Device Pixel Ratio (DPR)</td><td id="dpr"></td></tr>
+    <tr><td class="label">Color Depth</td><td id="color-depth"></td></tr>
     <tr><td class="label">Touch Support</td><td id="touch"></td></tr>
     <tr><td class="label">Orientation</td><td id="orient"></td></tr>
     <tr><td class="label">Timezone</td><td id="tz"></td></tr>
-    <tr><td class="label">Cookies Enabled</td><td id="cookie"></td></tr>
-    <tr><td class="label">Online Status</td><td id="online"></td></tr>
-    <tr><td class="label">Camera Permission</td><td id="perm-camera">Checking...</td></tr>
-    <tr><td class="label">Microphone Permission</td><td id="perm-mic">Checking...</td></tr>
-    <tr><td class="label">Location Permission</td><td id="perm-location">Checking...</td></tr>
-    <tr><td class="label">Notifications Permission</td><td id="perm-notify">Checking...</td></tr>
   </table>
 
-  <script>
-    const ua = navigator.userAgent.toLowerCase();
-    const platform = navigator.platform.toLowerCase();
+  <h2>API & Hardware Permissions</h2>
+  <table>
+    <tr><td class="label">Camera</td><td id="perm-camera">Checking...</td></tr>
+    <tr><td class="label">Microphone</td><td id="perm-mic">Checking...</td></tr>
+    <tr><td class="label">Geolocation</td><td id="perm-location">Checking...</td></tr>
+    <tr><td class="label">Notifications</td><td id="perm-notify">Checking...</td></tr>
+  </table>
+</div>
 
-    // Detect orientation
-    const getOrientation = () => {
-      if (screen.orientation && screen.orientation.type) return screen.orientation.type;
-      if (window.orientation !== undefined) return window.orientation;
-      return "Unavailable";
-    };
+<script>
+  const ua = navigator.userAgent.toLowerCase();
+  const platform = navigator.platform.toLowerCase();
 
-    // Map for browser detection
-    const browserMap = [
-      { name: 'Chrome', regex: /chrome|crios/, icon: 'https://img.icons8.com/color/48/000000/chrome--v1.png' },
-      { name: 'Firefox', regex: /firefox/, icon: 'https://img.icons8.com/color/48/000000/firefox.png' },
-      { name: 'Safari', regex: /safari(?!.*chrome)/, icon: 'https://img.icons8.com/ios-filled/50/000000/safari.png' },
-      { name: 'Edge', regex: /edg/, icon: 'https://img.icons8.com/color/48/000000/ms-edge-new.png' },
-      { name: 'Opera', regex: /opera|opr/, icon: 'https://img.icons8.com/color/48/000000/opera.png' },
-    ];
+  const getOrientation = () => {
+    if (screen.orientation && screen.orientation.type) return screen.orientation.type;
+    if (window.orientation !== undefined) return window.orientation + "°";
+    return "Unavailable";
+  };
 
-    // Map for device detection
-    const deviceMap = [
-      { type: 'iPhone', regex: /iphone/, img: 'https://img.icons8.com/emoji/48/000000/iphone-emoji.png' },
-      { type: 'iPad', regex: /ipad/, img: 'https://img.icons8.com/emoji/48/000000/ipad-emoji.png' },
-      { type: 'Android', regex: /android/, img: 'https://img.icons8.com/emoji/48/000000/android-emoji.png' },
-      { type: 'Windows', regex: /win/, img: 'https://img.icons8.com/fluency/48/000000/laptop.png' },
-      { type: 'Mac', regex: /mac/, img: 'https://img.icons8.com/fluency/48/000000/mac-client.png' },
-      { type: 'Linux', regex: /linux/, img: 'https://img.icons8.com/fluency/48/000000/linux.png' },
-    ];
+  // FIXED: Edge, Opera, and Brave evaluated BEFORE generic Chrome
+  const browserMap = [
+    { name: 'Microsoft Edge', regex: /edg\//, icon: 'https://img.icons8.com/color/48/000000/ms-edge-new.png' },
+    { name: 'Opera', regex: /opera|opr\//, icon: 'https://img.icons8.com/color/48/000000/opera.png' },
+    { name: 'Brave', regex: /brave/, icon: 'https://img.icons8.com/color/48/000000/brave-browser.png' },
+    { name: 'Chrome', regex: /chrome|crios/, icon: 'https://img.icons8.com/color/48/000000/chrome--v1.png' },
+    { name: 'Firefox', regex: /firefox|fxios/, icon: 'https://img.icons8.com/color/48/000000/firefox.png' },
+    { name: 'Safari', regex: /safari(?!.*chrome)/, icon: 'https://img.icons8.com/ios-filled/50/000000/safari.png' }
+  ];
 
-    const browser = browserMap.find(b => ua.match(b.regex)) || { name: 'Unknown', icon: 'https://img.icons8.com/ios-filled/50/000000/help.png' };
-    const device = deviceMap.find(d => ua.match(d.regex) || platform.match(d.regex)) || { type: 'Unknown', img: 'https://img.icons8.com/ios-filled/50/000000/help.png' };
+  const deviceMap = [
+    { type: 'iPhone', regex: /iphone/, img: 'https://img.icons8.com/emoji/48/000000/iphone-emoji.png' },
+    { type: 'iPad', regex: /ipad/, img: 'https://img.icons8.com/emoji/48/000000/ipad-emoji.png' },
+    { type: 'Android Device', regex: /android/, img: 'https://img.icons8.com/emoji/48/000000/android-emoji.png' },
+    { type: 'Windows PC', regex: /win/, img: 'https://img.icons8.com/fluency/48/000000/laptop.png' },
+    { type: 'MacBook/Mac', regex: /mac/, img: 'https://img.icons8.com/fluency/48/000000/mac-client.png' },
+    { type: 'Linux Machine', regex: /linux/, img: 'https://img.icons8.com/fluency/48/000000/linux.png' }
+  ];
 
-    // Set icons
-    document.getElementById("device-img").src = device.img;
-    document.getElementById("device-img").alt = device.type;
+  // Specific check for Brave browser implementation variant
+  let isBrave = false;
+  if (navigator.brave && typeof navigator.brave.isBrave === 'function') {
+    isBrave = true;
+  }
 
-    document.getElementById("browser-icon").src = browser.icon;
-    document.getElementById("browser-icon").alt = browser.name;
+  const browser = isBrave ? browserMap.find(b => b.name === 'Brave') : (browserMap.find(b => ua.match(b.regex)) || { name: 'Unknown Browser', icon: 'https://img.icons8.com/ios-filled/50/000000/help.png' });
+  const device = deviceMap.find(d => ua.match(d.regex) || platform.match(d.regex)) || { type: 'Unknown Device', img: 'https://img.icons8.com/ios-filled/50/000000/help.png' };
 
-    // Set device/browser info
-    document.getElementById("ua").textContent = navigator.userAgent;
-    document.getElementById("platform").textContent = navigator.platform || "N/A";
-    document.getElementById("lang").textContent = navigator.language || "N/A";
-    document.getElementById("screen").textContent = `${screen.width} x ${screen.height}`;
-    document.getElementById("window").textContent = `${window.innerWidth} x ${window.innerHeight}`;
-    document.getElementById("dpr").textContent = window.devicePixelRatio || "1";
-    document.getElementById("touch").textContent = 'ontouchstart' in window ? "Yes" : "No";
-    document.getElementById("orient").textContent = getOrientation();
-    document.getElementById("tz").textContent = Intl.DateTimeFormat().resolvedOptions().timeZone || "N/A";
-    document.getElementById("cookie").textContent = navigator.cookieEnabled ? "Yes" : "No";
-    document.getElementById("online").textContent = navigator.onLine ? "Online" : "Offline";
+  // Set Top Header Details
+  document.getElementById("device-img").src = device.img;
+  document.getElementById("device-img").alt = device.type;
+  document.getElementById("browser-icon").src = browser.icon;
+  document.getElementById("browser-icon").alt = browser.name;
+  document.getElementById("detected-summary").textContent = `${browser.name} on ${device.type}`;
 
-    // Permissions API check
-    const checkPermission = async (name, elementId) => {
-      try {
-        if (!navigator.permissions) {
-          document.getElementById(elementId).textContent = "Permissions API not supported";
-          return;
-        }
-        const result = await navigator.permissions.query({ name });
-        document.getElementById(elementId).textContent =
-          result.state.charAt(0).toUpperCase() + result.state.slice(1);
-      } catch (e) {
-        document.getElementById(elementId).textContent = "Not available";
+  // Populate testing dataset
+  document.getElementById("browser-name").textContent = browser.name;
+  document.getElementById("ua").textContent = navigator.userAgent;
+  document.getElementById("platform").textContent = navigator.platform || "N/A";
+  document.getElementById("lang").textContent = navigator.language || "N/A";
+  document.getElementById("screen").textContent = `${screen.width} x ${screen.height} (${screen.colorDepth}-bit)`;
+  document.getElementById("window").textContent = `${window.innerWidth} x ${window.innerHeight}`;
+  document.getElementById("dpr").textContent = window.devicePixelRatio || "1";
+  document.getElementById("color-depth").textContent = `${screen.colorDepth} bits per pixel`;
+  document.getElementById("touch").textContent = ('ontouchstart' in window || navigator.maxTouchPoints > 0) ? `Yes (${navigator.maxTouchPoints || 1} points)` : "No";
+  document.getElementById("orient").textContent = getOrientation();
+  document.getElementById("tz").textContent = Intl.DateTimeFormat().resolvedOptions().timeZone || "N/A";
+  document.getElementById("cookie").textContent = navigator.cookieEnabled ? "Enabled" : "Disabled";
+  document.getElementById("online").textContent = navigator.onLine ? "Connected (Online)" : "Disconnected (Offline)";
+
+  // Hardware additions
+  document.getElementById("hardware-threads").textContent = navigator.hardwareConcurrency ? `${navigator.hardwareConcurrency} Cores` : "N/A";
+  document.getElementById("device-memory").textContent = navigator.deviceMemory ? `~${navigator.deviceMemory} GB` : "N/A (or protected)";
+  
+  // Network connection speed data info
+  if (navigator.connection) {
+    const conn = navigator.connection;
+    document.getElementById("network-speed").textContent = `${conn.effectiveType || 'N/A'} (Downlink: ~${conn.downlink || 'N/A'} Mbps)`;
+  } else {
+    document.getElementById("network-speed").textContent = "N/A (Not supported on browser)";
+  }
+
+  // Permissions API check
+  const checkPermission = async (name, elementId) => {
+    try {
+      if (!navigator.permissions) {
+        document.getElementById(elementId).textContent = "Not Supported";
+        return;
       }
-    };
+      const result = await navigator.permissions.query({ name });
+      const formatState = (state) => {
+        if (state === 'granted') return `<span style="color:green; font-weight:bold;">Granted</span>`;
+        if (state === 'denied') return `<span style="color:red; font-weight:bold;">Denied</span>`;
+        return `<span style="color:orange;">Prompt Required</span>`;
+      };
+      document.getElementById(elementId).innerHTML = formatState(result.state);
+      
+      // Monitor change event real-time
+      result.onchange = () => {
+        document.getElementById(elementId).innerHTML = formatState(result.state);
+      };
+    } catch (e) {
+      document.getElementById(elementId).textContent = "Unavailable/Blocked";
+    }
+  };
 
-    checkPermission("camera", "perm-camera");
-    checkPermission("microphone", "perm-mic");
-    checkPermission("geolocation", "perm-location");
-    checkPermission("notifications", "perm-notify");
-  </script>
+  checkPermission("camera", "perm-camera");
+  checkPermission("microphone", "perm-mic");
+  checkPermission("geolocation", "perm-location");
+  checkPermission("notifications", "perm-notify");
+</script>
 </body>
 </html>
