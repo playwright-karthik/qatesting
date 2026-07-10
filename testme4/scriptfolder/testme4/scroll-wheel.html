@@ -3,22 +3,38 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Advanced Scroll, Trackpad & Mouse Interaction Sandbox</title>
+    <title>Advanced Scroll & Mouse Interaction Sandbox</title>
     <style>
-        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; margin: 30px; color: #333; background: #f0f2f5; padding-bottom: 350px; }
-        h1 { color: #1a1a1a; margin-bottom: 5px; font-size: 1.8rem; }
-        .instruction { color: #666; margin-bottom: 20px; font-size: 0.95rem; }
-        .back-link { display: inline-block; margin-bottom: 15px; color: #0066cc; text-decoration: none; font-weight: 500; }
+        body { 
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; 
+            margin: 0; 
+            padding: 0;
+            color: #333; 
+            background: #f0f2f5; 
+            display: flex;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        /* LEFT SIDE: Interactive Workspace Area */
+        .workspace-area {
+            flex: 1;
+            padding: 25px;
+            overflow-y: auto;
+            box-sizing: border-box;
+        }
+        h1 { color: #1a1a1a; margin: 0 0 5px 0; font-size: 1.6rem; }
+        .instruction { color: #666; margin-bottom: 20px; font-size: 0.9rem; }
+        .back-link { display: inline-block; margin-bottom: 15px; color: #0066cc; text-decoration: none; font-weight: 500; font-size: 0.9rem; }
         .back-link:hover { text-decoration: underline; }
         
-        .test-grid { display: grid; grid-template-columns: 1fr; gap: 20px; margin-bottom: 25px; }
-        .card { background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); border: 1px solid #e1e4e8; }
+        .card { background: white; padding: 15px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); border: 1px solid #e1e4e8; }
         
-        /* Infinite 2D Workspace Container */
+        /* Fixed, accessible workspace container sizing */
         .scroll-container { 
             display: block; 
             width: 100%; 
-            height: 400px; 
+            height: 500px; 
             overflow: auto; 
             border: 3px dashed #e67e22; 
             background: #fafafa; 
@@ -26,10 +42,10 @@
             position: relative;
         }
 
-        /* Large canvas area to allow true X, Y, and Diagonal scrolling */
+        /* 2D Layout Grid Canvas for Scroll Target Testing */
         .scroll-canvas { 
-            width: 3000px; 
-            height: 3000px; 
+            width: 2400px; 
+            height: 2400px; 
             position: relative;
             background-image: 
                 linear-gradient(to right, #e2e8f0 1px, transparent 1px),
@@ -39,92 +55,94 @@
             transition: transform 0.1s ease-out;
         }
 
-        /* Distinct landmarks for Playwright assertions */
+        /* Interactive Element Landmarks */
         .scroll-target-item {
             position: absolute;
-            padding: 15px;
+            padding: 12px 18px;
             background: #0066cc;
             color: white;
             font-weight: bold;
             border-radius: 6px;
             box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-            font-size: 0.9rem;
+            font-size: 0.85rem;
             white-space: nowrap;
             user-select: none;
             cursor: pointer;
         }
-        .scroll-target-item.center   { background: #9b59b6; left: 1400px; top: 1400px; }
-        .scroll-target-item.right    { background: #27ae60; left: 2600px; top: 50px; }
-        .scroll-target-item.bottom   { background: #c0392b; left: 50px; top: 2600px; }
-        .scroll-target-item.diagonal { background: #e67e22; left: 2600px; top: 2600px; }
+        .scroll-target-item.center   { background: #9b59b6; left: 1100px; top: 1100px; }
+        .scroll-target-item.right    { background: #27ae60; left: 2000px; top: 50px; }
+        .scroll-target-item.bottom   { background: #c0392b; left: 50px; top: 2000px; }
+        .scroll-target-item.diagonal { background: #e67e22; left: 2000px; top: 2000px; }
 
-        .live-monitor { background: #1e1e1e; color: #a9b7c6; padding: 20px; border-radius: 8px; font-family: 'Courier New', Courier, monospace; box-shadow: 0 4px 12px rgba(0,0,0,0.15); margin-bottom: 25px;}
-        .live-monitor h3 { color: #fff; margin-top:0; border-bottom: 1px solid #333; padding-bottom: 8px; font-size: 1.1rem; }
-        .live-monitor p { margin: 10px 0; font-size: 0.95rem; }
-        
-        /* Floating Detailed Interaction Log Dashboard Panel */
-        .inspector-panel {
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            height: 300px;
+        /* RIGHT SIDE: Compact, Fixed Monitoring Dashboard Sidebar */
+        .sidebar-inspector {
+            width: 360px;
             background: #121214;
             color: #e1e4e8;
-            border-top: 4px solid #ff79c6;
+            border-left: 4px solid #ff79c6;
             font-family: 'Courier New', Courier, monospace;
-            box-shadow: 0 -4px 20px rgba(0,0,0,0.3);
-            z-index: 9999;
+            box-shadow: -4px 0 15px rgba(0,0,0,0.15);
             display: flex;
             flex-direction: column;
+            height: 100vh;
+            box-sizing: border-box;
         }
-        .inspector-header {
+        .sidebar-header {
             background: #24292e;
-            padding: 10px 20px;
+            padding: 15px;
             font-weight: bold;
             color: #ff79c6;
             display: flex;
             justify-content: space-between;
             align-items: center;
             border-bottom: 1px solid #2d3139;
+            font-size: 0.85rem;
         }
+        
+        .live-metrics-box {
+            padding: 15px;
+            background: #1c1c1e;
+            border-bottom: 1px solid #2d3139;
+            font-size: 0.82rem;
+        }
+        .live-metrics-box p { margin: 8px 0; }
+        
         .inspector-body {
             flex: 1;
             overflow-y: auto;
-            padding: 10px 20px;
+            padding: 10px 15px;
             margin: 0;
             list-style: none;
         }
-        .log-row {
-            display: grid;
-            grid-template-columns: 100px 240px 150px 150px 180px 1fr;
-            gap: 10px;
-            padding: 6px 0;
-            border-bottom: 1px solid #21262d;
-            font-size: 0.85rem;
+        .log-card {
+            background: #1c1c1e;
+            border: 1px solid #2d3139;
+            border-radius: 5px;
+            padding: 10px;
+            margin-bottom: 10px;
+            font-size: 0.78rem;
+            line-height: 1.4;
         }
-        .log-row.highlight { background: #1f385c; }
+        .log-card.highlight { border-color: #ff79c6; background: #1a1e29; }
         
-        .badge { padding: 3px 8px; border-radius: 4px; font-size: 0.82rem; font-weight: bold; color: white; display: inline-block;}
+        .badge { padding: 2px 6px; border-radius: 4px; font-size: 0.75rem; font-weight: bold; color: white; display: inline-block;}
         .badge.gray { background: #555; }
         .badge.orange { background: #e67e22; }
         .badge.blue { background: #0066cc; }
         .badge.purple { background: #9b59b6; }
         .badge.green { background: #28a745; }
-        .badge.red { background: #dc3545; }
-        
-        .clear-btn { background: #f25c54; color: white; border: none; padding: 4px 10px; border-radius: 4px; font-weight: bold; cursor: pointer; font-family: monospace; font-size: 0.8rem; }
+
+        .clear-btn { background: #f25c54; color: white; border: none; padding: 4px 10px; border-radius: 4px; font-weight: bold; cursor: pointer; font-size: 0.75rem; }
         .clear-btn:hover { background: #c84b45; }
     </style>
 </head>
 <body>
-    <a href="index.html" class="back-link">← Back to Device Interaction Index</a>
-    <h1>Advanced Scroll, Trackpad & Mouse Interaction Sandbox</h1>
-    <hr style="border:0; border-top: 1px solid #d1d5db; margin-bottom: 20px;">
-    
-    <p class="instruction">Use your mouse wheel, trackpad gestures, precision coordinate clicks, or Playwright's <code>page.mouse.wheel(x, y)</code> step injections inside the workspace.</p>
-    
-    <div class="test-grid">
+
+    <div class="workspace-area">
+        <a href="index.html" class="back-link">← Back to Device Interaction Index</a>
+        <h1>Advanced Scroll, Trackpad & Mouse Interaction Sandbox</h1>
+        <p class="instruction">Interact with elements or inject <code>page.mouse.wheel(x, y)</code> inputs inside the orange viewport.</p>
+        
         <div class="card">
             <div id="scroll-workspace" class="scroll-container">
                 <div id="canvas-plane" class="scroll-canvas">
@@ -138,147 +156,125 @@
         </div>
     </div>
 
-    <div class="live-monitor">
-        <h3>Captured Live Gesture Metrics:</h3>
-        <p><strong>Action Mode:</strong> <span id="gesture-action" class="badge blue">None</span></p>
-        <p><strong>Vector Directions:</strong> <span id="gesture-dir-y" class="badge gray">Y: Idle</span> <span id="gesture-dir-x" class="badge gray">X: Idle</span></p>
-        <p><strong>Delta Distances:</strong> <span>X: <span id="delta-x">0</span> | Y: <span id="delta-y">0</span></span></p>
-        <p><strong>Trackpad Zoom Level:</strong> <span id="zoom-factor" class="badge purple">1.0x (No Pinch)</span></p>
-    </div>
+    <div class="sidebar-inspector">
+        <div class="sidebar-header">
+            <span>📊 LIVE STREAM RADAR</span>
+            <button class="clear-btn" onclick="clearLogs()">Reset</button>
+        </div>
+        
+        <div class="live-metrics-box">
+            <p><strong>Vector Mode:</strong> <span id="m-action" class="badge blue">None</span></p>
+            <p><strong>Scroll Vector:</strong> X: <span id="m-dx" style="color:#ffc66d;">0</span> | Y: <span id="m-dy" style="color:#ffc66d;">0</span></p>
+            <p><strong>Trackpad Zoom:</strong> <span id="m-zoom" class="badge purple">1.00x</span></p>
+            <p><strong>Last Element Node:</strong> <span id="m-node" style="color:#ff79c6;">&lt;none&gt;</span></p>
+        </div>
 
-    <div class="inspector-panel">
-        <div class="inspector-header">
-            <span>🔴 LIVE USER INTERACTION ACCELERATED LOG PIPELINE</span>
-            <button class="clear-btn" onclick="clearLogs()">Reset Log</button>
-        </div>
-        <div style="background: #1c1c1e; padding: 8px 20px; font-weight: bold; font-size: 0.85rem; border-bottom: 1px solid #2d3139; display: grid; grid-template-columns: 100px 240px 150px 150px 180px 1fr; gap: 10px; color: #8b949e;">
-            <span>Timestamp</span>
-            <span>Event Action Type</span>
-            <span>Canvas Coords</span>
-            <span>Viewport Coords</span>
-            <span>Target Node</span>
-            <span>Hardware Context String</span>
-        </div>
         <ul id="inspector-stream" class="inspector-body">
             </ul>
     </div>
 
     <script>
-        const gAction = document.getElementById('gesture-action');
-        const gDirY = document.getElementById('gesture-dir-y');
-        const gDirX = document.getElementById('gesture-dir-x');
-        const gDeltaX = document.getElementById('delta-x');
-        const gDeltaY = document.getElementById('delta-y');
-        const gZoom = document.getElementById('zoom-factor');
+        const gAction = document.getElementById('m-action');
+        const gDeltaX = document.getElementById('m-dx');
+        const gDeltaY = document.getElementById('m-dy');
+        const gZoom = document.getElementById('m-zoom');
+        const gNode = document.getElementById('m-node');
+        
         const canvasPlane = document.getElementById('canvas-plane');
         const workspace = document.getElementById('scroll-workspace');
         const inspectorStream = document.getElementById('inspector-stream');
 
         let currentScale = 1;
 
-        // Functional logger injector engine
-        function appendInteractionLog(eventName, e, extraStr = "") {
+        function logInteraction(eventName, e, detailString = "") {
             const rect = canvasPlane.getBoundingClientRect();
             const canvasX = Math.round((e.clientX - rect.left) / currentScale);
             const canvasY = Math.round((e.clientY - rect.top) / currentScale);
-            const timeStr = new Date().toLocaleTimeString();
-
-            const li = document.createElement('li');
-            li.className = 'log-row';
-            if (eventName.includes('Click') || eventName.includes('Zoom')) li.className += ' highlight';
-
-            let badgeClass = 'blue';
-            if (eventName.includes('Click') || eventName.includes('Down') || eventName.includes('Up')) badgeClass = 'green';
-            if (eventName.includes('Scroll') || eventName.includes('Zoom')) badgeClass = 'orange';
-            if (eventName.includes('Leave') || eventName.includes('Enter')) badgeClass = 'red';
-
-            let activeModifiers = [];
-            if (e.ctrlKey) activeModifiers.push('CTRL');
-            if (e.shiftKey) activeModifiers.push('SHIFT');
-            if (e.altKey) activeModifiers.push('ALT');
-            const modStr = activeModifiers.length > 0 ? activeModifiers.join('+') : 'None';
+            const timeStr = new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit', second:'2-digit'});
 
             const targetTag = e.target.id ? `#${e.target.id}` : `.${e.target.className.split(' ')[0]}`;
+            gNode.innerText = targetTag;
+
+            // Instantiating card container element
+            const li = document.createElement('li');
+            li.className = 'log-card';
+            
+            let isPrimaryAction = eventName.includes('Click') || eventName.includes('Zoom');
+            if (isPrimaryAction) li.className += ' highlight';
+
+            let typeBadgeColor = 'blue';
+            if (eventName.includes('Click') || eventName.includes('Down')) typeBadgeColor = 'green';
+            if (eventName.includes('Scroll') || eventName.includes('Zoom')) typeBadgeColor = 'orange';
 
             li.innerHTML = `
-                <span style="color: #8b949e;">${timeStr}</span>
-                <span><span class="badge ${badgeClass}">${eventName}</span></span>
-                <span style="color: #58afad;">X:${canvasX}px\|Y:${canvasY}px</span>
-                <span style="color: #9876aa;">X:${e.clientX || 0}px\|Y:${e.clientY || 0}px</span>
-                <span style="color: #ff79c6; font-weight:bold;">&lt;${targetTag}&gt;</span>
-                <span style="color: #79c0ff; font-size:0.8rem;">Btn:${e.button ?? 'N/A'} | Chord:[${modStr}] ${extraStr}</span>
+                <div style="display:flex; justify-content:space-between; margin-bottom:5px; border-bottom:1px solid #2d3139; padding-bottom:3px;">
+                    <span class="badge ${typeBadgeColor}">${eventName}</span>
+                    <span style="color:#8b949e;">${timeStr}</span>
+                </div>
+                <div><strong>Canvas Offset:</strong> X:${canvasX}px, Y:${canvasY}px</div>
+                <div><strong>Viewport Coords:</strong> X:${e.clientX || 0}px, Y:${e.clientY || 0}px</div>
+                <div style="color:#79c0ff; font-size:0.75rem; margin-top:3px;">Btn: ${e.button ?? 'N/A'} ${detailString}</div>
             `;
 
             inspectorStream.insertBefore(li, inspectorStream.firstChild);
-            if (inspectorStream.children.length > 40) inspectorStream.removeChild(inspectorStream.lastChild);
+            
+            // Trim logs cascade list limit to 20 entries for a clean display interface
+            if (inspectorStream.children.length > 20) {
+                inspectorStream.removeChild(inspectorStream.lastChild);
+            }
         }
 
-        // 1. PINCH-TO-ZOOM & CONTAINER SCROLL TRACKING
+        // 1. CONTAINER WORKSPACE SCROLL & ZOOM PIPELINES
         workspace.addEventListener('wheel', (e) => {
             e.preventDefault();
-            gDeltaX.innerText = e.deltaX.toFixed(1);
-            gDeltaY.innerText = e.deltaY.toFixed(1);
+            gDeltaX.innerText = e.deltaX.toFixed(0);
+            gDeltaY.innerText = e.deltaY.toFixed(0);
 
             if (e.ctrlKey) {
-                gAction.innerText = "Trackpad Pinch Zooming";
+                gAction.innerText = "Pinch Zoom";
                 gAction.className = "badge purple";
-                
                 currentScale -= e.deltaY * 0.01;
                 currentScale = Math.min(Math.max(0.5, currentScale), 3);
                 canvasPlane.style.transform = `scale(${currentScale})`;
                 gZoom.innerText = currentScale.toFixed(2) + 'x';
-                
-                appendInteractionLog('Trackpad Pinch Zoom', e, `Scale:${currentScale.toFixed(2)}x`);
+                logInteraction('Trackpad Zoom', e, `| Scale: ${currentScale.toFixed(2)}x`);
                 return;
             }
 
-            let verticalState = "Y: Idle";
-            let horizontalState = "X: Idle";
-            if (e.deltaY > 0) verticalState = "Down ⬇️";
-            if (e.deltaY < 0) verticalState = "Up ⬆️";
-            if (e.deltaX > 0) horizontalState = "Right ➡️";
-            if (e.deltaX < 0) horizontalState = "Left ⬅️";
-
             if (e.deltaX !== 0 && e.deltaY !== 0) {
-                gAction.innerText = "Diagonal Vector Matrix Scroll";
+                gAction.innerText = "Diagonal Scroll";
                 gAction.className = "badge orange";
             } else {
-                gAction.innerText = e.deltaX !== 0 ? "Pure Horizontal Scrolling" : "Pure Vertical Scrolling";
+                gAction.innerText = e.deltaX !== 0 ? "Horizontal Scroll" : "Vertical Scroll";
                 gAction.className = "badge blue";
             }
 
-            gDirY.innerText = verticalState;
-            gDirY.className = e.deltaY !== 0 ? "badge orange" : "badge gray";
-            gDirX.innerText = horizontalState;
-            gDirX.className = e.deltaX !== 0 ? "badge orange" : "badge gray";
-
-            appendInteractionLog('Scroll Wheel Vector', e, `dX:${e.deltaX.toFixed(0)} dY:${e.deltaY.toFixed(0)}`);
+            logInteraction('Scroll Vector', e, `| dX:${e.deltaX.toFixed(0)} dY:${e.deltaY.toFixed(0)}`);
         }, { passive: false });
 
-        // 2. DETAILED MOUSE CLICK INTERACTION TRACKERS
-        canvasPlane.addEventListener('mousedown', (e) => appendInteractionLog('Mouse Button Down', e));
-        canvasPlane.addEventListener('mouseup', (e) => appendInteractionLog('Mouse Button Released', e));
-        canvasPlane.addEventListener('click', (e) => appendInteractionLog('Single Click Captured', e));
-        canvasPlane.addEventListener('dblclick', (e) => appendInteractionLog('Double Click Confirmed', e));
-        
+        // 2. MOUSE CLICKS PIPELINE LOOKUPS
+        canvasPlane.addEventListener('mousedown', (e) => logInteraction('Button Down', e));
+        canvasPlane.addEventListener('click', (e) => logInteraction('Single Click', e));
+        canvasPlane.addEventListener('dblclick', (e) => logInteraction('Double Click', e));
         canvasPlane.addEventListener('contextmenu', (e) => {
-            e.preventDefault(); // Stop native context menu block popup
-            appendInteractionLog('Right-Click (Context Menu)', e);
+            e.preventDefault();
+            logInteraction('Right Click', e);
         });
 
-        // Trackpad mouse tracking boundaries
-        workspace.addEventListener('mouseenter', (e) => appendInteractionLog('Workspace Enter', e));
-        workspace.addEventListener('mouseleave', (e) => appendInteractionLog('Workspace Leave', e));
-        
-        // Tracking mouse movement coordinates stream dynamically
+        // Pointer sampling limits context rules to avoid rendering drops
         canvasPlane.addEventListener('mousemove', (e) => {
-            if (Math.random() > 0.94) { // Sample stream data frequency to prevent rendering stutter
-                appendInteractionLog('Pointer Tracking Move', e);
+            if (Math.random() > 0.96) {
+                logInteraction('Pointer Tracking', e);
             }
         });
 
         function clearLogs() {
             inspectorStream.innerHTML = '';
+            gAction.innerText = "None";
+            gAction.className = "badge blue";
+            gDeltaX.innerText = "0";
+            gDeltaY.innerText = "0";
+            gNode.innerText = "<none>";
         }
     </script>
 </body>
