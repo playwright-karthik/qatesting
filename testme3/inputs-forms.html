@@ -1,56 +1,257 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Inputs, Text Fields & Submissions</title>
+    <title>Inputs, Text Fields & Submissions - Automation Workbench</title>
     <style>
-    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; margin: 40px; color: #333; background: #f9f9f9; }
-    h1 { color: #111; border-bottom: 2px solid #ddd; padding-bottom: 10px; }
-    h2 { color: #0066cc; margin-top: 30px; font-size: 1.2rem; border-left: 4px solid #0066cc; padding-left: 8px;}
-    .btn, button { padding: 8px 16px; margin: 4px 4px 4px 0; border: 1px solid #ccc; border-radius: 4px; background: white; cursor: pointer; display: inline-block;}
-    .btn:disabled, button:disabled { background: #eee; cursor: not-allowed; color: #999; }
-    input[type="text"], input[type="password"], input[type="number"], input[type="email"], input[type="url"], input[type="tel"], input[type="search"], select { display: block; width: 100%; max-width: 320px; padding: 8px; margin: 8px 0; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box; }
-    input[type="date"], input[type="time"], input[type="datetime-local"], input[type="month"], input[type="week"] { display: block; margin: 8px 0; padding: 6px; border: 1px solid #ccc; border-radius: 4px;}
-    .back-link { display: inline-block; margin-bottom: 20px; color: #0066cc; text-decoration: none; font-weight: 500; }
-    .back-link:hover { text-decoration: underline; }
-    .test-container { background: white; padding: 20px; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
-</style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            margin: 40px;
+            color: #333;
+            background: #f9f9f9;
+        }
+
+        h1 {
+            color: #111;
+            border-bottom: 2px solid #ddd;
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+        }
+
+        h2 {
+            color: #0066cc;
+            margin-top: 25px;
+            font-size: 1.1rem;
+            border-left: 4px solid #0066cc;
+            padding-left: 8px;
+        }
+
+        /* The Eye-Level Interaction Radar Screen */
+        .eye-level-radar {
+            background: #121214;
+            color: #a9b7c6;
+            padding: 15px 20px;
+            border-radius: 8px;
+            font-family: 'Courier New', Courier, monospace;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+            border-left: 5px solid #ff79c6;
+            margin-bottom: 25px;
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 15px;
+        }
+
+        .radar-panel h4 {
+            margin: 0 0 5px 0;
+            color: #ff79c6;
+            font-size: 0.8rem;
+            text-transform: uppercase;
+        }
+
+        .radar-panel p {
+            margin: 0;
+            font-size: 1.1rem;
+            font-weight: bold;
+            color: #e1e4e8;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .btn,
+        button {
+            padding: 8px 16px;
+            margin: 4px 4px 4px 0;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            background: white;
+            cursor: pointer;
+            display: inline-block;
+        }
+
+        .btn:disabled,
+        button:disabled {
+            background: #eee;
+            cursor: not-allowed;
+            color: #999;
+        }
+
+        input[type="text"],
+        input[type="password"],
+        input[type="number"],
+        input[type="email"],
+        input[type="url"],
+        input[type="tel"],
+        input[type="search"],
+        select {
+            display: block;
+            width: 100%;
+            max-width: 320px;
+            padding: 8px;
+            margin: 8px 0;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+
+        input[type="date"],
+        input[type="time"],
+        input[type="datetime-local"],
+        input[type="month"],
+        input[type="week"] {
+            display: block;
+            margin: 8px 0;
+            padding: 6px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+
+        .disabled-wrapper {
+            display: block;
+            max-width: 320px;
+            cursor: not-allowed;
+        }
+
+        .back-link {
+            display: inline-block;
+            margin-bottom: 20px;
+            color: #0066cc;
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        .back-link:hover {
+            text-decoration: underline;
+        }
+
+        .test-container {
+            background: white;
+            padding: 25px;
+            border-radius: 8px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+            border: 1px solid #e1e4e8;
+        }
+    </style>
 </head>
+
 <body>
     <a href="index.html" class="back-link">← Back to Dashboard Index</a>
     <h1>Inputs, Text Fields & Submissions</h1>
-    <div class="test-container">
-        
-            <h2>Text Fields</h2>
-            <input type="text" id="inp-text" placeholder="Standard text input">
-            <input type="text" id="inp-disabled" value="Disabled text" disabled>
-            <input type="text" id="inp-readonly" value="Readonly text" readonly>
-            <input type="text" id="inp-required" placeholder="Required field" required>
-            <input type="password" id="inp-pass" placeholder="Password input">
-            
-            <h2>Numeric & Constraints</h2>
-            <input type="number" id="inp-num" min="1" max="10" value="5">
-            <input type="text" id="inp-pattern" pattern="[A-Z]{3}" title="3 Upper Case Letters" value="ABC">
 
-            <h2>HTML5 Specific Inputs</h2>
-            <input type="email" id="inp-email" placeholder="email@domain.com">
-            <input type="url" id="inp-url" placeholder="https://example.com">
-            <input type="tel" id="inp-tel" placeholder="123-456-7890">
-            <input type="search" id="inp-search" placeholder="Search query...">
-            
-            <h2>Date & Time Pickers</h2>
-            <input type="date" id="inp-date">
-            <input type="time" id="inp-time">
-            <input type="datetime-local" id="inp-datetime">
-            <input type="month" id="inp-month">
-            <input type="week" id="inp-week">
-
-            <h2>Color Picker & Sliders</h2>
-            <input type="color" id="inp-color" value="#0066cc">
-            <input type="range" id="inp-range" min="0" max="100" value="50" oninput="this.nextElementSibling.innerText = this.value">
-            <span>50</span>
-        
+    <div class="eye-level-radar">
+        <div class="radar-panel">
+            <h4>Captured Input Action</h4>
+            <p id="radar-action" style="color: #58a6ff;">None (System Idle)</p>
+        </div>
+        <div class="radar-panel">
+            <h4>Target Node Locator</h4>
+            <p id="radar-locator" style="color: #79c0ff;">&lt;none&gt;</p>
+        </div>
+        <div class="radar-panel">
+            <h4>Live Value Stream Context</h4>
+            <p id="radar-value" style="color: #3fb950;">Empty String</p>
+        </div>
     </div>
+
+    <div class="test-container">
+
+        <h2>Visibility Variations (For Non-Visible Assertions)</h2>
+        <input type="text" id="inp-hidden" value="Hidden Field Content" style="display: none;">
+        <input type="text" id="inp-invisible" value="Invisible Field Content" style="visibility: hidden;">
+        <input type="text" id="inp-opacity" value="Zero Opacity Content" style="opacity: 0;">
+        <p style="font-size: 0.8rem; color: #777; margin: -5px 0 15px 0;">* The three input elements above are embedded
+            but hidden via display, visibility, and opacity rules for target verification.</p>
+
+        <h2>Text Fields</h2>
+        <input type="text" id="inp-text" placeholder="Standard text input">
+
+        <div class="disabled-wrapper" onclick="flagDisabledClick(event)">
+            <input type="text" id="inp-disabled" value="Disabled text" disabled style="width: 100%;">
+        </div>
+
+        <input type="text" id="inp-readonly" value="Readonly text" readonly>
+        <input type="text" id="inp-required" placeholder="Required field" required>
+        <input type="password" id="inp-pass" placeholder="Password input">
+
+        <h2>Numeric & Constraints</h2>
+        <input type="number" id="inp-num" min="1" max="10" value="5">
+        <input type="text" id="inp-pattern" pattern="[A-Z]{3}" title="3 Upper Case Letters" value="ABC">
+
+        <h2>HTML5 Specific Inputs</h2>
+        <input type="email" id="inp-email" placeholder="email@domain.com">
+        <input type="url" id="inp-url" placeholder="https://example.com">
+        <input type="tel" id="inp-tel" placeholder="123-456-7890">
+        <input type="search" id="inp-search" placeholder="Search query...">
+
+        <h2>Date & Time Pickers</h2>
+        <input type="date" id="inp-date">
+        <input type="time" id="inp-time">
+        <input type="datetime-local" id="inp-datetime">
+        <input type="month" id="inp-month">
+        <input type="week" id="inp-week">
+
+        <h2>Color Picker & Sliders</h2>
+        <input type="color" id="inp-color" value="#0066cc">
+        <div style="display: flex; align-items: center; gap: 10px;">
+            <input type="range" id="inp-range" min="0" max="100" value="50"
+                oninput="document.getElementById('range-val').innerText = this.value; syncRangeRadar(this)">
+            <span id="range-val" style="font-weight: bold;">50</span>
+        </div>
+
+    </div>
+
+    <script>
+        const rAction = document.getElementById('radar-action');
+        const rLocator = document.getElementById('radar-locator');
+        const rValue = document.getElementById('radar-value');
+
+        // Centralized tracking function for interactable form controls
+        function updateRadar(actionName, element) {
+            rAction.innerText = actionName;
+            rAction.style.color = "#58a6ff";
+
+            rLocator.innerText = element.id ? `#${element.id}` : element.tagName.toLowerCase();
+
+            if (element.type === 'password' && element.value.length > 0) {
+                rValue.innerText = "*".repeat(element.value.length) + " [Masked Secret]";
+                rValue.style.color = "#ff79c6";
+            } else {
+                rValue.innerText = element.value.trim() === "" ? "Empty String" : `"${element.value}"`;
+                rValue.style.color = element.value.trim() === "" ? "#8b949e" : "#3fb950";
+            }
+        }
+
+        // Hook up focus, blur, and typing input listeners across all test container parameters
+        document.querySelectorAll('.test-container input').forEach(input => {
+            input.addEventListener('focus', () => updateRadar('Element Focused', input));
+            input.addEventListener('blur', () => {
+                rAction.innerText = "Element Blurred (Idle)";
+                rAction.style.color = "#8b949e";
+            });
+            input.addEventListener('input', () => updateRadar('Typing / Character Input', input));
+            input.addEventListener('change', () => updateRadar('Selection / Value Confirmed', input));
+        });
+
+        // Intercept container click blocks on disabled fields
+        function flagDisabledClick(e) {
+            rAction.innerText = "Blocked Input Action!";
+            rAction.style.color = "#f25c54";
+            rLocator.innerText = "#inp-disabled";
+            rValue.innerText = "NON-INTERACTABLE (DISABLED)";
+            rValue.style.color = "#f25c54";
+        }
+
+        // Custom synchronizer for range slider
+        function syncRangeRadar(slider) {
+            rAction.innerText = "Slider Range Adjustment";
+            rAction.style.color = "#ffb86c";
+            rLocator.innerText = "#inp-range";
+            rValue.innerText = `Numeric Value: ${slider.value}`;
+            rValue.style.color = "#3fb950";
+        }
+    </script>
 </body>
+
 </html>
