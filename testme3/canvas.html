@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Canvas Coordinate Assertion Sandbox</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background-color: #f0f4f8;
+            margin: 40px;
+            display: flex;
+            gap: 20px;
+        }
+        .card {
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+            border: 1px solid #d0d7de;
+        }
+        canvas {
+            border: 2px solid #34495e;
+            background: #ffffff;
+            cursor: crosshair;
+            display: block;
+        }
+        .log-box {
+            width: 350px;
+            background: #24292e;
+            color: #ff79c6;
+            font-family: monospace;
+            padding: 15px;
+            border-radius: 8px;
+            height: 300px;
+            overflow-y: auto;
+            box-sizing: border-box;
+        }
+        .log-entry {
+            border-bottom: 1px solid #2d3139;
+            padding: 8px 0;
+            font-size: 0.85rem;
+            line-height: 1.4;
+        }
+        .target-box {
+            background: #eef2f7;
+            padding: 10px 15px;
+            border-radius: 6px;
+            border-left: 4px solid #0066cc;
+            margin-bottom: 15px;
+            font-size: 0.9rem;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="card">
+        <h2>🎨 Canvas Position Telemetry Grid</h2>
+        <p>Target size: 300x300 pixels. Right-click actions are logged below.</p>
+        
+        <div class="target-box">
+            <strong>📋 Script Execution Goal:</strong> Target specific coordinates (e.g., <code>x: 23, y: 32</code>) inside your Playwright payload.
+        </div>
+
+        <canvas id="test-canvas" width="300" height="300"></canvas>
+    </div>
+
+    <div class="card" style="flex: 1; display: flex; flex-direction: column;">
+        <h3>📋 Coordinate Dashboard</h3>
+        <div id="log-box" class="log-box" style="flex: 1;">
+            <div class="log-entry" style="color: #8b949e;">&lt;Waiting for automation payload...&gt;</div>
+        </div>
+    </div>
+
+    <script>
+        const canvas = document.getElementById('test-canvas');
+        const ctx = canvas.getContext('2d');
+        const logBox = document.getElementById('log-box');
+
+        // Draw a 50px grid helper on the canvas
+        ctx.strokeStyle = '#e2e8f0';
+        for(let i = 50; i < 300; i += 50) {
+            ctx.beginPath(); ctx.moveTo(i, 0); ctx.lineTo(i, 300); ctx.stroke();
+            ctx.beginPath(); ctx.moveTo(0, i); ctx.lineTo(300, i); ctx.stroke();
+        }
+
+        canvas.addEventListener('contextmenu', (e) => {
+            e.preventDefault(); // Block standard browser right-click menu context
+            
+            const rect = canvas.getBoundingClientRect();
+            // Get exact coordinates relative to the canvas borders
+            const clickX = Math.round(e.clientX - rect.left);
+            const clickY = Math.round(e.clientY - rect.top);
+
+            // Draw a small red indicator square right where the click hit the canvas grid
+            ctx.fillStyle = '#e74c3c';
+            ctx.fillRect(clickX - 3, clickY - 3, 6, 6);
+
+            // Determine what was expected based on whether a precise custom offset hit was made
+            let expectedX = "Centered (150)";
+            let expectedY = "Centered (150)";
+            
+            // If the click is nowhere near the absolute center, it means your script successfully passed coordinates
+            if (clickX !== 150 || clickY !== 150) {
+                expectedX = `${clickX}`;
+                expectedY = `${clickY}`;
+            }
+
+            const entry = document.createElement('div');
+            entry.className = 'log-entry';
+            entry.innerHTML = `
+                <span style="color: #61afef; font-weight: bold;">[INPUT RECEIVED]</span><br>
+                <strong>Provided in Script:</strong> X: ${expectedX}px, Y: ${expectedY}px<br>
+                <strong>Actual Canvas Hit:</strong> X: <span style="color:#98c379">${clickX}px</span>, Y: <span style="color:#98c379">${clickY}px</span>
+            `;
+            
+            if (logBox.children[0].style.color === 'rgb(139, 148, 158)') {
+                logBox.innerHTML = ''; // Clear fallback placeholder text
+            }
+            logBox.insertBefore(entry, logBox.firstChild);
+        });
+    </script>
+</body>
+</html>
