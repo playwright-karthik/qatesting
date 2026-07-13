@@ -57,6 +57,11 @@
         .interactive-btn.unlocked:hover {
             background-color: #27ae60;
         }
+        .interactive-btn.clicked {
+            background-color: #9b59b6 !important;
+            color: white !important;
+            cursor: default;
+        }
         .status-badge {
             display: inline-block;
             padding: 4px 10px;
@@ -69,13 +74,16 @@
         .status-badge.ready {
             background: #2ecc71;
         }
+        .status-badge.stopped {
+            background: #9b59b6;
+        }
     </style>
 </head>
 <body>
 
     <div class="card">
-        <h2>⏱️ Async Automation Wait Sandbox</h2>
-        <p>This page features a strict programmatic gate delay framework.</p>
+        <h2>⏱️ Continuous Time Automation Wait Sandbox</h2>
+        <p>The elapsed time keeps running until an automation action occurs.</p>
         
         <div class="metric-row">
             <div>
@@ -88,7 +96,7 @@
             </div>
         </div>
 
-        <div class="timer-display" id="timer">5000ms</div>
+        <div class="timer-display" id="timer">5000ms REMAINING</div>
 
         <button id="target-action-btn" class="interactive-btn" disabled onclick="handleExecutionClick()">
             Locked Action Element
@@ -96,39 +104,54 @@
     </div>
 
     <script>
-        const TARGET_DELAY = 5000; // 5 seconds target gateway duration
+        const TARGET_DELAY = 5000; // Unlock threshold at 5 seconds
         const startTime = performance.now();
         
+        let isTestStopped = false;
+        let gateUnlocked = false;
+
         const timerElement = document.getElementById('timer');
         const elapsedElement = document.getElementById('elapsed');
         const statusElement = document.getElementById('status');
         const actionButton = document.getElementById('target-action-btn');
 
         const trackingInterval = setInterval(() => {
+            if (isTestStopped) return; // Completely freeze loop once clicked
+
             const currentTime = performance.now();
             const elapsed = currentTime - startTime;
-            const remaining = Math.max(0, TARGET_DELAY - elapsed);
-
-            // Update live ticking metric views
+            
+            // Update the absolute counter continuously
             elapsedElement.innerText = (elapsed / 1000).toFixed(2) + "s";
-            timerElement.innerText = Math.round(remaining) + "ms";
 
-            // Once wait condition completes, unlock the action target element
-            if (elapsed >= TARGET_DELAY) {
-                clearInterval(trackingInterval);
-                timerElement.innerText = "0ms";
-                statusElement.innerText = "READY";
-                statusElement.className = "status-badge ready";
-                
-                actionButton.removeAttribute('disabled');
-                actionButton.className = "interactive-btn unlocked";
-                actionButton.innerText = "💥 Execute Target Action Click";
+            if (!gateUnlocked) {
+                const remaining = Math.max(0, TARGET_DELAY - elapsed);
+                timerElement.innerText = Math.round(remaining) + "ms REMAINING";
+
+                // Unlock milestone trigger
+                if (elapsed >= TARGET_DELAY) {
+                    gateUnlocked = true;
+                    timerElement.innerText = "GATE OPENED (Timer Continuing...)";
+                    timerElement.style.color = "#27ae60";
+                    statusElement.innerText = "READY";
+                    statusElement.className = "status-badge ready";
+                    
+                    actionButton.removeAttribute('disabled');
+                    actionButton.className = "interactive-btn unlocked";
+                    actionButton.innerText = "💥 Execute Target Action Click";
+                }
             }
-        }, 30); // High-frequency update loop for smooth millisecond tracking
+        }, 30); // Fast interval loop for accurate millisecond tracking
 
         function handleExecutionClick() {
-            actionButton.innerText = "🎉 Action Success Verified!";
-            actionButton.style.backgroundColor = "#9b59b6";
+            isTestStopped = true; // Stop the elapsed timer immediately
+            clearInterval(trackingInterval); 
+            
+            statusElement.innerText = "TEST STOPPED";
+            statusElement.className = "status-badge stopped";
+            
+            actionButton.className = "interactive-btn clicked";
+            actionButton.innerText = "🎉 Action Verified & Clock Frozen!";
         }
     </script>
 </body>
