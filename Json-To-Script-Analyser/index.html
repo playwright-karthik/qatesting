@@ -1,377 +1,1303 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Recorder Conversion Analyzer Dashboard</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Json To Script Analyser</title>
   <style>
-    body { margin: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; background: #f6f7f9; color: #161a1d; }
-    main { max-width: 1100px; margin: 0 auto; padding: 32px 20px 56px; }
-    h1 { font-size: 28px; margin: 0 0 8px; color: #1a202c; }
-    p { color: #4d5761; line-height: 1.5; margin-bottom: 20px; }
-    form, .result { background: #fff; border: 1px solid #d8dde3; border-radius: 8px; padding: 20px; margin-top: 18px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); }
-    
-    /* Layout Textareas in a Grid */
-    .grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
-    .full-width { grid-column: span 2; }
-    label { display: grid; gap: 8px; font-weight: 600; font-size: 14px; color: #4a5568; }
-    
+    :root {
+      --bg: #f6f8fb;
+      --panel: #ffffff;
+      --text: #1f2937;
+      --muted: #64748b;
+      --border: #d8e0ea;
+      --border-strong: #b9c6d6;
+      --accent: #0b63ce;
+      --accent-soft: #e8f2ff;
+      --good: #0f7b45;
+      --warn: #9a5b00;
+      --bad: #b42318;
+      --bad-soft: #fff0ed;
+      --shadow: 0 10px 24px rgba(15, 23, 42, 0.08);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--text);
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+
+    button,
+    input,
+    textarea {
+      font: inherit;
+    }
+
+    .shell {
+      width: min(1180px, calc(100% - 32px));
+      margin: 32px auto 48px;
+    }
+
+    .hero {
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      gap: 24px;
+      margin-bottom: 18px;
+    }
+
+    .eyebrow {
+      margin: 0 0 8px;
+      color: var(--muted);
+      font-size: 14px;
+      font-weight: 700;
+      text-transform: uppercase;
+    }
+
+    h1, h2, h3 {
+      margin: 0;
+    }
+
+    h1 {
+      font-size: 34px;
+      line-height: 1.15;
+    }
+
+    h2 {
+      font-size: 20px;
+      margin-bottom: 14px;
+    }
+
+    h3 {
+      font-size: 16px;
+      margin: 18px 0 8px;
+    }
+
+    .privacy-note {
+      padding: 10px 12px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      background: var(--accent-soft);
+      color: #174a89;
+      font-size: 14px;
+      font-weight: 700;
+    }
+
+    .panel,
+    .metric-card {
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      background: var(--panel);
+      box-shadow: var(--shadow);
+    }
+
+    .input-panel,
+    .result-panel {
+      padding: 18px;
+      margin-bottom: 20px;
+    }
+
+    .field-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 16px;
+    }
+
+    .text-field {
+      display: grid;
+      gap: 8px;
+      color: var(--muted);
+      font-size: 14px;
+      font-weight: 700;
+      margin-top: 0px;
+    }
+
+    .full-width {
+      grid-column: span 2;
+    }
+
     textarea {
       width: 100%;
-      height: 250px;
+      min-height: 180px;
+      resize: vertical;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 12px;
+      color: var(--text);
+      background: #ffffff;
       font-family: 'Courier New', Courier, monospace;
       font-size: 0.85rem;
-      border: 1px solid #c7ced7;
-      border-radius: 6px;
-      padding: 12px;
-      background: #fbfcfd;
-      box-sizing: border-box;
-      resize: vertical;
     }
+
     textarea:focus {
       outline: none;
-      border-color: #1264a3;
-      background: #fff;
+      border-color: var(--accent);
     }
-    .log-textarea { height: 150px; }
-    
-    button { margin-top: 18px; border: 0; border-radius: 6px; background: #1264a3; color: #fff; font-weight: 700; padding: 12px 20px; font-size: 0.95rem; cursor: pointer; transition: background 0.2s; }
-    button:hover { background: #0f5286; }
-    button:disabled { opacity: 0.6; cursor: wait; }
-    
-    /* Metrics Visualizations */
-    .metrics { display: flex; flex-wrap: wrap; gap: 10px; margin: 16px 0; }
-    .metrics span { background: #eef2f6; border-radius: 6px; padding: 6px 12px; font-size: 13px; font-weight: 600; }
-    table { border-collapse: collapse; width: 100%; margin: 18px 0; font-size: 0.9rem; }
-    th, td { border: 1px solid #dde3ea; padding: 10px; text-align: left; }
-    th { width: 300px; background: #f7f9fb; color: #4a5568; }
-    ul { padding-left: 20px; }
-    li { margin: 8px 0; font-size: 0.9rem; }
-    
-    /* Severity Styling Rules */
-    .error strong { color: #b42318; background: #fef3f2; padding: 2px 6px; border-radius: 4px; }
-    .warning strong { color: #a15c00; background: #fffaeb; padding: 2px 6px; border-radius: 4px; }
-    .info strong { color: #175cd3; background: #eff8ff; padding: 2px 6px; border-radius: 4px; }
-    
-    .classification-banner { font-size: 1.5rem; margin: 0 0 10px 0; font-weight: bold; text-transform: uppercase; letter-spacing: 0.5px; }
-    .pass h2 { color: #067647; }
-    .agent_conversion_issue h2, .fe_json_issue h2, .runtime_or_page_issue h2, .input_error h2 { color: #b42318; }
-    code { background: #eef2f6; border-radius: 4px; padding: 2px 5px; font-family: monospace; font-size: 0.85rem; }
-    @media (max-width: 760px) { .grid { grid-template-columns: 1fr; } .full-width { grid-column: span 1; } }
+
+    .log-textarea {
+      min-height: 100px;
+    }
+
+    .actions {
+      display: flex;
+      gap: 10px;
+      margin-top: 16px;
+    }
+
+    button {
+      border: 1px solid var(--accent);
+      border-radius: 8px;
+      padding: 10px 16px;
+      background: var(--accent);
+      color: white;
+      cursor: pointer;
+      font-weight: 800;
+    }
+
+    button.secondary,
+    .tab {
+      border-color: var(--border);
+      background: #ffffff;
+      color: var(--text);
+    }
+
+    button:hover {
+      filter: brightness(0.97);
+    }
+
+    .status-grid {
+      display: grid;
+      grid-template-columns: 1.4fr repeat(4, 1fr);
+      gap: 12px;
+      margin: 14px 0;
+    }
+
+    .metric-card {
+      padding: 14px;
+    }
+
+    .metric-card span {
+      display: block;
+      margin-bottom: 8px;
+      color: var(--muted);
+      font-size: 13px;
+      font-weight: 800;
+    }
+
+    .metric-card strong {
+      display: block;
+      color: var(--text);
+      font-size: 20px;
+      line-height: 1.2;
+      overflow-wrap: anywhere;
+    }
+
+    .tabs {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 18px;
+    }
+
+    .tab {
+      padding: 8px 12px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: 700;
+      font-size: 14px;
+    }
+
+    .tab.active {
+      border-color: var(--accent);
+      background: var(--accent-soft);
+      color: #174a89;
+    }
+
+    .tab-panel {
+      display: none;
+    }
+
+    .tab-panel.active {
+      display: block;
+    }
+
+    .content-block {
+      color: var(--text);
+    }
+
+    .muted {
+      color: var(--muted);
+    }
+
+    .callout {
+      border: 1px solid var(--border);
+      border-left: 4px solid var(--accent);
+      border-radius: 8px;
+      padding: 12px 14px;
+      background: #fbfdff;
+      margin-bottom: 12px;
+    }
+
+    .callout.good { border-left-color: var(--good); }
+    .callout.warn { border-left-color: var(--warn); }
+    .callout.bad { border-left-color: var(--bad); background: var(--bad-soft); }
+
+    .callout strong {
+      display: block;
+      margin-bottom: 4px;
+    }
+
+    .table-wrap {
+      width: 100%;
+      overflow-x: auto;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      margin-bottom: 15px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      min-width: 760px;
+    }
+
+    th, td {
+      border-bottom: 1px solid var(--border);
+      padding: 10px 12px;
+      text-align: left;
+      vertical-align: top;
+      font-size: 14px;
+    }
+
+    th {
+      color: var(--muted);
+      background: #f8fafc;
+      font-weight: 900;
+    }
+
+    tr:last-child td {
+      border-bottom: 0;
+    }
+
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      min-height: 24px;
+      border-radius: 999px;
+      padding: 2px 9px;
+      font-size: 12px;
+      font-weight: 900;
+    }
+
+    .pill.good { background: #e7f7ef; color: var(--good); }
+    .pill.warn { background: #fff5df; color: var(--warn); }
+    .pill.bad { background: #ffe8e4; color: var(--bad); }
+
+    .code-block {
+      overflow: auto;
+      max-height: 560px;
+      margin: 0;
+      padding: 14px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      background: #111827;
+      color: #f9fafb;
+      font-family: monospace;
+      font-size: 13px;
+      line-height: 1.55;
+      white-space: pre-wrap;
+      word-break: break-all;
+    }
+
+    ul {
+      margin: 8px 0 0;
+      padding-left: 20px;
+    }
+
+    li {
+      margin: 6px 0;
+    }
+
+    @media (max-width: 840px) {
+      .shell { width: min(100% - 20px, 1180px); margin-top: 18px; }
+      .hero, .actions { align-items: stretch; flex-direction: column; }
+      .field-grid, .status-grid { grid-template-columns: 1fr; }
+      .full-width { grid-column: span 1; }
+    }
   </style>
 </head>
 <body>
-  <main>
-    <h1>📋 Catchpoint Playwright Translation Analyzer</h1>
-    <p>Paste the recording JSON text block alongside the compiled output script below to execute compliance logic verification completely client-side.</p>
-    
-    <form id="analyzeForm">
-      <div class="grid">
-        <label>1. Paste Recorder JSON text
-          <textarea id="recorderText" placeholder="Paste the content of recorder.json here..." required></textarea>
-        </label>
-        <label>2. Paste Generated Script text
-          <textarea id="scriptText" placeholder="Paste the generated Playwright script here..." required></textarea>
-        </label>
-        <label class="full-width">3. Paste Runtime Log text (Optional)
-          <textarea id="logText" class="log-textarea" placeholder="Optional: Paste text log streams (e.g. TestLog.log)..."></textarea>
-        </label>
+
+  <div class="shell">
+    <div class="hero">
+      <div>
+        <div class="eyebrow">Static Test Workbench</div>
+        <h1>Json To Script Analyser</h1>
       </div>
-      <button id="submitButton" type="submit">Run Direct Text Analysis</button>
-    </form>
-    
-    <div id="output"></div>
-  </main>
+      <div class="privacy-note">🔒 Local Evaluation Shield: Processed entirely client-side</div>
+    </div>
+
+    <div class="panel input-panel">
+      <h2>📋 Translation Inputs</h2>
+      <div class="field-grid">
+        <div class="text-field">
+          <label for="recorderFile">1. Recorder JSON (recorder.json)</label>
+          <textarea id="recorderFile" placeholder="Paste raw telemetry event JSON here..."></textarea>
+        </div>
+        <div class="text-field">
+          <label for="scriptFile">2. Transformed Playwright Script (script.js)</label>
+          <textarea id="scriptFile" placeholder="Paste generated Playwright execution script code here..."></textarea>
+        </div>
+        <div class="text-field full-width">
+          <label for="diagnosticText">3. Diagnostic Traces / Core Results (Optional)</label>
+          <input type="hidden" id="diagnosticFile" value="">
+          <textarea id="diagnosticText" class="log-textarea" placeholder="Paste runtime execution text logs or diagnostic_results.json objects here..."></textarea>
+        </div>
+      </div>
+      <div class="actions">
+        <button id="analyzeBtn">Analyze Conversion Metrics</button>
+        <button id="resetBtn" class="secondary">Reset Fields</button>
+      </div>
+    </div>
+
+    <div class="status-grid">
+      <div class="metric-card panel">
+        <span>COMPLIANCE STATUS</span>
+        <strong id="statusValue">WAITING_FOR_INPUT</strong>
+      </div>
+      <div class="metric-card panel">
+        <span>RECORDER ACTIONS</span>
+        <strong id="recorderCount">0</strong>
+      </div>
+      <div class="metric-card panel">
+        <span>SCRIPT VERBS</span>
+        <strong id="scriptCount">0</strong>
+      </div>
+      <div class="metric-card panel">
+        <span>VERBS MATCHED</span>
+        <strong id="matchedCount">0</strong>
+      </div>
+      <div class="metric-card panel">
+        <span>SELECTOR ISSUES</span>
+        <strong id="selectorIssueCount">0</strong>
+      </div>
+    </div>
+
+    <div class="panel result-panel">
+      <div class="tabs">
+        <button class="tab active" data-tab="tab-interpretation">Interpretation</button>
+        <button class="tab" data-tab="tab-verbs">Verb Summary</button>
+        <button class="tab" data-tab="tab-mapping">Action Mapping</button>
+        <button class="tab" data-tab="tab-selectors">Selector Priority</button>
+        <button class="tab" data-tab="tab-runtime">Runtime/Core Failure</button>
+        <button class="tab" data-tab="tab-json">JSON Output</button>
+        <button class="tab" data-tab="tab-csv">CSV Export</button>
+      </div>
+
+      <div class="content-block">
+        <div id="tab-interpretation" class="tab-panel active">
+          <div id="interpretationContent"><span class="muted">Upload or paste recorder.json and script.js, then analyze.</span></div>
+        </div>
+        <div id="tab-verbs" class="tab-panel">
+          <div id="verbContent"><span class="muted">No analysis yet.</span></div>
+        </div>
+        <div id="tab-mapping" class="tab-panel">
+          <div id="mappingContent"><span class="muted">No analysis yet.</span></div>
+        </div>
+        <div id="tab-selectors" class="tab-panel">
+          <div id="selectorContent"><span class="muted">No analysis yet.</span></div>
+        </div>
+        <div id="tab-runtime" class="tab-panel">
+          <div id="runtimeContent"><span class="muted">No diagnostic data supplied.</span></div>
+        </div>
+        <div id="tab-json" class="tab-panel">
+          <pre id="jsonContent" class="code-block">{}</pre>
+        </div>
+        <div id="tab-csv" class="tab-panel">
+          <pre id="csvContent" class="code-block"></pre>
+        </div>
+      </div>
+    </div>
+  </div>
 
   <script>
-    // --- SERVERLESS CONVERSION ENGINE LOGIC (Ported from analyzer.js) ---
-    const CLEANUP_NOISE_PATTERNS = [
-      /cdpSession\.detach: Target page, context or browser has been closed/i,
-      /Pages have already been cleaned up\. Skipping\./i,
-      /Contexts have already been cleaned up\. Skipping\./i,
-      /Attempting to call 'close\(\)' on context again/i,
-    ];
+    const state = {
+      report: null,
+    };
 
-    function makeIssue(area, severity, message, detail = {}) {
-      return { area, severity, message, ...detail };
-    }
+    const els = {
+      recorderFile: document.getElementById('recorderFile'),
+      scriptFile: document.getElementById('scriptFile'),
+      diagnosticFile: document.getElementById('diagnosticFile'),
+      diagnosticText: document.getElementById('diagnosticText'),
+      analyzeBtn: document.getElementById('analyzeBtn'),
+      resetBtn: document.getElementById('resetBtn'),
+      statusValue: document.getElementById('statusValue'),
+      recorderCount: document.getElementById('recorderCount'),
+      scriptCount: document.getElementById('scriptCount'),
+      matchedCount: document.getElementById('matchedCount'),
+      selectorIssueCount: document.getElementById('selectorIssueCount'),
+      interpretationContent: document.getElementById('interpretationContent'),
+      verbContent: document.getElementById('verbContent'),
+      mappingContent: document.getElementById('mappingContent'),
+      selectorContent: document.getElementById('selectorContent'),
+      runtimeContent: document.getElementById('runtimeContent'),
+      jsonContent: document.getElementById('jsonContent'),
+      csvContent: document.getElementById('csvContent'),
+    };
 
-    function flattenRecorderActions(recorder) {
-      const steps = [];
-      const actions = [];
-      for (const [stepIndex, event] of (recorder.events || []).entries()) {
-        const details = event.eventDetails || {};
-        const stepName = details.title || `Step ${stepIndex + 1}`;
-        const stepActions = details.actions || [];
-        steps.push({ stepIndex, stepName, actionCount: stepActions.length });
-        for (const [actionIndex, action] of stepActions.entries()) {
-          actions.push({
-            stepIndex,
-            stepName,
-            actionIndex,
-            actionNumber: actions.length + 1,
-            raw: action,
-            details: action.eventDetails || {},
-          });
-        }
-      }
-      return { steps, actions };
-    }
+    els.analyzeBtn.addEventListener('click', analyze);
+    els.resetBtn.addEventListener('click', reset);
 
-    function selectorSummary(selectors = {}) {
-      return {
-        label: selectors.label || '', id: selectors.id || '', dataTestId: selectors.dataTestId || '',
-        role: selectors.role || '', text: selectors.text || '', cssSelectorByClass: selectors.cssSelectorByClass || '',
-        cssSelectorByStableAncestor: selectors.cssSelectorByStableAncestor || '', cssSelectorByText: selectors.cssSelectorByText || '',
-        xpath: selectors.xpath || '', tagName: selectors.tagName || '',
-      };
-    }
+    document.querySelectorAll('.tab').forEach((button) => {
+      button.addEventListener('click', () => {
+        document.querySelectorAll('.tab').forEach((tab) => tab.classList.remove('active'));
+        document.querySelectorAll('.tab-panel').forEach((panel) => panel.classList.remove('active'));
+        button.classList.add('active');
+        document.getElementById(button.dataset.tab).classList.add('active');
+      });
+    });
 
-    function classifyExpectedOperation(action) {
-      const details = action.details;
-      const element = details.element || {};
-      const type = element.type || element.tagName || '';
-
-      if (details.url) return { kind: 'goto', value: details.url };
-      if (/double-click/i.test(details.title || '')) return { kind: 'dblclick', value: element.value ?? details.selectors?.text ?? details.selectors?.label ?? '' };
-      if (details.eventSubType === 0) return { kind: 'click', value: element.value ?? details.selectors?.text ?? details.selectors?.label ?? '' };
-      if (details.eventSubType === 2 || element.tagName === 'select' || type === 'select') return { kind: 'selectOption', value: (element.selectedOptions || [])[0] || '' };
-      if (details.eventSubType === 3 || type === 'checkbox') return { kind: element.checked === false ? 'uncheck' : 'check', value: String(element.checked !== false) };
-      if (details.eventSubType === 1 || ['text', 'password', 'textarea', 'date', 'color', 'number'].includes(type)) return { kind: 'fill', value: element.value ?? '' };
-
-      return { kind: 'click', value: element.value ?? details.selectors?.text ?? details.selectors?.label ?? '' };
-    }
-
-    function validateRecorder(recorder) {
-      const issues = [];
-      if (!recorder || typeof recorder !== 'object') return [makeIssue('recorder', 'error', 'Recorder JSON is not an object.')];
-      if (!recorder.schemaVersion) issues.push(makeIssue('recorder', 'warning', 'Recorder schemaVersion parameter attribute is missing.'));
-      if (!recorder.emulatorType || typeof recorder.emulatorType.width !== 'number' || typeof recorder.emulatorType.height !== 'number') {
-        issues.push(makeIssue('recorder', 'warning', 'Recorder emulation viewport configuration is missing or structurally incomplete.'));
-      }
-      if (!Array.isArray(recorder.events) || recorder.events.length === 0) {
-        issues.push(makeIssue('recorder', 'error', 'Recorder structural data contains no baseline event sequences.'));
-        return issues;
-      }
-      const { actions } = flattenRecorderActions(recorder);
-      if (actions.length === 0) {
-        issues.push(makeIssue('recorder', 'error', 'No actions found inside event collections.'));
-        return issues;
-      }
-
-      for (const action of actions) {
-        const details = action.details;
-        const selectors = selectorSummary(details.selectors);
-        const element = details.element || {};
-        const expected = classifyExpectedOperation(action);
-
-        if (expected.kind === 'goto' && !expected.value) {
-          issues.push(makeIssue('recorder', 'error', `Action ${action.actionNumber} navigation triggered but URL value is blank.`, { actionNumber: action.actionNumber }));
-        }
-        if (expected.kind !== 'goto' && !Object.values(selectors).some(Boolean)) {
-          issues.push(makeIssue('recorder', 'error', `Action ${action.actionNumber} lacks an active identifier or fallback selector rule block.`, { actionNumber: action.actionNumber }));
-        }
-        if (expected.kind === 'fill' && expected.value === '') {
-          issues.push(makeIssue('recorder', 'warning', `Action ${action.actionNumber} fill execution runs with an empty text value string.`, { actionNumber: action.actionNumber }));
-        }
-        if (expected.kind === 'click' && !details.selectors?.label && !details.selectors?.text && !details.selectors?.id && !details.selectors?.xpath) {
-          issues.push(makeIssue('recorder', 'warning', `Action ${action.actionNumber} click relies on dynamic/volatile coordinate vectors.`, { actionNumber: action.actionNumber }));
-        }
-      }
-      return issues;
-    }
-
-    function extractScriptOperations(scriptText) {
-      const operations = [];
-      const regex = /(page\.goto\((?<goto>[^)]*)\)|\.(?<method>fill|check|uncheck|click|dblclick|selectOption)\((?<args>[^)]*)\))/g;
-      let match;
-      while ((match = regex.exec(scriptText)) !== null) {
-        if (match.groups.goto !== undefined) operations.push({ kind: 'goto', rawArgs: match.groups.goto, index: match.index });
-        else operations.push({ kind: match.groups.method, rawArgs: match.groups.args || '', index: match.index });
-      }
-      return operations;
-    }
-
-    function rawArgsIncludesValue(rawArgs, value) {
-      if (value === undefined || value === null) return true;
-      const stringValue = String(value);
-      return rawArgs.includes(JSON.stringify(stringValue)) || rawArgs.includes(`'${stringValue.replace(/'/g, "\\'")}'`) || rawArgs.includes(`"${stringValue.replace(/"/g, '\\"')}"`);
-    }
-
-    function compareRecorderToScript(recorder, scriptText) {
-      const issues = [];
-      const { steps, actions } = flattenRecorderActions(recorder);
-      const expectedOps = actions.map(classifyExpectedOperation);
-      const actualOps = extractScriptOperations(scriptText);
-      const nonNavigationCount = expectedOps.filter(op => op.kind !== 'goto').length;
-      const locatorBlocks = (scriptText.match(/let\s+locator\d+\s*=/g) || []).length;
-      const fallbackThrows = (scriptText.match(/Unable to resolve/g) || []).length;
-
-      if (recorder.emulatorType) {
-        const viewportNeedle = `width: ${recorder.emulatorType.width}, height: ${recorder.emulatorType.height}`;
-        if (!scriptText.includes(viewportNeedle)) issues.push(makeIssue('conversion', 'error', `Viewport configuration size mismatch. Expected: ${viewportNeedle}.`));
-      }
-      for (const step of steps) {
-        if (!scriptText.includes(`Catchpoint.startStep(${JSON.stringify(step.stepName)})`) && !scriptText.includes(`Catchpoint.startStep('${step.stepName}')`)) {
-          issues.push(makeIssue('conversion', 'error', `Missing Catchpoint step boundary initialization wrapper for "${step.stepName}".`, { stepName: step.stepName }));
-        }
-      }
-      if (locatorBlocks < nonNavigationCount) issues.push(makeIssue('conversion', 'error', `Structural selector block mismatch. Found ${locatorBlocks} locators, expected ${nonNavigationCount}.`));
-      if (fallbackThrows < nonNavigationCount) issues.push(makeIssue('conversion', 'warning', `Script lacks recovery fallback throws loops for all non-navigation operations.`));
-
-      const comparableActual = actualOps.filter(op => ['goto', 'fill', 'check', 'uncheck', 'click', 'dblclick', 'selectOption'].includes(op.kind));
-      if (comparableActual.length !== expectedOps.length) {
-        issues.push(makeIssue('conversion', 'error', `Action map count mismatch. Expected ${expectedOps.length} commands, parsed ${comparableActual.length} inside script.`));
-      }
-
-      const pairCount = Math.min(expectedOps.length, comparableActual.length);
-      for (let i = 0; i < pairCount; i += 1) {
-        const expected = expectedOps[i];
-        const actual = comparableActual[i];
-        if (expected.kind !== actual.kind) {
-          issues.push(makeIssue('conversion', 'error', `Action ${i + 1} method verb mismatch. Expected execution pattern "${expected.kind}", found "${actual.kind}".`, { actionNumber: i + 1 }));
-          continue;
-        }
-        if (['goto', 'fill', 'selectOption'].includes(expected.kind) && !rawArgsIncludesValue(actual.rawArgs, expected.value)) {
-          issues.push(makeIssue('conversion', 'error', `Action ${i + 1} argument data string payload mismatch. Expected data string context: ${JSON.stringify(expected.value)}`, { actionNumber: i + 1 }));
-        }
-      }
-
-      return {
-        issues,
-        summary: {
-          stepCount: steps.length, recorderActionCount: actions.length, expectedOperationCount: expectedOps.length,
-          actualOperationCount: comparableActual.length, locatorBlockCount: locatorBlocks, locatorGuardCount: fallbackThrows,
-        },
-      };
-    }
-
-    function analyzeLogs(joinedLogs) {
-      const issues = [];
-      if (!joinedLogs.trim()) return { issues, summary: { status: 'LOGS_NOT_PROVIDED', realErrors: 0, cleanupNoise: 0 } };
-
-      const statusMatch = joinedLogs.match(/Status=(SUCCESS|FAILURE|FAILED|ERROR)/i);
-      const errorLines = joinedLogs
-        .replace(/\\u001B\[[0-9;]*m/g, '').replace(/\x1b\[[0-9;]*m/g, '')
-        .split(/\r?\n/)
-        .filter(line => /\[ERROR\]|Error:|Exception|Timeout|Cancellation token requested|Unable to resolve/i.test(line));
-
-      let cleanupNoise = 0, realErrors = 0;
-      for (const line of errorLines) {
-        if (CLEANUP_NOISE_PATTERNS.some(pattern => pattern.test(line))) {
-          cleanupNoise += 1;
-        } else {
-          realErrors += 1;
-          issues.push(makeIssue('runtime', 'error', 'Uncaught application stack execution error encountered.', { line: line.trim().slice(0, 120) + '...' }));
-        }
-      }
-      if (statusMatch && statusMatch[1].toUpperCase() !== 'SUCCESS') {
-        issues.push(makeIssue('runtime', 'error', `Transaction session explicitly failed script run status evaluation: Status=${statusMatch[1].toUpperCase()}.`));
-      }
-
-      return { issues, summary: { status: statusMatch ? statusMatch[1].toUpperCase() : 'UNKNOWN', realErrors, cleanupNoise } };
-    }
-
-    function classify(issues) {
-      const errors = issues.filter(issue => issue.severity === 'error');
-      if (errors.some(issue => issue.area === 'recorder')) return 'FE_JSON_ISSUE';
-      if (errors.some(issue => issue.area === 'conversion')) return 'AGENT_CONVERSION_ISSUE';
-      if (errors.some(issue => issue.area === 'runtime')) return 'RUNTIME_OR_PAGE_ISSUE';
-      return 'PASS';
-    }
-
-    function executeLocalAnalysis(recorderText, scriptText, logText) {
-      const issues = [];
-      let recorder;
+    async function analyze() {
       try {
-        recorder = JSON.parse(recorderText);
+        const recorderText = await readSingleFile(els.recorderFile);
+        const scriptText = await readSingleFile(els.scriptFile);
+        const diagnosticFileText = await readSingleFile(els.diagnosticFile, true);
+        const diagnosticText = [diagnosticFileText, els.diagnosticText.value].filter(Boolean).join('\n').trim();
+
+        if (!recorderText || !scriptText) {
+          throw new Error('Upload or paste recorder.json and generated script.js before analyzing.');
+        }
+
+        const recorderJson = parseJsonStrict(recorderText, 'recorder.json');
+        const recorderActions = extractRecorderActions(recorderJson);
+        const scriptActions = extractScriptActions(scriptText);
+        const runtime = extractRuntimeEvidence(diagnosticText);
+        const mapping = buildActionMapping(recorderActions, scriptActions);
+        const selectorIssues = findSelectorIssues(mapping);
+        const missingInitialNavigation = detectMissingInitialNavigation(recorderActions, scriptActions, scriptText);
+        const status = determineStatus({
+          recorderActions,
+          scriptActions,
+          mapping,
+          selectorIssues,
+          runtime,
+          missingInitialNavigation,
+        });
+
+        state.report = {
+          status,
+          summary: {
+            recorderActions: recorderActions.length,
+            scriptVerbs: scriptActions.length,
+            matched: mapping.filter((item) => item.verbMatches).length,
+            selectorIssues: selectorIssues.length,
+          },
+          interpretation: buildInterpretation(status, runtime, selectorIssues, missingInitialNavigation),
+          checks: {
+            recorderJson: recorderActions.length > 0 ? 'OK' : 'ISSUE',
+            verbMapping: mapping.every((item) => item.verbMatches) ? 'OK' : 'ISSUE',
+            selectorFallback: selectorIssues.length ? 'ISSUE' : 'OK',
+            runtimeCore: runtime.present ? 'READ' : 'CHECK',
+            missingInitialNavigation: missingInitialNavigation.present ? 'ISSUE' : 'OK',
+          },
+          recorderActions,
+          scriptActions,
+          mapping,
+          selectorIssues,
+          runtime,
+          missingInitialNavigation,
+        };
+
+        renderReport(state.report);
       } catch (error) {
-        issues.push(makeIssue('recorder', 'error', `JSON format parser check syntax fault validation failed: ${error.message}`));
-        return { classification: 'FE_JSON_ISSUE', issues, summary: {} };
+        renderError(error);
+      }
+    }
+
+    function reset() {
+      els.recorderFile.value = '';
+      els.scriptFile.value = '';
+      els.diagnosticFile.value = '';
+      els.diagnosticText.value = '';
+      state.report = null;
+      els.statusValue.textContent = 'WAITING_FOR_INPUT';
+      els.recorderCount.textContent = '0';
+      els.scriptCount.textContent = '0';
+      els.matchedCount.textContent = '0';
+      els.selectorIssueCount.textContent = '0';
+      els.interpretationContent.innerHTML = '<span class="muted">Upload or paste recorder.json and script.js, then analyze.</span>';
+      els.verbContent.innerHTML = '<span class="muted">No analysis yet.</span>';
+      els.mappingContent.innerHTML = '<span class="muted">No analysis yet.</span>';
+      els.selectorContent.innerHTML = '<span class="muted">No analysis yet.</span>';
+      els.runtimeContent.innerHTML = '<span class="muted">No diagnostic data supplied.</span>';
+      els.jsonContent.textContent = '{}';
+      els.csvContent.textContent = '';
+    }
+
+    async function readSingleFile(input, optional = false) {
+      // Re-routed extraction logic to treat inputs as raw pasted textarea values seamlessly
+      return input ? input.value : '';
+    }
+
+    function parseJsonStrict(text, label) {
+      try {
+        return JSON.parse(text);
+      } catch (error) {
+        throw new Error(`${label} is not valid JSON: ${error.message}`);
+      }
+    }
+
+    function extractRecorderActions(recorderJson) {
+      const actions = [];
+      const events = Array.isArray(recorderJson.events) ? recorderJson.events : [];
+
+      events.forEach((event, eventIndex) => {
+        const stepTitle = event?.eventDetails?.title || `Step ${eventIndex + 1}`;
+        const rawActions = Array.isArray(event?.eventDetails?.actions) ? event.eventDetails.actions : [];
+
+        rawActions.forEach((action) => {
+          const details = action?.eventDetails || {};
+          const selectors = details.selectors || {};
+          const verb = detectRecorderVerb(details);
+          const selectorCandidates = buildExpectedSelectorCandidates(selectors, verb);
+
+          actions.push({
+            index: actions.length + 1,
+            stepTitle,
+            title: details.title || `${verb} action`,
+            verb,
+            url: details.url || '',
+            selectors,
+            expectedPriority: selectorCandidates.map((item) => item.label),
+            expectedSelectors: selectorCandidates,
+          });
+        });
+      });
+
+      return actions;
+    }
+
+    function detectRecorderVerb(details) {
+      if (details.eventType === 2 || details.url) {
+        return 'navigate';
+      }
+      if (details.eventSubType === 1 || details.element?.value !== undefined) {
+        return 'fill';
+      }
+      return 'click';
+    }
+
+    function buildExpectedSelectorCandidates(selectors, verb) {
+      if (verb === 'navigate') {
+        return [];
       }
 
-      const recorderIssues = validateRecorder(recorder);
-      const comparison = compareRecorderToScript(recorder, scriptText);
-      const logs = analyzeLogs(logText);
+      const ordered = [
+        { label: 'label', value: selectors.label },
+        { label: 'text', value: selectors.text },
+        { label: 'css id', value: selectors.id },
+        { label: 'css stable ancestor', value: selectors.cssSelectorByStableAncestor },
+        { label: 'css class', value: selectors.cssSelectorByClass },
+        { label: 'xpath', value: selectors.cssSelectorByText },
+        { label: 'xpath', value: selectors.xpath },
+        { label: 'tag fallback', value: selectors.tagName },
+      ];
 
-      issues.push(...recorderIssues, ...comparison.issues, ...logs.issues);
+      const result = [];
+      const seen = new Set();
+      ordered.forEach((item) => {
+        const value = cleanSelectorValue(item.value);
+        if (!value) {
+          return;
+        }
+        const key = `${item.label}:${value}`;
+        if (seen.has(key)) {
+          return;
+        }
+        seen.add(key);
+        result.push({ label: item.label, value });
+      });
+
+      return result;
+    }
+
+    function extractScriptActions(scriptText) {
+      const actions = [];
+      const locatorMap = new Map();
+      const lines = scriptText.split(/\r?\n/);
+
+      lines.forEach((rawLine, lineIndex) => {
+        const line = rawLine.trim();
+        const gotoMatch = line.match(/^await\s+page\.goto\((['"`])(.+?)\1/);
+        if (gotoMatch) {
+          actions.push({
+            index: actions.length + 1,
+            verb: 'navigate',
+            title: `Maps to "${shorten(gotoMatch[2], 70)}"`,
+            url: gotoMatch[2],
+            line: lineIndex + 1,
+            actualPriority: [],
+            actualSelectors: [],
+          });
+          return;
+        }
+
+        const locatorMatch = line.match(/^(?:let\s+)?(locator\d+)\s*=\s*(.+);$/);
+        if (locatorMatch) {
+          const name = locatorMatch[1];
+          if (!locatorMap.has(name)) {
+            locatorMap.set(name, []);
+          }
+          return;
+        }
+
+        const descriptionMatch = line.match(/^(locator\d+)Description\s*=\s*(['"`])([\s\S]*)\2;$/);
+        if (descriptionMatch) {
+          const name = descriptionMatch[1];
+          const description = unescapeJsString(descriptionMatch[3]);
+          if (!locatorMap.has(name)) {
+            locatorMap.set(name, []);
+          }
+          locatorMap.get(name).push({
+            label: classifyScriptSelector(description),
+            value: selectorValueFromDescription(description),
+            description,
+          });
+          return;
+        }
+
+        const locatorActionMatch = line.match(/^await\s+(locator\d+)\.(click|fill)\(/);
+        if (locatorActionMatch) {
+          const name = locatorActionMatch[1];
+          const method = locatorActionMatch[2];
+          const selectors = locatorMap.get(name) || [];
+          actions.push({
+            index: actions.length + 1,
+            verb: method === 'fill' ? 'fill' : 'click',
+            title: `${method} using ${name}`,
+            line: lineIndex + 1,
+            actualPriority: selectors.map((item) => item.label),
+            actualSelectors: selectors,
+          });
+          locatorMap.delete(name);
+        }
+      });
+
+      return actions;
+    }
+
+    function buildActionMapping(recorderActions, scriptActions) {
+      const max = Math.max(recorderActions.length, scriptActions.length);
+      const mapping = [];
+
+      for (let i = 0; i < max; i += 1) {
+        const recorder = recorderActions[i] || null;
+        const script = scriptActions[i] || null;
+        mapping.push({
+          index: i + 1,
+          recorderTitle: recorder?.title || '',
+          recorderVerb: recorder?.verb || 'missing',
+          scriptVerb: script?.verb || 'missing',
+          scriptLine: script?.line || '',
+          verbMatches: Boolean(recorder && script && recorder.verb === script.verb),
+          expectedPriority: recorder?.expectedPriority || [],
+          actualPriority: script?.actualPriority || [],
+          expectedSelectors: recorder?.expectedSelectors || [],
+          actualSelectors: script?.actualSelectors || [],
+        });
+      }
+
+      return mapping;
+    }
+
+    function findSelectorIssues(mapping) {
+      return mapping
+        .filter((item) => item.verbMatches && item.recorderVerb !== 'navigate')
+        .map((item) => {
+          const diff = firstPriorityDifference(item.expectedPriority, item.actualPriority);
+          if (!diff) {
+            return null;
+          }
+          return {
+            action: item.index,
+            title: item.recorderTitle,
+            expectedPriority: item.expectedPriority,
+            actualPriority: item.actualPriority,
+            reason: diff,
+            expectedSelectors: item.expectedSelectors,
+            actualSelectors: item.actualSelectors,
+          };
+        })
+        .filter(Boolean);
+    }
+
+    function firstPriorityDifference(expected, actual) {
+      const max = Math.max(expected.length, actual.length);
+      for (let i = 0; i < max; i += 1) {
+        if ((expected[i] || 'missing') !== (actual[i] || 'missing')) {
+          return `Expected #${i + 1} ${expected[i] || 'missing'}, found ${actual[i] || 'missing'}.`;
+        }
+      }
+      return '';
+    }
+
+    document.getElementById('analyzeForm')?.addEventListener('submit', (e) => e.preventDefault());
+
+    function detectMissingInitialNavigation(recorderActions, scriptActions, scriptText) {
+      const firstRecorder = recorderActions[0];
+      const firstScript = scriptActions[0];
+      const firstGotoLine = findFirstGotoLine(scriptText);
+      const present = Boolean(
+        firstRecorder &&
+          firstScript &&
+          firstRecorder.verb !== 'navigate' &&
+          firstScript.verb !== 'navigate' &&
+          firstGotoLine &&
+          firstScript.line < firstGotoLine
+      );
 
       return {
-        classification: classify(issues),
-        summary: { ...comparison.summary, runtime: logs.summary },
-        issues,
+        present,
+        reason: present
+          ? 'First generated script action is a user interaction, but the first page.goto() appears later. The start page may never be loaded before Step 1.'
+          : '',
+        firstRecorderAction: firstRecorder?.title || '',
+        firstScriptAction: firstScript?.title || '',
+        firstScriptLine: firstScript?.line || '',
+        firstGotoLine: firstGotoLine || '',
       };
     }
 
-    // --- DOM VIEWPORT RENDER SYSTEM (Ported from server.js UI templates) ---
-    function escapeHtml(value) {
-      return String(value).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+    function findFirstGotoLine(scriptText) {
+      const lines = scriptText.split(/\r?\n/);
+      for (let i = 0; i < lines.length; i += 1) {
+        if (/await\s+page\.goto\(/.test(lines[i])) {
+          return i + 1;
+        }
+      }
+      return 0;
     }
 
-    function renderIssue(issue) {
-      const suffix = issue.actionNumber ? ` action ${issue.actionNumber}` : '';
-      const lineSnippet = issue.line ? `<br><code style="background:#1e1e1e; color:#ff79c6; display:block; padding:8px; border-radius:4px; margin-top:5px; white-space:pre-wrap;">${escapeHtml(issue.line)}</code>` : '';
-      return `<li class="${escapeHtml(issue.severity)}"><strong>${escapeHtml(issue.severity.toUpperCase())}</strong> ${escapeHtml(issue.area + suffix)}: ${escapeHtml(issue.message)}${lineSnippet}</li>`;
+    function extractRuntimeEvidence(text) {
+      if (!text.trim()) {
+        return {
+          present: false,
+          status: 'NO_DATA',
+          message: 'No Core diagnostic data was supplied. Upload or paste diagnostic logs to include runtime failure evidence.',
+          failures: [],
+        };
+      }
+
+      const parsed = tryParseJsonFromText(text);
+      if (parsed) {
+        const failures = [];
+        const monitorResults = Array.isArray(parsed.MonitorResults) ? parsed.MonitorResults : [];
+        monitorResults.forEach((monitor, monitorIndex) => {
+          const browserVersion = monitor?.OtherData?.['results.web-browser.specific-browser-version'] || '';
+          const stepResults = Array.isArray(monitor.StepResults) ? monitor.StepResults : [];
+          stepResults.forEach((step, stepIndex) => {
+            const other = step.OtherData || {};
+            const errorDetails = other['common.results.tx.error-details'] || '';
+            const errorCode = other['common.results.error-code'] || '';
+            if (errorDetails || errorCode) {
+              failures.push({
+                monitorIndex: monitorIndex + 1,
+                stepIndex: stepIndex + 1,
+                stepName: other['common.results.tx.step-name'] || `Step ${stepIndex + 1}`,
+                errorCode,
+                errorDetails,
+                browserVersion,
+              });
+            }
+          });
+        });
+
+        return {
+          present: true,
+          status: failures.length ? 'FAILURE_FOUND' : 'NO_FAILURE_FOUND',
+          message: failures.length ? `${failures.length} runtime failure(s) found.` : 'Diagnostic JSON was readable, but no runtime failure was found.',
+          failures,
+          rawType: 'json',
+        };
+      }
+
+      const fallbackDetails = [];
+      const unableMatch = text.match(/Unable to resolve[^\n\r]+/i);
+      const failedVerbMatch = text.match(/Failed Verb:[^\n\r]+/i);
+      if (unableMatch || failedVerbMatch) {
+        fallbackDetails.push({
+          stepName: detectStepNameFromText(text),
+          errorCode: '',
+          errorDetails: unableMatch?.[0] || failedVerbMatch?.[0] || text.slice(0, 240),
+          browserVersion: '',
+        });
+      }
+
+      return {
+        present: true,
+        status: fallbackDetails.length ? 'FAILURE_FOUND' : 'TEXT_READ',
+        message: fallbackDetails.length
+          ? `${fallbackDetails.length} runtime failure(s) found from pasted text.`
+          : 'Diagnostic text was supplied, but no common failure pattern was detected.',
+        failures: fallbackDetails,
+        rawType: 'text',
+      };
     }
 
-    function generateReportHtml(result) {
-      const errors = result.issues.filter(issue => issue.severity === 'error').length;
-      const warnings = result.issues.filter(issue => issue.severity === 'warning').length;
-      const info = result.issues.filter(issue => issue.severity === 'info').length;
-      
+    function tryParseJsonFromText(text) {
+      try {
+        return JSON.parse(text);
+      } catch (_error) {
+        const start = text.indexOf('{');
+        const end = text.lastIndexOf('}');
+        if (start >= 0 && end > start) {
+          try {
+            return JSON.parse(text.slice(start, end + 1));
+          } catch (_ignored) {
+            return null;
+          }
+        }
+      }
+      return null;
+    }
+
+    function detectStepNameFromText(text) {
+      const match = text.match(/step\s+(\d+)/i);
+      return match ? `Step ${match[1]}` : '';
+    }
+
+    function determineStatus({ mapping, selectorIssues, runtime, missingInitialNavigation }) {
+      const hasVerbMismatch = mapping.some((item) => !item.verbMatches);
+      const hasRuntimeFailure = runtime.present && runtime.status === 'FAILURE_FOUND';
+
+      if (hasRuntimeFailure && missingInitialNavigation.present) {
+        return 'RUNTIME_FAILURE_MISSING_START_PAGE';
+      }
+      if (hasRuntimeFailure) {
+        return 'RUNTIME_FAILURE';
+      }
+      if (hasVerbMismatch) {
+        return 'VERB_MAPPING_ISSUE';
+      }
+      if (selectorIssues.length) {
+        return 'AGENT_CONVERSION_ISSUE';
+      }
+      return 'OK';
+    }
+
+    function buildInterpretation(status, runtime, selectorIssues, missingInitialNavigation) {
+      const blocks = [];
+
+      if (status === 'RUNTIME_FAILURE_MISSING_START_PAGE') {
+        blocks.push({
+          tone: 'bad',
+          title: 'Runtime failure: missing start page before first click',
+          text: 'The generated script starts with a user interaction before loading the page that contains the recorded element. Because the start page is missing, Step 1 cannot find the button or its fallback selectors.',
+        });
+      } else if (status === 'RUNTIME_FAILURE') {
+        blocks.push({
+          tone: 'bad',
+          title: 'Runtime failure found',
+          text: 'The Core diagnostic data contains a runtime failure. Check the Runtime/Core tab for the exact step and error.',
+        });
+      } else if (status === 'AGENT_CONVERSION_ISSUE') {
+        blocks.push({
+          tone: 'warn',
+          title: 'Agent selector fallback issue',
+          text: 'The JSON actions and Playwright verbs match, but the generated script changed selector fallback priority. This points to converter behavior rather than a missing recorder action.',
+        });
+      } else if (status === 'VERB_MAPPING_ISSUE') {
+        blocks.push({
+          tone: 'bad',
+          title: 'Verb mapping issue',
+          text: 'The recorder actions and generated script verbs do not line up. One or more actions may have been dropped, added, or converted incorrectly.',
+        });
+      } else {
+        blocks.push({
+          tone: 'good',
+          title: 'No conversion issue detected',
+          text: 'Recorder actions, script verbs, and selector fallback priority look aligned based on the supplied files.',
+        });
+      }
+
+      if (missingInitialNavigation.present) {
+        blocks.push({
+          tone: 'bad',
+          title: 'Start page check',
+          text: `${missingInitialNavigation.reason} First script action line: ${missingInitialNavigation.firstScriptLine}. First page.goto line: ${missingInitialNavigation.firstGotoLine}.`,
+        });
+      }
+
+      if (runtime.present && runtime.failures.length) {
+        const firstFailure = runtime.failures[0];
+        blocks.push({
+          tone: 'bad',
+          title: 'Runtime evidence',
+          text: `${firstFailure.stepName}: ${firstFailure.errorDetails || firstFailure.errorCode}`,
+        });
+      } else if (!runtime.present) {
+        blocks.push({
+          tone: 'warn',
+          title: 'Runtime/Core check',
+          text: 'No diagnostic data was supplied. Add it to confirm the actual runtime failure reason.',
+        });
+      }
+
+      if (selectorIssues.length) {
+        blocks.push({
+          tone: 'warn',
+          title: 'Selector priority',
+          text: `${selectorIssues.length} selector priority issue(s) found. Open the Selector Priority tab for exact expected vs actual order.`,
+        });
+      }
+
+      return blocks;
+    }
+
+    function renderReport(report) {
+      els.statusValue.textContent = report.status;
+      els.recorderCount.textContent = String(report.summary.recorderActions);
+      els.scriptCount.textContent = String(report.summary.scriptVerbs);
+      els.matchedCount.textContent = String(report.summary.matched);
+      els.selectorIssueCount.textContent = String(report.summary.selectorIssues);
+
+      els.interpretationContent.innerHTML = report.interpretation.map(renderCallout).join('') + renderChecks(report.checks);
+      els.verbContent.innerHTML = renderVerbSummary(report);
+      els.mappingContent.innerHTML = renderMappingTable(report.mapping);
+      els.selectorContent.innerHTML = renderSelectorIssues(report.selectorIssues);
+      els.runtimeContent.innerHTML = renderRuntime(report.runtime, report.missingInitialNavigation);
+      els.jsonContent.textContent = JSON.stringify(report, null, 2);
+      els.csvContent.textContent = buildCsv(report);
+    }
+
+    function renderError(error) {
+      els.statusValue.textContent = 'ANALYSIS_ERROR';
+      els.interpretationContent.innerHTML = renderCallout({
+        tone: 'bad',
+        title: 'Analysis error',
+        text: error.message,
+      });
+    }
+
+    function renderCallout(item) {
       return `
-        <section class="result ${escapeHtml(result.classification.toLowerCase())}">
-          <h2 class="classification-banner">Compliance Classification: ${escapeHtml(result.classification)}</h2>
-          <div class="metrics">
-            <span>Errors Found: ${errors}</span>
-            <span>Warnings Flagged: ${warnings}</span>
-            <span>Info Metrics: ${info}</span>
-          </div>
-          <table>
-            <tbody>
-              <tr><th>Target Step Bounds Recorded</th><td>${escapeHtml(result.summary.stepCount ?? '-')}</td></tr>
-              <tr><th>JSON Operational Elements</th><td>${escapeHtml(result.summary.recorderActionCount ?? '-')}</td></tr>
-              <tr><th>Expected Script Compilation Tree</th><td>${escapeHtml(result.summary.expectedOperationCount ?? '-')}</td></tr>
-              <tr><th>Resolved Script Execution Elements</th><td>${escapeHtml(result.summary.actualOperationCount ?? '-')}</td></tr>
-              <tr><th>Isolated Locator Logical Blocks</th><td>${escapeHtml(result.summary.locatorBlockCount ?? '-')}</td></tr>
-              <tr><th>Active Failover Exception Guards</th><td>${escapeHtml(result.summary.locatorGuardCount ?? '-')}</td></tr>
-              <tr><th>Log Output Execution Status</th><td>${escapeHtml(result.summary.runtime?.status ?? '-')}</td></tr>
-              <tr><th>Runtime Trace Real App Errors</th><td>${escapeHtml(result.summary.runtime?.realErrors ?? '-')}</td></tr>
-              <tr><th>Dismissed CDP Thread Intercept Noise</th><td>${escapeHtml(result.summary.runtime?.cleanupNoise ?? '-')}</td></tr>
-            </tbody>
-          </table>
-          <h3>Analysis Findings & Trace Blocks</h3>
-          ${result.issues.length ? `<ul>${result.issues.map(renderIssue).join('')}</ul>` : '<p style="color:#067647; font-weight:bold;">🎉 Pass! Script mapping configuration structural compliance check verified completely clean.</p>'}
-        </section>
+        <div class="callout ${escapeHtml(item.tone || '')}">
+          <strong>${escapeHtml(item.title)}</strong>
+          <div>${escapeHtml(item.text)}</div>
+        </div>
       `;
     }
 
-    // --- FORM SUBMIT INTERACTION ACTION HANDLER ---
-    document.getElementById('analyzeForm').addEventListener('submit', event => {
-      event.preventDefault();
-      const button = document.getElementById('submitButton');
-      const outputDiv = document.getElementById('output');
-      
-      button.disabled = true;
-      button.textContent = 'Processing Code Blocks...';
-      outputDiv.innerHTML = '';
+    function renderChecks(checks) {
+      const rows = Object.entries(checks).map(([area, status]) => {
+        const tone = status === 'OK' || status === 'READ' ? 'good' : status === 'CHECK' ? 'warn' : 'bad';
+        return `<tr><td>${escapeHtml(labelize(area))}</td><td><span class="pill ${tone}">${escapeHtml(status)}</span></td></tr>`;
+      });
 
-      setTimeout(() => {
-        try {
-          const recorderText = document.getElementById('recorderText').value;
-          const scriptText = document.getElementById('scriptText').value;
-          const logText = document.getElementById('logText').value;
+      return `
+        <h3>Checks</h3>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Area</th><th>Status</th></tr></thead>
+            <tbody>${rows.join('')}</tbody>
+          </table>
+        </div>
+      `;
+    }
 
-          const analysisResult = executeLocalAnalysis(recorderText, scriptText, logText);
-          outputDiv.innerHTML = generateReportHtml(analysisResult);
-        } catch (err) {
-          outputDiv.innerHTML = `<section class="result input_error"><h2>Critical Framework Processing Failure</h2><p>${escapeHtml(err.message)}</p></section>`;
-        } finally {
-          button.disabled = false;
-          button.textContent = 'Run Direct Text Analysis';
+    function renderVerbSummary(report) {
+      const recorderCounts = countBy(report.recorderActions, 'verb');
+      const scriptCounts = countBy(report.scriptActions, 'verb');
+      const verbs = Array.from(new Set([...Object.keys(recorderCounts), ...Object.keys(scriptCounts)])).sort();
+      const rows = verbs.map((verb) => `
+        <tr>
+          <td>${escapeHtml(verb)}</td>
+          <td>${recorderCounts[verb] || 0}</td>
+          <td>${scriptCounts[verb] || 0}</td>
+          <td>${(recorderCounts[verb] || 0) === (scriptCounts[verb] || 0) ? '<span class="pill good">OK</span>' : '<span class="pill bad">ISSUE</span>'}</td>
+        </tr>
+      `);
+
+      return `
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Verb</th><th>Recorder JSON</th><th>Generated Script</th><th>Status</th></tr></thead>
+            <tbody>${rows.join('')}</tbody>
+          </table>
+        </div>
+      `;
+    }
+
+    function renderMappingTable(mapping) {
+      const rows = mapping.map((item) => `
+        <tr>
+          <td>${item.index}</td>
+          <td>${escapeHtml(item.recorderTitle)}</td>
+          <td>${escapeHtml(item.recorderVerb)}</td>
+          <td>${escapeHtml(item.scriptVerb)}</td>
+          <td>${item.scriptLine || ''}</td>
+          <td>${item.verbMatches ? '<span class="pill good">MATCH</span>' : '<span class="pill bad">ISSUE</span>'}</td>
+        </tr>
+      `);
+
+      return `
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr><th>#</th><th>Recorder Action</th><th>Recorder Verb</th><th>Script Verb</th><th>Script Line</th><th>Status</th></tr>
+            </thead>
+            <tbody>${rows.join('')}</tbody>
+          </table>
+        </div>
+      `;
+    }
+
+    function renderSelectorIssues(issues) {
+      if (!issues.length) {
+        return '<div class="callout good"><strong>No selector priority issue detected</strong><div>Expected and generated selector order match for all mapped user actions.</div></div>';
+      }
+
+      const rows = issues.map((issue) => `
+        <tr>
+          <td>${issue.action}</td>
+          <td>${escapeHtml(issue.title)}</td>
+          <td>${escapeHtml(issue.expectedPriority.join(' -> '))}</td>
+          <td>${escapeHtml(issue.actualPriority.join(' -> '))}</td>
+          <td>${escapeHtml(issue.reason)}</td>
+        </tr>
+      `);
+
+      const details = issues.map((issue) => `
+        <h3>Action ${issue.action}: ${escapeHtml(issue.title)}</h3>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Expected Selector</th><th>Generated Script Selector</th></tr></thead>
+            <tbody>${renderSelectorValueRows(issue.expectedSelectors, issue.actualSelectors)}</tbody>
+          </table>
+        </div>
+      `);
+
+      return `
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Action</th><th>Title</th><th>Expected Priority</th><th>Actual Script Priority</th><th>Reason</th></tr></thead>
+            <tbody>${rows.join('')}</tbody>
+          </table>
+        </div>
+        ${details.join('')}
+      `;
+    }
+
+    function renderSelectorValueRows(expected, actual) {
+      const max = Math.max(expected.length, actual.length);
+      const rows = [];
+      for (let i = 0; i < max; i += 1) {
+        rows.push(`
+          <tr>
+            <td>${escapeHtml(formatSelector(expected[i]))}</td>
+            <td>${escapeHtml(formatSelector(actual[i]))}</td>
+          </tr>
+        `);
+      }
+      return rows.join('');
+    }
+
+    function renderRuntime(runtime, missingInitialNavigation) {
+      const blocks = [];
+
+      if (missingInitialNavigation.present) {
+        blocks.push(renderCallout({
+          tone: 'bad',
+          title: 'Missing initial navigation/start page',
+          text: missingInitialNavigation.reason,
+        }));
+      }
+
+      if (!runtime.present) {
+        blocks.push(renderCallout({
+          tone: 'warn',
+          title: 'No Core diagnostic data supplied',
+          text: runtime.message,
+        }));
+        return blocks.join('');
+      }
+
+      blocks.push(renderCallout({
+        tone: runtime.failures.length ? 'bad' : 'good',
+        title: runtime.status,
+        text: runtime.message,
+      }));
+
+      if (!runtime.failures.length) {
+        return blocks.join('');
+      }
+
+      const rows = runtime.failures.map((failure) => `
+        <tr>
+          <td>${escapeHtml(failure.stepName)}</td>
+          <td>${escapeHtml(failure.errorCode)}</td>
+          <td>${escapeHtml(failure.errorDetails)}</td>
+          <td>${escapeHtml(failure.browserVersion)}</td>
+        </tr>
+      `);
+
+      blocks.push(`
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Step</th><th>Error Code</th><th>Error Details</th><th>Browser</th></tr></thead>
+            <tbody>${rows.join('')}</tbody>
+          </table>
+        </div>
+      `);
+
+      return blocks.join('');
+    }
+
+    function buildCsv(report) {
+      const lines = [];
+      lines.push(['section', 'action', 'title', 'expected', 'actual', 'reason'].map(csvEscape).join(','));
+
+      report.selectorIssues.forEach((issue) => {
+        lines.push([
+          'selector_issue',
+          issue.action,
+          issue.title,
+          issue.expectedPriority.join(' -> '),
+          issue.actualPriority.join(' -> '),
+          issue.reason,
+        ].map(csvEscape).join(','));
+      });
+
+      report.mapping.forEach((item) => {
+        lines.push([
+          'action_mapping',
+          item.index,
+          item.recorderTitle,
+          item.recorderVerb,
+          item.scriptVerb,
+          item.verbMatches ? 'MATCH' : 'ISSUE',
+        ].map(csvEscape).join(','));
+      });
+
+      report.runtime.failures.forEach((failure) => {
+        lines.push([
+          'runtime_failure',
+          failure.stepName,
+          failure.errorCode,
+          failure.errorDetails,
+          failure.browserVersion,
+          '',
+        ].map(csvEscape).join(','));
+      });
+
+      if (report.missingInitialNavigation.present) {
+        lines.push([
+          'missing_initial_navigation',
+          report.missingInitialNavigation.firstScriptLine,
+          report.missingInitialNavigation.firstRecorderAction,
+          `first page.goto line ${report.missingInitialNavigation.firstGotoLine}`,
+          report.missingInitialNavigation.firstScriptAction,
+          report.missingInitialNavigation.reason,
+        ].map(csvEscape).join(','));
+      }
+
+      return lines.join('\n');
+    }
+
+    function countBy(items, key) {
+      return items.reduce((acc, item) => {
+        const value = item[key] || 'unknown';
+        acc[value] = (acc[value] || 0) + 1;
+        return acc;
+      }, {});
+    }
+
+    function formatSelector(item) {
+      if (!item) {
+        return '';
+      }
+      return `${item.label}: ${item.value || item.description || ''}`;
+    }
+
+    function classifyScriptSelector(description) {
+      const value = selectorValueFromDescription(description);
+      if (description.startsWith('label:')) {
+        return 'label';
+      }
+      if (description.startsWith('text:')) {
+        return 'text';
+      }
+      if (description.startsWith('xpath:')) {
+        return 'xpath';
+      }
+      if (description.startsWith('css:')) {
+        if (value.startsWith('body >')) {
+          return 'tag fallback';
         }
-      }, 50);
-    });
+        if (value.startsWith('#')) {
+          return 'css id';
+        }
+        if (value.includes('>') && !value.startsWith('body >')) {
+          return 'css stable ancestor';
+        }
+        return 'css class';
+      }
+      return 'selector';
+    }
+
+    function selectorValueFromDescription(description) {
+      return cleanSelectorValue(description.replace(/^(label|text|xpath|css):/, ''));
+    }
+
+    function cleanSelectorValue(value) {
+      return String(value || '').trim();
+    }
+
+    function unescapeJsString(value) {
+      return value.replace(/\\"/g, '"').replace(/\\'/g, "'").replace(/\\\\/g, '\\');
+    }
+
+    function labelize(value) {
+      return value.replace(/([A-Z])/g, ' $1').replace(/^./, (letter) => letter.toUpperCase());
+    }
+
+    function shorten(value, length) {
+      const text = String(value || '');
+      return text.length > length ? `${text.slice(0, length - 3)}...` : text;
+    }
+
+    // Custom helper matching app.js references safely
+    function countBy(items, key) {
+      return items.reduce((acc, item) => {
+        const value = item[key] || 'unknown';
+        acc[value] = (acc[value] || 0) + 1;
+        return acc;
+      }, {});
+    }
+
+    function csvEscape(value) {
+      const text = String(value ?? '');
+      if (/[",\n]/.test(text)) {
+        return `"${text.replace(/"/g, '""')}"`;
+      }
+      return text;
+    }
+
+    function escapeHtml(value) {
+      return String(value ?? '')
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#039;');
+    }
   </script>
 </body>
 </html>
