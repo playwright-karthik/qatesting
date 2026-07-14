@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Catchpoint Core Playwright Engine Sandbox</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background-color: #f0f4f8;
+            color: #333;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            gap: 20px;
+        }
+        .workspace {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+        .card {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+            border: 1px solid #d0d7de;
+            position: relative;
+        }
+        h2 { margin-top: 0; color: #24292e; font-size: 1.3rem; display: flex; align-items: center; gap: 8px;}
+        .help-trigger {
+            cursor: pointer;
+            color: #0066cc;
+            font-size: 1.1rem;
+            user-select: none;
+        }
+        /* Interactive Component Elements */
+        .delay-btn {
+            background-color: #bdc3c7;
+            color: #7f8c8d;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 6px;
+            font-weight: bold;
+            cursor: not-allowed;
+            width: 100%;
+            transition: all 0.3s;
+        }
+        .delay-btn.unlocked {
+            background-color: #2ecc71;
+            color: white;
+            cursor: pointer;
+        }
+        canvas {
+            border: 2px dashed #34495e;
+            background: #fafafa;
+            cursor: crosshair;
+            display: block;
+            margin-top: 10px;
+        }
+        /* Sidebar Logs Display Panel */
+        .inspector-panel {
+            width: 380px;
+            background: #121214;
+            color: #e1e4e8;
+            border-left: 4px solid #ff79c6;
+            font-family: monospace;
+            padding: 15px;
+            border-radius: 8px;
+            display: flex;
+            flex-direction: column;
+            height: 90vh;
+            box-sizing: border-box;
+        }
+        .log-stream { flex: 1; overflow-y: auto; list-style: none; padding: 0; margin: 10px 0 0 0; }
+        .log-card { background: #1c1c1e; border: 1px solid #2d3139; padding: 8px; margin-bottom: 8px; border-radius: 4px; font-size: 0.8rem; }
+        /* Modal Info Box System */
+        .modal-guide {
+            display: none;
+            background: #eef2f7;
+            border-left: 4px solid #0066cc;
+            padding: 12px;
+            border-radius: 4px;
+            margin-top: 10px;
+            font-size: 0.88rem;
+            line-height: 1.4;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="workspace">
+        <h1>🛠️ Playwright Automation Translation Sandbox</h1>
+        <p>Use this serverless dashboard suite to validate how manual recording attributes match execution parameters.</p>
+
+        <div class="card" id="suite-timeout">
+            <h2>⏱️ Case 1: Dynamic Actionability (Wait/Sleep) <span class="help-trigger" onclick="toggleHelp('help-timeout')">❓</span></h2>
+            <div id="help-timeout" class="modal-guide">
+                <strong>How to test this property:</strong><br>
+                1. Set up a step that navigates to this URL.<br>
+                2. In the Catchpoint Portal, insert an explicit <strong>Action Block -> Type: Wait/Delay</strong> with a value of <code>6000</code> ms.<br>
+                3. Create a subsequent Action targeting <code>#delay-target-btn</code>.<br>
+                <strong>Playwright Translation Expected:</strong><br>
+                <code>await page.waitForTimeout(6000);</code><br>
+                <code>await page.locator('#delay-target-btn').click();</code>
+            </div>
+            <div style="margin: 10px 0; font-size: 0.9rem;">
+                Status: <span id="gate-status" style="font-weight:bold; color:#e74c3c;">LOCKED</span> | 
+                Clock: <span id="gate-clock" style="font-weight:bold; color:#0066cc;">0.00s</span>
+            </div>
+            <button id="delay-target-btn" class="delay-btn" disabled onclick="logTimeoutClick()">Locked Action Element</button>
+        </div>
+
+        <div class="card" id="suite-coordinates">
+            <h2>🎨 Case 2: Element Click Offset Coordinates <span class="help-trigger" onclick="toggleHelp('help-coords')">❓</span></h2>
+            <div id="help-coords" class="modal-guide">
+                <strong>How to test this property:</strong><br>
+                1. Target the canvas node selector: <code>canvas#sandbox-canvas</code>.<br>
+                2. <strong>Scenario A (With Offsets):</strong> Populate the Catchpoint properties with custom numbers (e.g., <code>x: 45, y: 70</code>). Checks if converter outputs <code>position: {x: 45, y: 70}</code>.<br>
+                3. <strong>Scenario B (Without Offsets):</strong> Omit coordinates. Verifies if Playwright center-clicks automatically.<br>
+                <strong>Playwright Translation Expected:</strong><br>
+                <code>await page.locator('canvas').click({ button: 'left', position: { x: 45, y: 70 } });</code>
+            </div>
+            <p style="font-size: 0.9rem; margin-bottom: 5px;">Click anywhere inside this 300x150 grid workspace layer:</p>
+            <canvas id="sandbox-canvas" width="300" height="150"></canvas>
+        </div>
+    </div>
+
+    <div class="inspector-panel">
+        <h3 style="margin-top: 0; color: #ff79c6; border-bottom: 1px solid #2d3139; padding-bottom: 5px;">📊 LIVE TELEMETRY RADAR</h3>
+        <div>Last Event Triggered: <span id="radar-mode" style="color: #ffc66d;">None</span></div>
+        <ul id="log-stream" class="log-stream">
+            <li class="log-card" style="color: #8b949e;">&lt;Awaiting Playwright automation events...&gt;</li>
+        </ul>
+    </div>
+
+    <script>
+        // --- TIMEOUT SANDBOX LOGIC ---
+        const startTime = performance.now();
+        const TARGET_DELAY = 5000; // Unlocks at 5 seconds
+        let gateUnlocked = false;
+
+        setInterval(() => {
+            const elapsed = (performance.now() - startTime) / 1000;
+            document.getElementById('gate-clock').innerText = elapsed.toFixed(2) + "s";
+
+            if (!gateUnlocked && (elapsed * 1000) >= TARGET_DELAY) {
+                gateUnlocked = true;
+                const btn = document.getElementById('delay-target-btn');
+                btn.removeAttribute('disabled');
+                btn.className = "delay-btn unlocked";
+                btn.innerText = "💥 Click Action Unlocked!";
+                document.getElementById('gate-status').innerText = "READY";
+                document.getElementById('gate-status').style.color = "#2ecc71";
+            }
+        }, 30);
+
+        function logTimeoutClick() {
+            const hitTime = (performance.now() - startTime) / 1000;
+            document.getElementById('radar-mode').innerText = "Button Click";
+            pushLog("BUTTON CLICK", `DOM click registered successfully at exactly ${hitTime.toFixed(3)}s`);
+            document.getElementById('delay-target-btn').innerText = "🎉 Success Verified!";
+            document.getElementById('delay-target-btn').style.backgroundColor = "#9b59b6";
+        }
+
+        // --- CANVAS CLICK LOGIC ---
+        const canvas = document.getElementById('sandbox-canvas');
+        const ctx = canvas.getContext('2d');
+
+        canvas.addEventListener('click', (e) => {
+            const rect = canvas.getBoundingClientRect();
+            const x = Math.round(e.clientX - rect.left);
+            const y = Math.round(e.clientY - rect.top);
+
+            // Draw a visual confirmation dot on canvas screen
+            ctx.fillStyle = '#ff79c6';
+            ctx.fillRect(x - 2, y - 2, 4, 4);
+
+            document.getElementById('radar-mode').innerText = "Canvas Direct Vector";
+            pushLog("CANVAS VECTOR HITS", `Coordinates Received -> OffsetX: ${x}px | OffsetY: ${y}px`);
+        });
+
+        // --- CORE BOX UI HELPERS ---
+        function toggleHelp(id) {
+            const panel = document.getElementById(id);
+            panel.style.display = (panel.style.display === 'block') ? 'none' : 'block';
+        }
+
+        function pushLog(actionType, message) {
+            const stream = document.getElementById('log-stream');
+            if (stream.children[0].style.color === 'rgb(139, 148, 158)') stream.innerHTML = '';
+            
+            const li = document.createElement('li');
+            li.className = 'log-card';
+            li.innerHTML = `<strong>[${actionType}]</strong><br>${message}`;
+            stream.insertBefore(li, stream.firstChild);
+        }
+    </script>
+</body>
+</html>
