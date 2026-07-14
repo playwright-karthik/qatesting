@@ -1,125 +1,377 @@
 <!doctype html>
 <html lang="en">
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Json To Script Analyser</title>
-    <link rel="stylesheet" href="styles.css" />
-  </head>
-  <body>
-    <main class="shell">
-      <header class="hero">
-        <div>
-          <p class="eyebrow">Recorder JSON to Playwright script conversion diagnosis</p>
-          <h1>Json To Script Analyser</h1>
-        </div>
-        <div class="privacy-note">Files are processed locally in your browser.</div>
-      </header>
-
-      <section class="panel input-panel" aria-label="Inputs">
-        <div class="field-grid">
-          <label class="file-card">
-            <span>Recorder JSON</span>
-            <input id="recorderFile" type="file" accept=".json,application/json" />
-          </label>
-
-          <label class="file-card">
-            <span>Generated Script</span>
-            <input id="scriptFile" type="file" accept=".js,.ts,text/javascript,text/plain" />
-          </label>
-
-          <label class="file-card">
-            <span>Core Diagnostic JSON Optional</span>
-            <input id="diagnosticFile" type="file" accept=".json,application/json,text/plain" />
-          </label>
-        </div>
-
-        <label class="text-field">
-          <span>Paste Core Diagnostic Text Optional</span>
-          <textarea
-            id="diagnosticText"
-            rows="5"
-            placeholder="Paste diagnostic_results.json output or terminal text that contains it."
-          ></textarea>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Recorder Conversion Analyzer Dashboard</title>
+  <style>
+    body { margin: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; background: #f6f7f9; color: #161a1d; }
+    main { max-width: 1100px; margin: 0 auto; padding: 32px 20px 56px; }
+    h1 { font-size: 28px; margin: 0 0 8px; color: #1a202c; }
+    p { color: #4d5761; line-height: 1.5; margin-bottom: 20px; }
+    form, .result { background: #fff; border: 1px solid #d8dde3; border-radius: 8px; padding: 20px; margin-top: 18px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); }
+    
+    /* Layout Textareas in a Grid */
+    .grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
+    .full-width { grid-column: span 2; }
+    label { display: grid; gap: 8px; font-weight: 600; font-size: 14px; color: #4a5568; }
+    
+    textarea {
+      width: 100%;
+      height: 250px;
+      font-family: 'Courier New', Courier, monospace;
+      font-size: 0.85rem;
+      border: 1px solid #c7ced7;
+      border-radius: 6px;
+      padding: 12px;
+      background: #fbfcfd;
+      box-sizing: border-box;
+      resize: vertical;
+    }
+    textarea:focus {
+      outline: none;
+      border-color: #1264a3;
+      background: #fff;
+    }
+    .log-textarea { height: 150px; }
+    
+    button { margin-top: 18px; border: 0; border-radius: 6px; background: #1264a3; color: #fff; font-weight: 700; padding: 12px 20px; font-size: 0.95rem; cursor: pointer; transition: background 0.2s; }
+    button:hover { background: #0f5286; }
+    button:disabled { opacity: 0.6; cursor: wait; }
+    
+    /* Metrics Visualizations */
+    .metrics { display: flex; flex-wrap: wrap; gap: 10px; margin: 16px 0; }
+    .metrics span { background: #eef2f6; border-radius: 6px; padding: 6px 12px; font-size: 13px; font-weight: 600; }
+    table { border-collapse: collapse; width: 100%; margin: 18px 0; font-size: 0.9rem; }
+    th, td { border: 1px solid #dde3ea; padding: 10px; text-align: left; }
+    th { width: 300px; background: #f7f9fb; color: #4a5568; }
+    ul { padding-left: 20px; }
+    li { margin: 8px 0; font-size: 0.9rem; }
+    
+    /* Severity Styling Rules */
+    .error strong { color: #b42318; background: #fef3f2; padding: 2px 6px; border-radius: 4px; }
+    .warning strong { color: #a15c00; background: #fffaeb; padding: 2px 6px; border-radius: 4px; }
+    .info strong { color: #175cd3; background: #eff8ff; padding: 2px 6px; border-radius: 4px; }
+    
+    .classification-banner { font-size: 1.5rem; margin: 0 0 10px 0; font-weight: bold; text-transform: uppercase; letter-spacing: 0.5px; }
+    .pass h2 { color: #067647; }
+    .agent_conversion_issue h2, .fe_json_issue h2, .runtime_or_page_issue h2, .input_error h2 { color: #b42318; }
+    code { background: #eef2f6; border-radius: 4px; padding: 2px 5px; font-family: monospace; font-size: 0.85rem; }
+    @media (max-width: 760px) { .grid { grid-template-columns: 1fr; } .full-width { grid-column: span 1; } }
+  </style>
+</head>
+<body>
+  <main>
+    <h1>📋 Catchpoint Playwright Translation Analyzer</h1>
+    <p>Paste the recording JSON text block alongside the compiled output script below to execute compliance logic verification completely client-side.</p>
+    
+    <form id="analyzeForm">
+      <div class="grid">
+        <label>1. Paste Recorder JSON text
+          <textarea id="recorderText" placeholder="Paste the content of recorder.json here..." required></textarea>
         </label>
+        <label>2. Paste Generated Script text
+          <textarea id="scriptText" placeholder="Paste the generated Playwright script here..." required></textarea>
+        </label>
+        <label class="full-width">3. Paste Runtime Log text (Optional)
+          <textarea id="logText" class="log-textarea" placeholder="Optional: Paste text log streams (e.g. TestLog.log)..."></textarea>
+        </label>
+      </div>
+      <button id="submitButton" type="submit">Run Direct Text Analysis</button>
+    </form>
+    
+    <div id="output"></div>
+  </main>
 
-        <div class="actions">
-          <button id="analyzeBtn" type="button">Analyze</button>
-          <button id="resetBtn" class="secondary" type="button">Reset</button>
-        </div>
-      </section>
+  <script>
+    // --- SERVERLESS CONVERSION ENGINE LOGIC (Ported from analyzer.js) ---
+    const CLEANUP_NOISE_PATTERNS = [
+      /cdpSession\.detach: Target page, context or browser has been closed/i,
+      /Pages have already been cleaned up\. Skipping\./i,
+      /Contexts have already been cleaned up\. Skipping\./i,
+      /Attempting to call 'close\(\)' on context again/i,
+    ];
 
-      <section id="statusCards" class="status-grid" aria-label="Status summary">
-        <article class="metric-card">
-          <span>Status</span>
-          <strong id="statusValue">WAITING_FOR_INPUT</strong>
-        </article>
-        <article class="metric-card">
-          <span>Recorder Actions</span>
-          <strong id="recorderCount">0</strong>
-        </article>
-        <article class="metric-card">
-          <span>Script Verbs</span>
-          <strong id="scriptCount">0</strong>
-        </article>
-        <article class="metric-card">
-          <span>Matched</span>
-          <strong id="matchedCount">0</strong>
-        </article>
-        <article class="metric-card">
-          <span>Selector Issues</span>
-          <strong id="selectorIssueCount">0</strong>
-        </article>
-      </section>
+    function makeIssue(area, severity, message, detail = {}) {
+      return { area, severity, message, ...detail };
+    }
 
-      <section class="panel result-panel" aria-label="Results">
-        <div class="tabs" role="tablist">
-          <button class="tab active" type="button" data-tab="interpretation">Interpretation</button>
-          <button class="tab" type="button" data-tab="verbs">Verb Summary</button>
-          <button class="tab" type="button" data-tab="mapping">Action Mapping</button>
-          <button class="tab" type="button" data-tab="selectors">Selector Priority</button>
-          <button class="tab" type="button" data-tab="runtime">Runtime/Core</button>
-          <button class="tab" type="button" data-tab="json">JSON</button>
-          <button class="tab" type="button" data-tab="csv">CSV</button>
-        </div>
+    function flattenRecorderActions(recorder) {
+      const steps = [];
+      const actions = [];
+      for (const [stepIndex, event] of (recorder.events || []).entries()) {
+        const details = event.eventDetails || {};
+        const stepName = details.title || `Step ${stepIndex + 1}`;
+        const stepActions = details.actions || [];
+        steps.push({ stepIndex, stepName, actionCount: stepActions.length });
+        for (const [actionIndex, action] of stepActions.entries()) {
+          actions.push({
+            stepIndex,
+            stepName,
+            actionIndex,
+            actionNumber: actions.length + 1,
+            raw: action,
+            details: action.eventDetails || {},
+          });
+        }
+      }
+      return { steps, actions };
+    }
 
-        <div id="interpretation" class="tab-panel active">
-          <h2>Interpretation</h2>
-          <div id="interpretationContent" class="content-block muted">Upload recorder.json and script.js, then analyze.</div>
-        </div>
+    function selectorSummary(selectors = {}) {
+      return {
+        label: selectors.label || '', id: selectors.id || '', dataTestId: selectors.dataTestId || '',
+        role: selectors.role || '', text: selectors.text || '', cssSelectorByClass: selectors.cssSelectorByClass || '',
+        cssSelectorByStableAncestor: selectors.cssSelectorByStableAncestor || '', cssSelectorByText: selectors.cssSelectorByText || '',
+        xpath: selectors.xpath || '', tagName: selectors.tagName || '',
+      };
+    }
 
-        <div id="verbs" class="tab-panel">
-          <h2>Verb Summary</h2>
-          <div id="verbContent" class="content-block muted">No analysis yet.</div>
-        </div>
+    function classifyExpectedOperation(action) {
+      const details = action.details;
+      const element = details.element || {};
+      const type = element.type || element.tagName || '';
 
-        <div id="mapping" class="tab-panel">
-          <h2>Action Mapping</h2>
-          <div id="mappingContent" class="content-block muted">No analysis yet.</div>
-        </div>
+      if (details.url) return { kind: 'goto', value: details.url };
+      if (/double-click/i.test(details.title || '')) return { kind: 'dblclick', value: element.value ?? details.selectors?.text ?? details.selectors?.label ?? '' };
+      if (details.eventSubType === 0) return { kind: 'click', value: element.value ?? details.selectors?.text ?? details.selectors?.label ?? '' };
+      if (details.eventSubType === 2 || element.tagName === 'select' || type === 'select') return { kind: 'selectOption', value: (element.selectedOptions || [])[0] || '' };
+      if (details.eventSubType === 3 || type === 'checkbox') return { kind: element.checked === false ? 'uncheck' : 'check', value: String(element.checked !== false) };
+      if (details.eventSubType === 1 || ['text', 'password', 'textarea', 'date', 'color', 'number'].includes(type)) return { kind: 'fill', value: element.value ?? '' };
 
-        <div id="selectors" class="tab-panel">
-          <h2>Selector Priority</h2>
-          <div id="selectorContent" class="content-block muted">No analysis yet.</div>
-        </div>
+      return { kind: 'click', value: element.value ?? details.selectors?.text ?? details.selectors?.label ?? '' };
+    }
 
-        <div id="runtime" class="tab-panel">
-          <h2>Runtime/Core</h2>
-          <div id="runtimeContent" class="content-block muted">No diagnostic data supplied.</div>
-        </div>
+    function validateRecorder(recorder) {
+      const issues = [];
+      if (!recorder || typeof recorder !== 'object') return [makeIssue('recorder', 'error', 'Recorder JSON is not an object.')];
+      if (!recorder.schemaVersion) issues.push(makeIssue('recorder', 'warning', 'Recorder schemaVersion parameter attribute is missing.'));
+      if (!recorder.emulatorType || typeof recorder.emulatorType.width !== 'number' || typeof recorder.emulatorType.height !== 'number') {
+        issues.push(makeIssue('recorder', 'warning', 'Recorder emulation viewport configuration is missing or structurally incomplete.'));
+      }
+      if (!Array.isArray(recorder.events) || recorder.events.length === 0) {
+        issues.push(makeIssue('recorder', 'error', 'Recorder structural data contains no baseline event sequences.'));
+        return issues;
+      }
+      const { actions } = flattenRecorderActions(recorder);
+      if (actions.length === 0) {
+        issues.push(makeIssue('recorder', 'error', 'No actions found inside event collections.'));
+        return issues;
+      }
 
-        <div id="json" class="tab-panel">
-          <h2>JSON</h2>
-          <pre id="jsonContent" class="code-block">{}</pre>
-        </div>
+      for (const action of actions) {
+        const details = action.details;
+        const selectors = selectorSummary(details.selectors);
+        const element = details.element || {};
+        const expected = classifyExpectedOperation(action);
 
-        <div id="csv" class="tab-panel">
-          <h2>CSV</h2>
-          <pre id="csvContent" class="code-block"></pre>
-        </div>
-      </section>
-    </main>
+        if (expected.kind === 'goto' && !expected.value) {
+          issues.push(makeIssue('recorder', 'error', `Action ${action.actionNumber} navigation triggered but URL value is blank.`, { actionNumber: action.actionNumber }));
+        }
+        if (expected.kind !== 'goto' && !Object.values(selectors).some(Boolean)) {
+          issues.push(makeIssue('recorder', 'error', `Action ${action.actionNumber} lacks an active identifier or fallback selector rule block.`, { actionNumber: action.actionNumber }));
+        }
+        if (expected.kind === 'fill' && expected.value === '') {
+          issues.push(makeIssue('recorder', 'warning', `Action ${action.actionNumber} fill execution runs with an empty text value string.`, { actionNumber: action.actionNumber }));
+        }
+        if (expected.kind === 'click' && !details.selectors?.label && !details.selectors?.text && !details.selectors?.id && !details.selectors?.xpath) {
+          issues.push(makeIssue('recorder', 'warning', `Action ${action.actionNumber} click relies on dynamic/volatile coordinate vectors.`, { actionNumber: action.actionNumber }));
+        }
+      }
+      return issues;
+    }
 
-    <script src="app.js"></script>
-  </body>
+    function extractScriptOperations(scriptText) {
+      const operations = [];
+      const regex = /(page\.goto\((?<goto>[^)]*)\)|\.(?<method>fill|check|uncheck|click|dblclick|selectOption)\((?<args>[^)]*)\))/g;
+      let match;
+      while ((match = regex.exec(scriptText)) !== null) {
+        if (match.groups.goto !== undefined) operations.push({ kind: 'goto', rawArgs: match.groups.goto, index: match.index });
+        else operations.push({ kind: match.groups.method, rawArgs: match.groups.args || '', index: match.index });
+      }
+      return operations;
+    }
+
+    function rawArgsIncludesValue(rawArgs, value) {
+      if (value === undefined || value === null) return true;
+      const stringValue = String(value);
+      return rawArgs.includes(JSON.stringify(stringValue)) || rawArgs.includes(`'${stringValue.replace(/'/g, "\\'")}'`) || rawArgs.includes(`"${stringValue.replace(/"/g, '\\"')}"`);
+    }
+
+    function compareRecorderToScript(recorder, scriptText) {
+      const issues = [];
+      const { steps, actions } = flattenRecorderActions(recorder);
+      const expectedOps = actions.map(classifyExpectedOperation);
+      const actualOps = extractScriptOperations(scriptText);
+      const nonNavigationCount = expectedOps.filter(op => op.kind !== 'goto').length;
+      const locatorBlocks = (scriptText.match(/let\s+locator\d+\s*=/g) || []).length;
+      const fallbackThrows = (scriptText.match(/Unable to resolve/g) || []).length;
+
+      if (recorder.emulatorType) {
+        const viewportNeedle = `width: ${recorder.emulatorType.width}, height: ${recorder.emulatorType.height}`;
+        if (!scriptText.includes(viewportNeedle)) issues.push(makeIssue('conversion', 'error', `Viewport configuration size mismatch. Expected: ${viewportNeedle}.`));
+      }
+      for (const step of steps) {
+        if (!scriptText.includes(`Catchpoint.startStep(${JSON.stringify(step.stepName)})`) && !scriptText.includes(`Catchpoint.startStep('${step.stepName}')`)) {
+          issues.push(makeIssue('conversion', 'error', `Missing Catchpoint step boundary initialization wrapper for "${step.stepName}".`, { stepName: step.stepName }));
+        }
+      }
+      if (locatorBlocks < nonNavigationCount) issues.push(makeIssue('conversion', 'error', `Structural selector block mismatch. Found ${locatorBlocks} locators, expected ${nonNavigationCount}.`));
+      if (fallbackThrows < nonNavigationCount) issues.push(makeIssue('conversion', 'warning', `Script lacks recovery fallback throws loops for all non-navigation operations.`));
+
+      const comparableActual = actualOps.filter(op => ['goto', 'fill', 'check', 'uncheck', 'click', 'dblclick', 'selectOption'].includes(op.kind));
+      if (comparableActual.length !== expectedOps.length) {
+        issues.push(makeIssue('conversion', 'error', `Action map count mismatch. Expected ${expectedOps.length} commands, parsed ${comparableActual.length} inside script.`));
+      }
+
+      const pairCount = Math.min(expectedOps.length, comparableActual.length);
+      for (let i = 0; i < pairCount; i += 1) {
+        const expected = expectedOps[i];
+        const actual = comparableActual[i];
+        if (expected.kind !== actual.kind) {
+          issues.push(makeIssue('conversion', 'error', `Action ${i + 1} method verb mismatch. Expected execution pattern "${expected.kind}", found "${actual.kind}".`, { actionNumber: i + 1 }));
+          continue;
+        }
+        if (['goto', 'fill', 'selectOption'].includes(expected.kind) && !rawArgsIncludesValue(actual.rawArgs, expected.value)) {
+          issues.push(makeIssue('conversion', 'error', `Action ${i + 1} argument data string payload mismatch. Expected data string context: ${JSON.stringify(expected.value)}`, { actionNumber: i + 1 }));
+        }
+      }
+
+      return {
+        issues,
+        summary: {
+          stepCount: steps.length, recorderActionCount: actions.length, expectedOperationCount: expectedOps.length,
+          actualOperationCount: comparableActual.length, locatorBlockCount: locatorBlocks, locatorGuardCount: fallbackThrows,
+        },
+      };
+    }
+
+    function analyzeLogs(joinedLogs) {
+      const issues = [];
+      if (!joinedLogs.trim()) return { issues, summary: { status: 'LOGS_NOT_PROVIDED', realErrors: 0, cleanupNoise: 0 } };
+
+      const statusMatch = joinedLogs.match(/Status=(SUCCESS|FAILURE|FAILED|ERROR)/i);
+      const errorLines = joinedLogs
+        .replace(/\\u001B\[[0-9;]*m/g, '').replace(/\x1b\[[0-9;]*m/g, '')
+        .split(/\r?\n/)
+        .filter(line => /\[ERROR\]|Error:|Exception|Timeout|Cancellation token requested|Unable to resolve/i.test(line));
+
+      let cleanupNoise = 0, realErrors = 0;
+      for (const line of errorLines) {
+        if (CLEANUP_NOISE_PATTERNS.some(pattern => pattern.test(line))) {
+          cleanupNoise += 1;
+        } else {
+          realErrors += 1;
+          issues.push(makeIssue('runtime', 'error', 'Uncaught application stack execution error encountered.', { line: line.trim().slice(0, 120) + '...' }));
+        }
+      }
+      if (statusMatch && statusMatch[1].toUpperCase() !== 'SUCCESS') {
+        issues.push(makeIssue('runtime', 'error', `Transaction session explicitly failed script run status evaluation: Status=${statusMatch[1].toUpperCase()}.`));
+      }
+
+      return { issues, summary: { status: statusMatch ? statusMatch[1].toUpperCase() : 'UNKNOWN', realErrors, cleanupNoise } };
+    }
+
+    function classify(issues) {
+      const errors = issues.filter(issue => issue.severity === 'error');
+      if (errors.some(issue => issue.area === 'recorder')) return 'FE_JSON_ISSUE';
+      if (errors.some(issue => issue.area === 'conversion')) return 'AGENT_CONVERSION_ISSUE';
+      if (errors.some(issue => issue.area === 'runtime')) return 'RUNTIME_OR_PAGE_ISSUE';
+      return 'PASS';
+    }
+
+    function executeLocalAnalysis(recorderText, scriptText, logText) {
+      const issues = [];
+      let recorder;
+      try {
+        recorder = JSON.parse(recorderText);
+      } catch (error) {
+        issues.push(makeIssue('recorder', 'error', `JSON format parser check syntax fault validation failed: ${error.message}`));
+        return { classification: 'FE_JSON_ISSUE', issues, summary: {} };
+      }
+
+      const recorderIssues = validateRecorder(recorder);
+      const comparison = compareRecorderToScript(recorder, scriptText);
+      const logs = analyzeLogs(logText);
+
+      issues.push(...recorderIssues, ...comparison.issues, ...logs.issues);
+
+      return {
+        classification: classify(issues),
+        summary: { ...comparison.summary, runtime: logs.summary },
+        issues,
+      };
+    }
+
+    // --- DOM VIEWPORT RENDER SYSTEM (Ported from server.js UI templates) ---
+    function escapeHtml(value) {
+      return String(value).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+    }
+
+    function renderIssue(issue) {
+      const suffix = issue.actionNumber ? ` action ${issue.actionNumber}` : '';
+      const lineSnippet = issue.line ? `<br><code style="background:#1e1e1e; color:#ff79c6; display:block; padding:8px; border-radius:4px; margin-top:5px; white-space:pre-wrap;">${escapeHtml(issue.line)}</code>` : '';
+      return `<li class="${escapeHtml(issue.severity)}"><strong>${escapeHtml(issue.severity.toUpperCase())}</strong> ${escapeHtml(issue.area + suffix)}: ${escapeHtml(issue.message)}${lineSnippet}</li>`;
+    }
+
+    function generateReportHtml(result) {
+      const errors = result.issues.filter(issue => issue.severity === 'error').length;
+      const warnings = result.issues.filter(issue => issue.severity === 'warning').length;
+      const info = result.issues.filter(issue => issue.severity === 'info').length;
+      
+      return `
+        <section class="result ${escapeHtml(result.classification.toLowerCase())}">
+          <h2 class="classification-banner">Compliance Classification: ${escapeHtml(result.classification)}</h2>
+          <div class="metrics">
+            <span>Errors Found: ${errors}</span>
+            <span>Warnings Flagged: ${warnings}</span>
+            <span>Info Metrics: ${info}</span>
+          </div>
+          <table>
+            <tbody>
+              <tr><th>Target Step Bounds Recorded</th><td>${escapeHtml(result.summary.stepCount ?? '-')}</td></tr>
+              <tr><th>JSON Operational Elements</th><td>${escapeHtml(result.summary.recorderActionCount ?? '-')}</td></tr>
+              <tr><th>Expected Script Compilation Tree</th><td>${escapeHtml(result.summary.expectedOperationCount ?? '-')}</td></tr>
+              <tr><th>Resolved Script Execution Elements</th><td>${escapeHtml(result.summary.actualOperationCount ?? '-')}</td></tr>
+              <tr><th>Isolated Locator Logical Blocks</th><td>${escapeHtml(result.summary.locatorBlockCount ?? '-')}</td></tr>
+              <tr><th>Active Failover Exception Guards</th><td>${escapeHtml(result.summary.locatorGuardCount ?? '-')}</td></tr>
+              <tr><th>Log Output Execution Status</th><td>${escapeHtml(result.summary.runtime?.status ?? '-')}</td></tr>
+              <tr><th>Runtime Trace Real App Errors</th><td>${escapeHtml(result.summary.runtime?.realErrors ?? '-')}</td></tr>
+              <tr><th>Dismissed CDP Thread Intercept Noise</th><td>${escapeHtml(result.summary.runtime?.cleanupNoise ?? '-')}</td></tr>
+            </tbody>
+          </table>
+          <h3>Analysis Findings & Trace Blocks</h3>
+          ${result.issues.length ? `<ul>${result.issues.map(renderIssue).join('')}</ul>` : '<p style="color:#067647; font-weight:bold;">🎉 Pass! Script mapping configuration structural compliance check verified completely clean.</p>'}
+        </section>
+      `;
+    }
+
+    // --- FORM SUBMIT INTERACTION ACTION HANDLER ---
+    document.getElementById('analyzeForm').addEventListener('submit', event => {
+      event.preventDefault();
+      const button = document.getElementById('submitButton');
+      const outputDiv = document.getElementById('output');
+      
+      button.disabled = true;
+      button.textContent = 'Processing Code Blocks...';
+      outputDiv.innerHTML = '';
+
+      setTimeout(() => {
+        try {
+          const recorderText = document.getElementById('recorderText').value;
+          const scriptText = document.getElementById('scriptText').value;
+          const logText = document.getElementById('logText').value;
+
+          const analysisResult = executeLocalAnalysis(recorderText, scriptText, logText);
+          outputDiv.innerHTML = generateReportHtml(analysisResult);
+        } catch (err) {
+          outputDiv.innerHTML = `<section class="result input_error"><h2>Critical Framework Processing Failure</h2><p>${escapeHtml(err.message)}</p></section>`;
+        } finally {
+          button.disabled = false;
+          button.textContent = 'Run Direct Text Analysis';
+        }
+      }, 50);
+    });
+  </script>
+</body>
 </html>
