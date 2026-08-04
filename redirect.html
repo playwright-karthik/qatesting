@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>QA redirect resource</title>
+</head>
+<body>
+  <p id="status">Preparing redirect…</p>
+
+  <script>
+    (() => {
+      const status = document.getElementById('status');
+      const params = new URLSearchParams(window.location.search);
+      const destination = params.get('url');
+      const rawCount = params.get('count') ?? params.get('times') ?? '1';
+      const count = Number.parseInt(rawCount, 10);
+
+      if (!destination) {
+        status.textContent = 'Missing required parameter: ?url=https://example.com';
+        return;
+      }
+
+      if (!Number.isSafeInteger(count) || count < 0) {
+        status.textContent = 'The count/times parameter must be a non-negative integer.';
+        return;
+      }
+
+      let target;
+      try {
+        target = new URL(destination, window.location.href);
+      } catch {
+        status.textContent = 'Invalid redirect URL.';
+        return;
+      }
+
+      if (count === 0) {
+        status.textContent = `Redirecting to ${target.href}`;
+        window.location.replace(target.href);
+        return;
+      }
+
+      // GitHub Pages cannot emit a dynamic HTTP 3xx response. Instead, each
+      // client-side hop reloads this same page with a decremented count.
+      const next = new URL(window.location.href);
+      next.search = '';
+      next.searchParams.set('url', target.href);
+      next.searchParams.set('count', String(count - 1));
+      status.textContent = `Redirect ${count} of ${count + 1} → ${target.href}`;
+      window.location.replace(next.href);
+    })();
+  </script>
+</body>
+</html>
