@@ -4,72 +4,103 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Window Popup Example</title>
+
+    <style>
+        body { font-family: Arial, sans-serif; margin: 24px; }
+        section { margin-bottom: 20px; }
+        h2 { font-size: 18px; margin-bottom: 10px; }
+        button { margin: 4px; padding: 8px 14px; cursor: pointer; }
+        .note { color: #555; font-style: italic; }
+    </style>
+</head>
+
+<body>
+    <h1>Window Popup Testing</h1>
+
+    <section>
+        <h2>Basic Websites</h2>
+        <button data-url="https://www.google.com">Open Google</button>
+        <button data-url="https://the-internet.herokuapp.com/">Open Script Testing</button>
+        <button data-url="https://httpbin.org">Open HTTPBin</button>
+        <button data-url="https://badssl.com">Open BadSSL</button>
+        <button data-url="https://client.badssl.com">Open BadSSL Certificate</button><br>
+    </section>
+
+    <section>
+        <h2>Delayed and HTTP Status Testing</h2>
+        <button data-url="https://www.airtel.com" data-delay="5000">Open Airtel (5s Delay)</button>
+        <button data-url="https://httpbin.org/status/403">Access Denied</button>
+        <button data-url="https://httpbin.org/status/404">Status 404</button>
+        <button data-url="https://httpbin.org/status/502">Status 502</button>
+        <button data-url="https://httpbin.org/status/503">Status 503</button>
+        <button data-url="https://expired.badssl.com/">Expired SSL</button><br>
+    </section>
+
+    <section>
+        <h2>Catchpoint and Network Testing</h2>
+        <button data-url="http://scc.catchpoint.tools/login">SCC Catchpoint</button>
+        <button data-url="https://sqa.3genlabs.net/hawksyntheticpageserver/">SQA 3genlabs</button>
+        <button data-url="https://httpstat.us/">HTTP Stat</button>
+        <button data-url="https://192.168.128.111:81">Connection Failure</button>
+        <button data-url="https://www.chethanpatel.com/">DNS Failure</button><br>
+    </section>
+
+    <section>
+        <h2>Authentication and Page Testing</h2>
+        <button data-url="https://authenticationtest.com/">Auth Test / Token</button>
+        <button data-url="https://www.globalsqa.com/demo-site/">GlobalSQA</button>
+        <button data-url="https://playwright-karthik.github.io/qatesting/spapage.html">SPA Page</button>
+        <button data-url="https://jsonplaceholder.typicode.com/posts">Post Data Page</button>
+        <button data-url="https://playwright-karthik.github.io/qatesting/mychild.html">Favicon Test</button>
+        <button data-url="https://ipa.demo1.freeipa.org/ipa/session/login_kerberos?_=1747310036">Kerberos Test</button>
+        <button data-url="https://playwright-karthik.github.io/qatesting/windowpopups.html">Nested Popup</button><br>
+    </section>
+
+    <section>
+        <h2>Before and After Response</h2>
+        <p class="note">Run the beforeafterresponse.sh script in the local VM before clicking the buttons and enable cross-origin support in the test settings.</p>
+        <button data-url="http://localhost:8000/abort-before-response">Before Response</button>
+        <button data-url="http://localhost:8000/abort-after-response">After Response</button><br>
+    </section>
+
+    <section>
+        <h2>VSCODE Service Testing</h2>
+        <p class="note">Run the VSCODE script on the 192.168.128.109 machine with the appropriate port numbers.</p>
+        <button data-url="http://192.168.128.109:8127/status/502">Port 8127 - Status 502</button>
+        <button data-url="http://192.168.128.109:8127/delay/5">Port 8127 - Delay 5</button><br>
+    </section>
+
+    <section>
+        <h2>SPA Popup Testing</h2>
+        <button data-url="https://playwright-karthik.github.io/qatesting/vctest/index.html">SPA Popup 1</button>
+        <button data-url="https://react.dev/reference/react/hooks">SPA Popup 2</button><br>
+    </section>
+
+    <section>
+        <h2>Popup User-Agent Testing</h2>
+        <button data-url="https://www.w3schools.com/js/tryit.asp?filename=tryjs_nav_userAgent">Popup User-Agent</button>
+        <button data-url="https://qa-syn-page-01.3genlabs.net/hawksyntheticpageserver/main.ashx?type=html&amp;details={&quot;css&quot;:{&quot;count&quot;:5,&quot;size&quot;:10,&quot;delay&quot;:0,&quot;redirect&quot;:0},&quot;js&quot;:{&quot;count&quot;:5,&quot;defer&quot;:true,&quot;size&quot;:10,&quot;delay&quot;:0,&quot;redirect&quot;:0,&quot;subtype&quot;:&quot;&quot;}}">Popup SQA Website</button><br>
+    </section>
+
     <script>
         function openNewWindow(url) {
-            window.open(url, '_blank', 'width=500,height=400');
+            window.open(url, "_blank", "width=500,height=400");
         }
-        
+
         function openDelayedWindow(url, delay) {
-            setTimeout(() => {
-                window.open(url, '_blank', 'width=500,height=400');
-            }, delay);
+            setTimeout(() => openNewWindow(url), delay);
         }
+
+        document.querySelectorAll("button[data-url]").forEach((button) => {
+            button.addEventListener("click", () => {
+                const delay = Number(button.dataset.delay || 0);
+                const url = button.dataset.url;
+
+                delay > 0
+                    ? openDelayedWindow(url, delay)
+                    : openNewWindow(url);
+            });
+        });
     </script>
-</head>
-<body>
-    <button onclick="openNewWindow('https://www.google.com')">Open Google</button>
-    <button onclick="openNewWindow('https://the-internet.herokuapp.com/')">Open Script testing</button>
-    <button onclick="openNewWindow('https://httpbin.org')">Open HTTPBin</button>
-    <button onclick="openNewWindow('https://badssl.com')">Open BadSSL</button>
-    <button onclick="openNewWindow('https://client.badssl.com')">Open Badssl-certificate</button>
-    </br>
-    
-    <button onclick="openDelayedWindow('https://www.airtel.com', 5000)">Open Airtel (5s Delay)</button>
-    <button onclick="openNewWindow('https://httpbin.org/status/403')">AccessDenied</button>
-    <button onclick="openNewWindow('https://httpbin.org/status/404')">status404</button>
-    <button onclick="openNewWindow('https://httpbin.org/status/502')">status502</button>
-    <button onclick="openNewWindow('https://httpbin.org/status/503')">status503</button>
-    <button onclick="openNewWindow('https://expired.badssl.com/')">ExpiredSsl</button>
-    </br>
-    
-    <button onclick="openNewWindow('http://scc.catchpoint.tools/login')">SCC catchpoint</button>
-    <button onclick="openNewWindow('https://sqa.3genlabs.net/hawksyntheticpageserver/')">SQA 3genlabs</button>
-    <button onclick="openNewWindow('https://httpstat.us/')">httpStat</button>
-    <button onclick="openNewWindow('https://192.168.128.111:81')">ConnectFailure</button>
-    <button onclick="openNewWindow('https://www.chethanpatel.com/')">DnsFailure</button>
-    </br>
-    
-    <button onclick="openNewWindow('https://authenticationtest.com/')">Auth test/Token</button>
-    <button onclick="openNewWindow('https://www.globalsqa.com/demo-site/')">GlobalSqa</button>
-    <button onclick="openNewWindow('https://playwright-karthik.github.io/qatesting/spapage.html')">spapage</button>
-    <button onclick="openNewWindow('https://jsonplaceholder.typicode.com/posts')">postdata-page</button>
-    </br>
-    
-    <button onclick="openNewWindow('https://playwright-karthik.github.io/qatesting/mychild.html')">favicontest</button>
-    <button onclick="openNewWindow('https://ipa.demo1.freeipa.org/ipa/session/login_kerberos?_=1747310036')">Kerberostest</button>
-    <button onclick="openNewWindow('https://playwright-karthik.github.io/qatesting/windowpopups.html')">Nested-popup</button>
-    <br/>
-    
-    <p>Run the beforeafterresponse.sh in the local VM before clickin on the button
-        and enable the cross-Origin in the test Settings</p>
-    <button onclick="openNewWindow('http://localhost:8000/abort-before-response')">Before-Response</button>
-    <button onclick="openNewWindow('http://localhost:8000/abort-after-response')">After-Response</button>
-    </br>
-
-    <p>Run the VSCODE script in 192.168.128.109 machine [with respect to port numbers]</p>
-    <button onclick="openNewWindow('http://192.168.128.109:8127/status/502')">8127-status502</button>
-    <button onclick="openNewWindow('http://192.168.128.109:8127/delay/5')">8127-delay5</button>
-    </br>
-
-    <p>SPA in popups</p>
-    <button onclick="openNewWindow('https://playwright-karthik.github.io/qatesting/vctest/index.html')">spa-popup1</button>
-    <button onclick="openNewWindow('https://react.dev/reference/react/hooks')">spa-popup2</button>
-    </br>
-
-    <p>Popup UserAgent Testing</p>
-    <button onclick="openNewWindow('https://www.w3schools.com/js/tryit.asp?filename=tryjs_nav_userAgent')">popup-ua</button>
-    <button onclick="openNewWindow('https://qa-syn-page-01.3genlabs.net/hawksyntheticpageserver/main.ashx?type=html&amp;details={&quot;css&quot;:{&quot;count&quot;:5,&quot;size&quot;:10,&quot;delay&quot;:0,&quot;redirect&quot;:0},&quot;js&quot;:{&quot;count&quot;:5,&quot;defer&quot;:true,&quot;size&quot;:10,&quot;delay&quot;:0,&quot;redirect&quot;:0,&quot;subtype&quot;:&quot;&quot;}}')">popup-sqawebsite</button>
-
-<br>
 </body>
 </html>
