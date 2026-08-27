@@ -5,5 +5,5 @@ function FindProxyForURL(url, host) {
         return "DIRECT";
     }
     // Everything else goes through proxy
-    return "PROXY 172.21.61.107:3128";
+    return "PROXY 192.168.128.115:3128";
 }
