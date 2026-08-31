@@ -1,0 +1,142 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Iframe Recorder Lab</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --bg: #f5f7fb;
+      --panel: #ffffff;
+      --ink: #1f2937;
+      --muted: #5b6472;
+      --line: #d9e0ea;
+      --accent: #0f766e;
+      --accent-2: #1d4ed8;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: Arial, Helvetica, sans-serif;
+      background: linear-gradient(180deg, #eef3f9 0%, #f9fafc 48%, #eef4ff 100%);
+      color: var(--ink);
+      padding: 32px;
+    }
+    .shell {
+      max-width: 1120px;
+      margin: 0 auto;
+    }
+    .hero {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      padding: 24px;
+      box-shadow: 0 10px 30px rgba(15, 23, 42, 0.06);
+      margin-bottom: 20px;
+    }
+    .hero h1 {
+      margin: 0 0 8px;
+      font-size: 2rem;
+    }
+    .hero p {
+      margin: 0;
+      color: var(--muted);
+      line-height: 1.55;
+      max-width: 76ch;
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 16px;
+      margin-top: 18px;
+    }
+    .card {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      padding: 18px;
+      box-shadow: 0 8px 24px rgba(15, 23, 42, 0.05);
+    }
+    .card h2 {
+      margin: 0 0 8px;
+      font-size: 1.1rem;
+    }
+    .card p {
+      margin: 0 0 14px;
+      color: var(--muted);
+      line-height: 1.5;
+    }
+    a.button {
+      display: inline-block;
+      padding: 10px 14px;
+      border-radius: 999px;
+      background: var(--accent);
+      color: #fff;
+      text-decoration: none;
+      font-weight: 700;
+      font-size: 0.95rem;
+    }
+    a.button.secondary {
+      background: var(--accent-2);
+    }
+    .notes {
+      margin-top: 18px;
+      background: rgba(29, 78, 216, 0.06);
+      border: 1px solid rgba(29, 78, 216, 0.16);
+      border-radius: 14px;
+      padding: 16px 18px;
+      color: #1f3a8a;
+      line-height: 1.55;
+    }
+    .back-link {
+      display: inline-block;
+      margin-bottom: 16px;
+      color: var(--accent-2);
+      text-decoration: none;
+      font-weight: 700;
+    }
+  </style>
+</head>
+<body>
+  <div class="shell">
+    <a class="back-link" href="../index.html">← Back to qatesting index</a>
+    <section class="hero">
+      <h1>Iframe Recorder Lab</h1>
+      <p>
+        Shared fixtures for testing recorder behavior inside iframe contexts. The child iframe pages reuse the same control set so we can compare single-frame, double-frame, and chained frame-path resolution paths without depending on third-party pages.
+      </p>
+      <div class="notes">
+        Use these pages to validate element selection, frame-path chaining, and iframe-scoped interactions such as text input, checkbox, radio, dropdown, button, and link navigation. The nested iframe page is the one to use when you want to confirm multi-hop frame resolution.
+      </div>
+    </section>
+
+    <section class="grid">
+      <article class="card">
+        <h2>Single Iframe Page</h2>
+        <p>Main page with one iframe that points to the shared control fixture.</p>
+        <a class="button" href="single-iframe.html">Open Single Iframe</a>
+      </article>
+
+      <article class="card">
+        <h2>Two Iframe Page</h2>
+        <p>Main page with two independent iframes, each pointing to the same fixture with different labels.</p>
+        <a class="button secondary" href="double-iframe.html">Open Two Iframes</a>
+      </article>
+
+      <article class="card">
+        <h2>Nested Iframe Page</h2>
+        <p>Outer iframe contains a second iframe inside it. This is the chained frame-path scenario.</p>
+        <a class="button secondary" href="nested-iframe.html">Open Nested Iframes</a>
+      </article>
+
+      <article class="card">
+        <h2>Ambiguous Iframe Page</h2>
+        <p>Two sibling iframes share the same name and class so the resolver must fall back to a unique attribute.</p>
+        <a class="button secondary" href="ambiguous-iframe.html">Open Ambiguous Iframes</a>
+      </article>
+
+    </section>
+  </div>
+</body>
+</html>

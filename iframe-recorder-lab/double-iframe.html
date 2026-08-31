@@ -1,0 +1,549 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Two Iframe Page</title>
+  <style>
+    body { margin: 0; font-family: Arial, Helvetica, sans-serif; background: #f4f7fb; color: #1f2937; padding: 24px; }
+    .shell { max-width: 1400px; margin: 0 auto; }
+    .back-link { display: inline-block; margin-bottom: 16px; color: #1d4ed8; text-decoration: none; font-weight: 700; }
+    .hero { background: #fff; border: 1px solid #d9e0ea; border-radius: 16px; padding: 20px; box-shadow: 0 10px 24px rgba(15, 23, 42, 0.05); margin-bottom: 16px; }
+    .hero h1 { margin: 0 0 8px; }
+    .hero p { margin: 0; color: #5b6472; line-height: 1.55; }
+    .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(480px, 1fr)); gap: 16px; }
+    .frame-card { background: #fff; border: 1px solid #d9e0ea; border-radius: 16px; padding: 14px; box-shadow: 0 10px 24px rgba(15, 23, 42, 0.05); }
+    .frame-card h2 { margin: 0 0 10px; font-size: 1.05rem; }
+    iframe { width: 100%; height: 920px; border: 2px solid #94a3b8; border-radius: 14px; background: #fff; }
+  </style>
+</head>
+<body>
+  <div class="shell">
+    <a class="back-link" href="index.html">← Back to iframe lab</a>
+    <section class="hero">
+      <h1>Two Iframe Test</h1>
+      <p>This page contains two independent iframes and both are embedded directly in this HTML via <code>srcdoc</code>.</p>
+    </section>
+    <div class="grid">
+      <section class="frame-card">
+        <h2>Left iframe</h2>
+        <iframe id="left-demo-frame" name="left-demo-frame" title="Left Recorder Frame" srcdoc="&lt;!doctype html&gt;
+&lt;html lang=&quot;en&quot;&gt;
+&lt;head&gt;
+  &lt;meta charset=&quot;utf-8&quot;&gt;
+  &lt;meta name=&quot;viewport&quot; content=&quot;width=device-width, initial-scale=1&quot;&gt;
+  &lt;style&gt;
+    :root {
+      --bg: #fff;
+      --panel: #f8fafc;
+      --ink: #1f2937;
+      --muted: #5b6472;
+      --line: #d9e0ea;
+      --accent: #0f766e;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: Arial, Helvetica, sans-serif;
+      background: var(--bg);
+      color: var(--ink);
+      padding: 18px;
+    }
+    .page {
+      min-width: 760px;
+      padding: 18px;
+      border: 1px solid var(--line);
+      background: linear-gradient(180deg, #ffffff 0%, #f8fbff 100%);
+    }
+    h1 { margin: 0 0 6px; font-size: 1.5rem; }
+    .subtitle { margin: 0 0 16px; color: var(--muted); line-height: 1.5; }
+    .status {
+      margin-bottom: 16px;
+      padding: 10px 12px;
+      border-radius: 10px;
+      background: #ecfeff;
+      border: 1px solid #a5f3fc;
+      color: #155e75;
+      font-size: 0.95rem;
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(260px, 1fr));
+      gap: 14px;
+    }
+    .panel {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      padding: 14px;
+    }
+    .panel h2 { margin: 0 0 10px; font-size: 1rem; }
+    label {
+      display: block;
+      font-weight: 700;
+      margin: 10px 0 6px;
+    }
+    input, textarea, select, button { font: inherit; }
+    input[type=&quot;text&quot;], input[type=&quot;password&quot;], input[type=&quot;email&quot;], input[type=&quot;url&quot;], input[type=&quot;tel&quot;], input[type=&quot;number&quot;], input[type=&quot;date&quot;], input[type=&quot;color&quot;], textarea, select {
+      width: 100%;
+      padding: 10px 12px;
+      border: 1px solid #cbd5e1;
+      border-radius: 10px;
+      background: #fff;
+    }
+    textarea { min-height: 92px; resize: vertical; }
+    .inline {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px 14px;
+      align-items: center;
+      margin-top: 8px;
+    }
+    .inline label {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      margin: 0;
+      font-weight: 400;
+    }
+    .actions {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-top: 12px;
+    }
+    button, a.action-link {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 10px 14px;
+      border-radius: 999px;
+      border: 1px solid var(--accent);
+      background: var(--accent);
+      color: #fff;
+      text-decoration: none;
+      cursor: pointer;
+    }
+    a.action-link.secondary { background: #fff; color: var(--accent); }
+    .editable {
+      min-height: 70px;
+      padding: 10px 12px;
+      border: 1px dashed #94a3b8;
+      border-radius: 10px;
+      background: #fff;
+    }
+    .tall-box {
+      height: 150px;
+      overflow: auto;
+      border: 1px solid #cbd5e1;
+      border-radius: 10px;
+      background: #fff;
+      padding: 10px 12px;
+      line-height: 1.5;
+    }
+    details {
+      margin-top: 12px;
+      background: #fff;
+      border: 1px solid #cbd5e1;
+      border-radius: 10px;
+      padding: 10px 12px;
+    }
+    summary { cursor: pointer; font-weight: 700; }
+    .footer-note {
+      margin-top: 14px;
+      color: var(--muted);
+      font-size: 0.92rem;
+      line-height: 1.5;
+    }
+  &lt;/style&gt;
+&lt;/head&gt;
+&lt;body&gt;
+  &lt;div class=&quot;page&quot;&gt;
+    &lt;h1 id=&quot;fixture-title&quot;&gt;Left Iframe Fixture&lt;/h1&gt;
+    &lt;p class=&quot;subtitle&quot; id=&quot;fixture-subtitle&quot;&gt;This iframe is the left-side fixture for recorder testing.&lt;/p&gt;
+    &lt;div class=&quot;status&quot; id=&quot;status&quot;&gt;Idle&lt;/div&gt;
+
+    &lt;div class=&quot;grid&quot;&gt;
+      &lt;section class=&quot;panel&quot;&gt;
+        &lt;h2&gt;Text Inputs&lt;/h2&gt;
+        &lt;label for=&quot;text-input&quot;&gt;Text box&lt;/label&gt;
+        &lt;input id=&quot;text-input&quot; type=&quot;text&quot; value=&quot;Alpha&quot;&gt;
+
+        &lt;label for=&quot;password-input&quot;&gt;Password box&lt;/label&gt;
+        &lt;input id=&quot;password-input&quot; type=&quot;password&quot; value=&quot;Secret123&quot;&gt;
+
+        &lt;label for=&quot;email-input&quot;&gt;Email box&lt;/label&gt;
+        &lt;input id=&quot;email-input&quot; type=&quot;email&quot; value=&quot;user@example.com&quot;&gt;
+
+        &lt;label for=&quot;textarea-input&quot;&gt;Textarea&lt;/label&gt;
+        &lt;textarea id=&quot;textarea-input&quot;&gt;Recorder iframe content&lt;/textarea&gt;
+      &lt;/section&gt;
+
+      &lt;section class=&quot;panel&quot;&gt;
+        &lt;h2&gt;Choice Controls&lt;/h2&gt;
+        &lt;label&gt;&lt;input id=&quot;checkbox-input&quot; type=&quot;checkbox&quot; checked&gt; Checkbox option&lt;/label&gt;
+
+        &lt;div class=&quot;inline&quot; role=&quot;group&quot; aria-label=&quot;Radio options&quot;&gt;
+          &lt;label&gt;&lt;input type=&quot;radio&quot; name=&quot;frame-radio&quot; id=&quot;radio-one&quot; checked&gt; Radio one&lt;/label&gt;
+          &lt;label&gt;&lt;input type=&quot;radio&quot; name=&quot;frame-radio&quot; id=&quot;radio-two&quot;&gt; Radio two&lt;/label&gt;
+        &lt;/div&gt;
+
+        &lt;label for=&quot;select-input&quot;&gt;Select menu&lt;/label&gt;
+        &lt;select id=&quot;select-input&quot;&gt;
+          &lt;option value=&quot;one&quot;&gt;One&lt;/option&gt;
+          &lt;option value=&quot;two&quot; selected&gt;Two&lt;/option&gt;
+          &lt;option value=&quot;three&quot;&gt;Three&lt;/option&gt;
+        &lt;/select&gt;
+
+        &lt;label for=&quot;number-input&quot;&gt;Number input&lt;/label&gt;
+        &lt;input id=&quot;number-input&quot; type=&quot;number&quot; value=&quot;42&quot;&gt;
+      &lt;/section&gt;
+
+      &lt;section class=&quot;panel&quot;&gt;
+        &lt;h2&gt;Buttons and Links&lt;/h2&gt;
+        &lt;div class=&quot;actions&quot;&gt;
+          &lt;button id=&quot;action-button&quot; type=&quot;button&quot;&gt;Action Button&lt;/button&gt;
+          &lt;a class=&quot;action-link&quot; id=&quot;self-link&quot; href=&quot;#&quot; target=&quot;_self&quot;&gt;Self navigation link&lt;/a&gt;
+          &lt;a class=&quot;action-link secondary&quot; id=&quot;anchor-link&quot; href=&quot;#details-anchor&quot;&gt;Jump to details&lt;/a&gt;
+        &lt;/div&gt;
+
+        &lt;label for=&quot;url-input&quot;&gt;URL input&lt;/label&gt;
+        &lt;input id=&quot;url-input&quot; type=&quot;url&quot; value=&quot;https://example.com&quot;&gt;
+
+        &lt;label for=&quot;date-input&quot;&gt;Date input&lt;/label&gt;
+        &lt;input id=&quot;date-input&quot; type=&quot;date&quot; value=&quot;2026-08-31&quot;&gt;
+      &lt;/section&gt;
+
+      &lt;section class=&quot;panel&quot;&gt;
+        &lt;h2&gt;Additional Controls&lt;/h2&gt;
+        &lt;label for=&quot;color-input&quot;&gt;Color input&lt;/label&gt;
+        &lt;input id=&quot;color-input&quot; type=&quot;color&quot; value=&quot;#3366ff&quot;&gt;
+
+        &lt;label for=&quot;range-input&quot;&gt;Range input&lt;/label&gt;
+        &lt;input id=&quot;range-input&quot; type=&quot;range&quot; min=&quot;0&quot; max=&quot;100&quot; value=&quot;35&quot;&gt;
+
+        &lt;label for=&quot;file-input&quot;&gt;File input&lt;/label&gt;
+        &lt;input id=&quot;file-input&quot; type=&quot;file&quot;&gt;
+
+        &lt;label for=&quot;editable-box&quot;&gt;Contenteditable area&lt;/label&gt;
+        &lt;div id=&quot;editable-box&quot; class=&quot;editable&quot; contenteditable=&quot;true&quot;&gt;Editable iframe text&lt;/div&gt;
+      &lt;/section&gt;
+
+      &lt;section class=&quot;panel&quot;&gt;
+        &lt;h2&gt;Scrollable Area&lt;/h2&gt;
+        &lt;div class=&quot;tall-box&quot; id=&quot;scroll-box&quot;&gt;
+          &lt;p&gt;Line 1 - top&lt;/p&gt;
+          &lt;p&gt;Line 2 - middle&lt;/p&gt;
+          &lt;p&gt;Line 3 - middle&lt;/p&gt;
+          &lt;p&gt;Line 4 - middle&lt;/p&gt;
+          &lt;p&gt;Line 5 - middle&lt;/p&gt;
+          &lt;p&gt;Line 6 - middle&lt;/p&gt;
+          &lt;p&gt;Line 7 - middle&lt;/p&gt;
+          &lt;p&gt;Line 8 - middle&lt;/p&gt;
+          &lt;p&gt;Line 9 - bottom&lt;/p&gt;
+          &lt;p&gt;Line 10 - bottom&lt;/p&gt;
+        &lt;/div&gt;
+      &lt;/section&gt;
+
+      &lt;section class=&quot;panel&quot;&gt;
+        &lt;h2&gt;Details and Summary&lt;/h2&gt;
+        &lt;details id=&quot;details-anchor&quot;&gt;
+          &lt;summary&gt;More iframe details&lt;/summary&gt;
+          &lt;p&gt;This section helps test element expansion and text matching inside the iframe document.&lt;/p&gt;
+        &lt;/details&gt;
+
+        &lt;label for=&quot;tel-input&quot;&gt;Telephone input&lt;/label&gt;
+        &lt;input id=&quot;tel-input&quot; type=&quot;tel&quot; value=&quot;555-0101&quot;&gt;
+
+        &lt;label for=&quot;search-input&quot;&gt;Search input&lt;/label&gt;
+        &lt;input id=&quot;search-input&quot; type=&quot;search&quot; value=&quot;iframe search&quot;&gt;
+      &lt;/section&gt;
+    &lt;/div&gt;
+
+    &lt;p class=&quot;footer-note&quot;&gt;Query parameter: &lt;code id=&quot;view-flag&quot;&gt;left&lt;/code&gt;&lt;/p&gt;
+  &lt;/div&gt;
+
+  &lt;script&gt;
+    const status = document.getElementById(&#x27;status&#x27;);
+    const viewFlag = document.getElementById(&#x27;view-flag&#x27;);
+    const params = new URLSearchParams(window.location.search);
+    viewFlag.textContent = params.get(&#x27;view&#x27;) || &#x27;left&#x27;;
+    document.getElementById(&#x27;fixture-title&#x27;).textContent = params.get(&#x27;label&#x27;) || &#x27;Left Iframe Fixture&#x27;;
+    document.getElementById(&#x27;fixture-subtitle&#x27;).textContent = params.get(&#x27;subtitle&#x27;) || &#x27;This iframe is the left-side fixture for recorder testing.&#x27;;
+    const mark = (message) =&gt; { status.textContent = message; };
+    document.getElementById(&#x27;action-button&#x27;).addEventListener(&#x27;click&#x27;, () =&gt; mark(&#x27;Button clicked&#x27;));
+    document.getElementById(&#x27;checkbox-input&#x27;).addEventListener(&#x27;change&#x27;, (event) =&gt; mark(&#x27;Checkbox changed: &#x27; + event.target.checked));
+    document.getElementById(&#x27;radio-one&#x27;).addEventListener(&#x27;change&#x27;, (event) =&gt; { if (event.target.checked) mark(&#x27;Radio one selected&#x27;); });
+    document.getElementById(&#x27;radio-two&#x27;).addEventListener(&#x27;change&#x27;, (event) =&gt; { if (event.target.checked) mark(&#x27;Radio two selected&#x27;); });
+    document.getElementById(&#x27;select-input&#x27;).addEventListener(&#x27;change&#x27;, (event) =&gt; mark(&#x27;Select changed: &#x27; + event.target.value));
+    document.getElementById(&#x27;text-input&#x27;).addEventListener(&#x27;input&#x27;, (event) =&gt; mark(&#x27;Text input: &#x27; + event.target.value));
+    document.getElementById(&#x27;password-input&#x27;).addEventListener(&#x27;input&#x27;, (event) =&gt; mark(&#x27;Password input length: &#x27; + event.target.value.length));
+    document.getElementById(&#x27;textarea-input&#x27;).addEventListener(&#x27;input&#x27;, (event) =&gt; mark(&#x27;Textarea length: &#x27; + event.target.value.length));
+  &lt;/script&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+"></iframe>
+      </section>
+      <section class="frame-card">
+        <h2>Right iframe</h2>
+        <iframe id="right-demo-frame" name="right-demo-frame" title="Right Recorder Frame" srcdoc="&lt;!doctype html&gt;
+&lt;html lang=&quot;en&quot;&gt;
+&lt;head&gt;
+  &lt;meta charset=&quot;utf-8&quot;&gt;
+  &lt;meta name=&quot;viewport&quot; content=&quot;width=device-width, initial-scale=1&quot;&gt;
+  &lt;style&gt;
+    :root {
+      --bg: #fff;
+      --panel: #f8fafc;
+      --ink: #1f2937;
+      --muted: #5b6472;
+      --line: #d9e0ea;
+      --accent: #0f766e;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: Arial, Helvetica, sans-serif;
+      background: var(--bg);
+      color: var(--ink);
+      padding: 18px;
+    }
+    .page {
+      min-width: 760px;
+      padding: 18px;
+      border: 1px solid var(--line);
+      background: linear-gradient(180deg, #ffffff 0%, #f8fbff 100%);
+    }
+    h1 { margin: 0 0 6px; font-size: 1.5rem; }
+    .subtitle { margin: 0 0 16px; color: var(--muted); line-height: 1.5; }
+    .status {
+      margin-bottom: 16px;
+      padding: 10px 12px;
+      border-radius: 10px;
+      background: #ecfeff;
+      border: 1px solid #a5f3fc;
+      color: #155e75;
+      font-size: 0.95rem;
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(260px, 1fr));
+      gap: 14px;
+    }
+    .panel {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      padding: 14px;
+    }
+    .panel h2 { margin: 0 0 10px; font-size: 1rem; }
+    label {
+      display: block;
+      font-weight: 700;
+      margin: 10px 0 6px;
+    }
+    input, textarea, select, button { font: inherit; }
+    input[type=&quot;text&quot;], input[type=&quot;password&quot;], input[type=&quot;email&quot;], input[type=&quot;url&quot;], input[type=&quot;tel&quot;], input[type=&quot;number&quot;], input[type=&quot;date&quot;], input[type=&quot;color&quot;], textarea, select {
+      width: 100%;
+      padding: 10px 12px;
+      border: 1px solid #cbd5e1;
+      border-radius: 10px;
+      background: #fff;
+    }
+    textarea { min-height: 92px; resize: vertical; }
+    .inline {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px 14px;
+      align-items: center;
+      margin-top: 8px;
+    }
+    .inline label {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      margin: 0;
+      font-weight: 400;
+    }
+    .actions {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-top: 12px;
+    }
+    button, a.action-link {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 10px 14px;
+      border-radius: 999px;
+      border: 1px solid var(--accent);
+      background: var(--accent);
+      color: #fff;
+      text-decoration: none;
+      cursor: pointer;
+    }
+    a.action-link.secondary { background: #fff; color: var(--accent); }
+    .editable {
+      min-height: 70px;
+      padding: 10px 12px;
+      border: 1px dashed #94a3b8;
+      border-radius: 10px;
+      background: #fff;
+    }
+    .tall-box {
+      height: 150px;
+      overflow: auto;
+      border: 1px solid #cbd5e1;
+      border-radius: 10px;
+      background: #fff;
+      padding: 10px 12px;
+      line-height: 1.5;
+    }
+    details {
+      margin-top: 12px;
+      background: #fff;
+      border: 1px solid #cbd5e1;
+      border-radius: 10px;
+      padding: 10px 12px;
+    }
+    summary { cursor: pointer; font-weight: 700; }
+    .footer-note {
+      margin-top: 14px;
+      color: var(--muted);
+      font-size: 0.92rem;
+      line-height: 1.5;
+    }
+  &lt;/style&gt;
+&lt;/head&gt;
+&lt;body&gt;
+  &lt;div class=&quot;page&quot;&gt;
+    &lt;h1 id=&quot;fixture-title&quot;&gt;Right Iframe Fixture&lt;/h1&gt;
+    &lt;p class=&quot;subtitle&quot; id=&quot;fixture-subtitle&quot;&gt;This iframe is the right-side fixture for recorder testing.&lt;/p&gt;
+    &lt;div class=&quot;status&quot; id=&quot;status&quot;&gt;Idle&lt;/div&gt;
+
+    &lt;div class=&quot;grid&quot;&gt;
+      &lt;section class=&quot;panel&quot;&gt;
+        &lt;h2&gt;Text Inputs&lt;/h2&gt;
+        &lt;label for=&quot;text-input&quot;&gt;Text box&lt;/label&gt;
+        &lt;input id=&quot;text-input&quot; type=&quot;text&quot; value=&quot;Alpha&quot;&gt;
+
+        &lt;label for=&quot;password-input&quot;&gt;Password box&lt;/label&gt;
+        &lt;input id=&quot;password-input&quot; type=&quot;password&quot; value=&quot;Secret123&quot;&gt;
+
+        &lt;label for=&quot;email-input&quot;&gt;Email box&lt;/label&gt;
+        &lt;input id=&quot;email-input&quot; type=&quot;email&quot; value=&quot;user@example.com&quot;&gt;
+
+        &lt;label for=&quot;textarea-input&quot;&gt;Textarea&lt;/label&gt;
+        &lt;textarea id=&quot;textarea-input&quot;&gt;Recorder iframe content&lt;/textarea&gt;
+      &lt;/section&gt;
+
+      &lt;section class=&quot;panel&quot;&gt;
+        &lt;h2&gt;Choice Controls&lt;/h2&gt;
+        &lt;label&gt;&lt;input id=&quot;checkbox-input&quot; type=&quot;checkbox&quot; checked&gt; Checkbox option&lt;/label&gt;
+
+        &lt;div class=&quot;inline&quot; role=&quot;group&quot; aria-label=&quot;Radio options&quot;&gt;
+          &lt;label&gt;&lt;input type=&quot;radio&quot; name=&quot;frame-radio&quot; id=&quot;radio-one&quot; checked&gt; Radio one&lt;/label&gt;
+          &lt;label&gt;&lt;input type=&quot;radio&quot; name=&quot;frame-radio&quot; id=&quot;radio-two&quot;&gt; Radio two&lt;/label&gt;
+        &lt;/div&gt;
+
+        &lt;label for=&quot;select-input&quot;&gt;Select menu&lt;/label&gt;
+        &lt;select id=&quot;select-input&quot;&gt;
+          &lt;option value=&quot;one&quot;&gt;One&lt;/option&gt;
+          &lt;option value=&quot;two&quot; selected&gt;Two&lt;/option&gt;
+          &lt;option value=&quot;three&quot;&gt;Three&lt;/option&gt;
+        &lt;/select&gt;
+
+        &lt;label for=&quot;number-input&quot;&gt;Number input&lt;/label&gt;
+        &lt;input id=&quot;number-input&quot; type=&quot;number&quot; value=&quot;42&quot;&gt;
+      &lt;/section&gt;
+
+      &lt;section class=&quot;panel&quot;&gt;
+        &lt;h2&gt;Buttons and Links&lt;/h2&gt;
+        &lt;div class=&quot;actions&quot;&gt;
+          &lt;button id=&quot;action-button&quot; type=&quot;button&quot;&gt;Action Button&lt;/button&gt;
+          &lt;a class=&quot;action-link&quot; id=&quot;self-link&quot; href=&quot;#&quot; target=&quot;_self&quot;&gt;Self navigation link&lt;/a&gt;
+          &lt;a class=&quot;action-link secondary&quot; id=&quot;anchor-link&quot; href=&quot;#details-anchor&quot;&gt;Jump to details&lt;/a&gt;
+        &lt;/div&gt;
+
+        &lt;label for=&quot;url-input&quot;&gt;URL input&lt;/label&gt;
+        &lt;input id=&quot;url-input&quot; type=&quot;url&quot; value=&quot;https://example.com&quot;&gt;
+
+        &lt;label for=&quot;date-input&quot;&gt;Date input&lt;/label&gt;
+        &lt;input id=&quot;date-input&quot; type=&quot;date&quot; value=&quot;2026-08-31&quot;&gt;
+      &lt;/section&gt;
+
+      &lt;section class=&quot;panel&quot;&gt;
+        &lt;h2&gt;Additional Controls&lt;/h2&gt;
+        &lt;label for=&quot;color-input&quot;&gt;Color input&lt;/label&gt;
+        &lt;input id=&quot;color-input&quot; type=&quot;color&quot; value=&quot;#3366ff&quot;&gt;
+
+        &lt;label for=&quot;range-input&quot;&gt;Range input&lt;/label&gt;
+        &lt;input id=&quot;range-input&quot; type=&quot;range&quot; min=&quot;0&quot; max=&quot;100&quot; value=&quot;35&quot;&gt;
+
+        &lt;label for=&quot;file-input&quot;&gt;File input&lt;/label&gt;
+        &lt;input id=&quot;file-input&quot; type=&quot;file&quot;&gt;
+
+        &lt;label for=&quot;editable-box&quot;&gt;Contenteditable area&lt;/label&gt;
+        &lt;div id=&quot;editable-box&quot; class=&quot;editable&quot; contenteditable=&quot;true&quot;&gt;Editable iframe text&lt;/div&gt;
+      &lt;/section&gt;
+
+      &lt;section class=&quot;panel&quot;&gt;
+        &lt;h2&gt;Scrollable Area&lt;/h2&gt;
+        &lt;div class=&quot;tall-box&quot; id=&quot;scroll-box&quot;&gt;
+          &lt;p&gt;Line 1 - top&lt;/p&gt;
+          &lt;p&gt;Line 2 - middle&lt;/p&gt;
+          &lt;p&gt;Line 3 - middle&lt;/p&gt;
+          &lt;p&gt;Line 4 - middle&lt;/p&gt;
+          &lt;p&gt;Line 5 - middle&lt;/p&gt;
+          &lt;p&gt;Line 6 - middle&lt;/p&gt;
+          &lt;p&gt;Line 7 - middle&lt;/p&gt;
+          &lt;p&gt;Line 8 - middle&lt;/p&gt;
+          &lt;p&gt;Line 9 - bottom&lt;/p&gt;
+          &lt;p&gt;Line 10 - bottom&lt;/p&gt;
+        &lt;/div&gt;
+      &lt;/section&gt;
+
+      &lt;section class=&quot;panel&quot;&gt;
+        &lt;h2&gt;Details and Summary&lt;/h2&gt;
+        &lt;details id=&quot;details-anchor&quot;&gt;
+          &lt;summary&gt;More iframe details&lt;/summary&gt;
+          &lt;p&gt;This section helps test element expansion and text matching inside the iframe document.&lt;/p&gt;
+        &lt;/details&gt;
+
+        &lt;label for=&quot;tel-input&quot;&gt;Telephone input&lt;/label&gt;
+        &lt;input id=&quot;tel-input&quot; type=&quot;tel&quot; value=&quot;555-0101&quot;&gt;
+
+        &lt;label for=&quot;search-input&quot;&gt;Search input&lt;/label&gt;
+        &lt;input id=&quot;search-input&quot; type=&quot;search&quot; value=&quot;iframe search&quot;&gt;
+      &lt;/section&gt;
+    &lt;/div&gt;
+
+    &lt;p class=&quot;footer-note&quot;&gt;Query parameter: &lt;code id=&quot;view-flag&quot;&gt;right&lt;/code&gt;&lt;/p&gt;
+  &lt;/div&gt;
+
+  &lt;script&gt;
+    const status = document.getElementById(&#x27;status&#x27;);
+    const viewFlag = document.getElementById(&#x27;view-flag&#x27;);
+    const params = new URLSearchParams(window.location.search);
+    viewFlag.textContent = params.get(&#x27;view&#x27;) || &#x27;right&#x27;;
+    document.getElementById(&#x27;fixture-title&#x27;).textContent = params.get(&#x27;label&#x27;) || &#x27;Right Iframe Fixture&#x27;;
+    document.getElementById(&#x27;fixture-subtitle&#x27;).textContent = params.get(&#x27;subtitle&#x27;) || &#x27;This iframe is the right-side fixture for recorder testing.&#x27;;
+    const mark = (message) =&gt; { status.textContent = message; };
+    document.getElementById(&#x27;action-button&#x27;).addEventListener(&#x27;click&#x27;, () =&gt; mark(&#x27;Button clicked&#x27;));
+    document.getElementById(&#x27;checkbox-input&#x27;).addEventListener(&#x27;change&#x27;, (event) =&gt; mark(&#x27;Checkbox changed: &#x27; + event.target.checked));
+    document.getElementById(&#x27;radio-one&#x27;).addEventListener(&#x27;change&#x27;, (event) =&gt; { if (event.target.checked) mark(&#x27;Radio one selected&#x27;); });
+    document.getElementById(&#x27;radio-two&#x27;).addEventListener(&#x27;change&#x27;, (event) =&gt; { if (event.target.checked) mark(&#x27;Radio two selected&#x27;); });
+    document.getElementById(&#x27;select-input&#x27;).addEventListener(&#x27;change&#x27;, (event) =&gt; mark(&#x27;Select changed: &#x27; + event.target.value));
+    document.getElementById(&#x27;text-input&#x27;).addEventListener(&#x27;input&#x27;, (event) =&gt; mark(&#x27;Text input: &#x27; + event.target.value));
+    document.getElementById(&#x27;password-input&#x27;).addEventListener(&#x27;input&#x27;, (event) =&gt; mark(&#x27;Password input length: &#x27; + event.target.value.length));
+    document.getElementById(&#x27;textarea-input&#x27;).addEventListener(&#x27;input&#x27;, (event) =&gt; mark(&#x27;Textarea length: &#x27; + event.target.value.length));
+  &lt;/script&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+"></iframe>
+      </section>
+    </div>
+  </div>
+</body>
+</html>

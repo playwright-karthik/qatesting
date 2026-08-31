@@ -1,0 +1,184 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Ambiguous Iframe Attributes Page</title>
+  <style>
+    body { margin: 0; font-family: Arial, Helvetica, sans-serif; background: #f4f7fb; color: #1f2937; padding: 24px; }
+    .shell { max-width: 1400px; margin: 0 auto; }
+    .back-link { display: inline-block; margin-bottom: 16px; color: #1d4ed8; text-decoration: none; font-weight: 700; }
+    .hero { background: #fff; border: 1px solid #d9e0ea; border-radius: 16px; padding: 20px; box-shadow: 0 10px 24px rgba(15, 23, 42, 0.05); margin-bottom: 16px; }
+    .hero h1 { margin: 0 0 8px; }
+    .hero p { margin: 0; color: #5b6472; line-height: 1.55; }
+    .callout { margin-top: 12px; padding: 12px 14px; border-radius: 12px; background: #fffbeb; border: 1px solid #fcd34d; color: #92400e; line-height: 1.5; }
+    .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(480px, 1fr)); gap: 16px; }
+    .frame-card { background: #fff; border: 1px solid #d9e0ea; border-radius: 16px; padding: 14px; box-shadow: 0 10px 24px rgba(15, 23, 42, 0.05); }
+    .frame-card h2 { margin: 0 0 8px; font-size: 1.05rem; }
+    .frame-card p { margin: 0 0 10px; color: #5b6472; line-height: 1.5; }
+    iframe { width: 100%; height: 780px; border: 2px solid #94a3b8; border-radius: 14px; background: #fff; }
+  </style>
+</head>
+<body>
+  <div class="shell">
+    <a class="back-link" href="index.html">← Back to iframe lab</a>
+    <section class="hero">
+      <h1>Ambiguous Iframe Attributes Test</h1>
+      <p>
+        This page is for duplicate-attribute fallback testing. Both iframes share the same name and class so the resolver should reject those candidates as ambiguous, then move on to the next unique attribute.
+      </p>
+      <div class="callout">
+        Expected behavior: <strong>name</strong> and <strong>class</strong> should be ambiguous, while the iframe <strong>title</strong> should still uniquely identify the intended frame.
+      </div>
+    </section>
+
+    <div class="grid">
+      <section class="frame-card">
+        <h2>Primary iframe</h2>
+        <p>Has the same <code>name</code> and <code>class</code> as the sibling frame, but a unique title and id.</p>
+        <iframe id="ambiguous-primary-frame" name="duplicate-frame" title="Primary Unique Frame" class="duplicate-frame shared-frame" srcdoc="&lt;!doctype html&gt;
+&lt;html lang=&quot;en&quot;&gt;
+&lt;head&gt;
+  &lt;meta charset=&quot;utf-8&quot;&gt;
+  &lt;meta name=&quot;viewport&quot; content=&quot;width=device-width, initial-scale=1&quot;&gt;
+  &lt;style&gt;
+    body { margin: 0; font-family: Arial, Helvetica, sans-serif; background: #fff; color: #1f2937; padding: 16px; }
+    .box { min-width: 720px; border: 1px solid #d9e0ea; border-radius: 14px; padding: 16px; background: linear-gradient(180deg, #ffffff 0%, #f8fbff 100%); }
+    h1 { margin: 0 0 6px; font-size: 1.35rem; }
+    p { margin: 0 0 12px; color: #5b6472; line-height: 1.5; }
+    label { display: block; font-weight: 700; margin: 10px 0 6px; }
+    input, select, textarea, button { font: inherit; }
+    input[type=&quot;text&quot;], input[type=&quot;checkbox&quot;], input[type=&quot;radio&quot;], input[type=&quot;number&quot;], select, textarea {
+      border: 1px solid #cbd5e1;
+      border-radius: 10px;
+      padding: 10px 12px;
+      background: #fff;
+    }
+    input[type=&quot;text&quot;], input[type=&quot;number&quot;], textarea, select { width: 100%; }
+    textarea { min-height: 80px; }
+    .row { display: grid; grid-template-columns: repeat(2, minmax(220px, 1fr)); gap: 12px; }
+    .inline { display: flex; gap: 12px; flex-wrap: wrap; align-items: center; margin-top: 8px; }
+    .controls { margin-top: 16px; display: flex; gap: 10px; flex-wrap: wrap; }
+    button, a { display: inline-flex; align-items: center; justify-content: center; padding: 10px 14px; border-radius: 999px; text-decoration: none; border: 1px solid #0f766e; background: #0f766e; color: #fff; }
+    .secondary { background: #fff; color: #0f766e; }
+    .scroll { margin-top: 16px; height: 140px; overflow: auto; border: 1px solid #cbd5e1; border-radius: 10px; padding: 10px 12px; background: #fff; line-height: 1.5; }
+  &lt;/style&gt;
+&lt;/head&gt;
+&lt;body&gt;
+  &lt;div class=&quot;box&quot;&gt;
+    &lt;h1 id=&quot;fixture-title&quot;&gt;Ambiguity Fixture&lt;/h1&gt;
+    &lt;p id=&quot;fixture-subtitle&quot;&gt;Child content for duplicate iframe attribute fallback testing.&lt;/p&gt;
+    &lt;div class=&quot;row&quot;&gt;
+      &lt;div&gt;
+        &lt;label for=&quot;name-input&quot;&gt;Text input&lt;/label&gt;
+        &lt;input id=&quot;name-input&quot; type=&quot;text&quot; value=&quot;Alpha&quot;&gt;
+      &lt;/div&gt;
+      &lt;div&gt;
+        &lt;label for=&quot;number-input&quot;&gt;Number input&lt;/label&gt;
+        &lt;input id=&quot;number-input&quot; type=&quot;number&quot; value=&quot;7&quot;&gt;
+      &lt;/div&gt;
+      &lt;div&gt;
+        &lt;label&gt;&lt;input id=&quot;check-input&quot; type=&quot;checkbox&quot; checked&gt; Checkbox option&lt;/label&gt;
+      &lt;/div&gt;
+      &lt;div class=&quot;inline&quot; role=&quot;group&quot; aria-label=&quot;Radio group&quot;&gt;
+        &lt;label&gt;&lt;input id=&quot;radio-a&quot; type=&quot;radio&quot; name=&quot;radio-choice&quot; checked&gt; Radio A&lt;/label&gt;
+        &lt;label&gt;&lt;input id=&quot;radio-b&quot; type=&quot;radio&quot; name=&quot;radio-choice&quot;&gt; Radio B&lt;/label&gt;
+      &lt;/div&gt;
+      &lt;div&gt;
+        &lt;label for=&quot;select-input&quot;&gt;Select&lt;/label&gt;
+        &lt;select id=&quot;select-input&quot;&gt;&lt;option&gt;One&lt;/option&gt;&lt;option selected&gt;Two&lt;/option&gt;&lt;option&gt;Three&lt;/option&gt;&lt;/select&gt;
+      &lt;/div&gt;
+      &lt;div&gt;
+        &lt;label for=&quot;textarea-input&quot;&gt;Textarea&lt;/label&gt;
+        &lt;textarea id=&quot;textarea-input&quot;&gt;Ambiguous iframe content&lt;/textarea&gt;
+      &lt;/div&gt;
+    &lt;/div&gt;
+    &lt;div class=&quot;controls&quot;&gt;
+      &lt;button id=&quot;action-button&quot; type=&quot;button&quot;&gt;Action Button&lt;/button&gt;
+      &lt;a id=&quot;action-link&quot; href=&quot;#end&quot; class=&quot;secondary&quot;&gt;Jump to bottom&lt;/a&gt;
+    &lt;/div&gt;
+    &lt;div class=&quot;scroll&quot; id=&quot;end&quot;&gt;
+      &lt;p&gt;Scrollable line 1&lt;/p&gt;&lt;p&gt;Scrollable line 2&lt;/p&gt;&lt;p&gt;Scrollable line 3&lt;/p&gt;&lt;p&gt;Scrollable line 4&lt;/p&gt;&lt;p&gt;Scrollable line 5&lt;/p&gt;
+    &lt;/div&gt;
+  &lt;/div&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+"></iframe>
+      </section>
+
+      <section class="frame-card">
+        <h2>Sibling iframe</h2>
+        <p>Shares the duplicate attributes but should not be selected when the resolver falls through to the unique title.</p>
+        <iframe id="ambiguous-sibling-frame" name="duplicate-frame" title="Sibling Unique Frame" class="duplicate-frame shared-frame" srcdoc="&lt;!doctype html&gt;
+&lt;html lang=&quot;en&quot;&gt;
+&lt;head&gt;
+  &lt;meta charset=&quot;utf-8&quot;&gt;
+  &lt;meta name=&quot;viewport&quot; content=&quot;width=device-width, initial-scale=1&quot;&gt;
+  &lt;style&gt;
+    body { margin: 0; font-family: Arial, Helvetica, sans-serif; background: #fff; color: #1f2937; padding: 16px; }
+    .box { min-width: 720px; border: 1px solid #d9e0ea; border-radius: 14px; padding: 16px; background: linear-gradient(180deg, #ffffff 0%, #f8fbff 100%); }
+    h1 { margin: 0 0 6px; font-size: 1.35rem; }
+    p { margin: 0 0 12px; color: #5b6472; line-height: 1.5; }
+    label { display: block; font-weight: 700; margin: 10px 0 6px; }
+    input, select, textarea, button { font: inherit; }
+    input[type=&quot;text&quot;], input[type=&quot;checkbox&quot;], input[type=&quot;radio&quot;], input[type=&quot;number&quot;], select, textarea {
+      border: 1px solid #cbd5e1;
+      border-radius: 10px;
+      padding: 10px 12px;
+      background: #fff;
+    }
+    input[type=&quot;text&quot;], input[type=&quot;number&quot;], textarea, select { width: 100%; }
+    textarea { min-height: 80px; }
+    .row { display: grid; grid-template-columns: repeat(2, minmax(220px, 1fr)); gap: 12px; }
+    .inline { display: flex; gap: 12px; flex-wrap: wrap; align-items: center; margin-top: 8px; }
+    .controls { margin-top: 16px; display: flex; gap: 10px; flex-wrap: wrap; }
+    button, a { display: inline-flex; align-items: center; justify-content: center; padding: 10px 14px; border-radius: 999px; text-decoration: none; border: 1px solid #0f766e; background: #0f766e; color: #fff; }
+    .secondary { background: #fff; color: #0f766e; }
+    .scroll { margin-top: 16px; height: 140px; overflow: auto; border: 1px solid #cbd5e1; border-radius: 10px; padding: 10px 12px; background: #fff; line-height: 1.5; }
+  &lt;/style&gt;
+&lt;/head&gt;
+&lt;body&gt;
+  &lt;div class=&quot;box&quot;&gt;
+    &lt;h1 id=&quot;fixture-title&quot;&gt;Ambiguity Fixture&lt;/h1&gt;
+    &lt;p id=&quot;fixture-subtitle&quot;&gt;Child content for duplicate iframe attribute fallback testing.&lt;/p&gt;
+    &lt;div class=&quot;row&quot;&gt;
+      &lt;div&gt;
+        &lt;label for=&quot;name-input&quot;&gt;Text input&lt;/label&gt;
+        &lt;input id=&quot;name-input&quot; type=&quot;text&quot; value=&quot;Alpha&quot;&gt;
+      &lt;/div&gt;
+      &lt;div&gt;
+        &lt;label for=&quot;number-input&quot;&gt;Number input&lt;/label&gt;
+        &lt;input id=&quot;number-input&quot; type=&quot;number&quot; value=&quot;7&quot;&gt;
+      &lt;/div&gt;
+      &lt;div&gt;
+        &lt;label&gt;&lt;input id=&quot;check-input&quot; type=&quot;checkbox&quot; checked&gt; Checkbox option&lt;/label&gt;
+      &lt;/div&gt;
+      &lt;div class=&quot;inline&quot; role=&quot;group&quot; aria-label=&quot;Radio group&quot;&gt;
+        &lt;label&gt;&lt;input id=&quot;radio-a&quot; type=&quot;radio&quot; name=&quot;radio-choice&quot; checked&gt; Radio A&lt;/label&gt;
+        &lt;label&gt;&lt;input id=&quot;radio-b&quot; type=&quot;radio&quot; name=&quot;radio-choice&quot;&gt; Radio B&lt;/label&gt;
+      &lt;/div&gt;
+      &lt;div&gt;
+        &lt;label for=&quot;select-input&quot;&gt;Select&lt;/label&gt;
+        &lt;select id=&quot;select-input&quot;&gt;&lt;option&gt;One&lt;/option&gt;&lt;option selected&gt;Two&lt;/option&gt;&lt;option&gt;Three&lt;/option&gt;&lt;/select&gt;
+      &lt;/div&gt;
+      &lt;div&gt;
+        &lt;label for=&quot;textarea-input&quot;&gt;Textarea&lt;/label&gt;
+        &lt;textarea id=&quot;textarea-input&quot;&gt;Ambiguous iframe content&lt;/textarea&gt;
+      &lt;/div&gt;
+    &lt;/div&gt;
+    &lt;div class=&quot;controls&quot;&gt;
+      &lt;button id=&quot;action-button&quot; type=&quot;button&quot;&gt;Action Button&lt;/button&gt;
+      &lt;a id=&quot;action-link&quot; href=&quot;#end&quot; class=&quot;secondary&quot;&gt;Jump to bottom&lt;/a&gt;
+    &lt;/div&gt;
+    &lt;div class=&quot;scroll&quot; id=&quot;end&quot;&gt;
+      &lt;p&gt;Scrollable line 1&lt;/p&gt;&lt;p&gt;Scrollable line 2&lt;/p&gt;&lt;p&gt;Scrollable line 3&lt;/p&gt;&lt;p&gt;Scrollable line 4&lt;/p&gt;&lt;p&gt;Scrollable line 5&lt;/p&gt;
+    &lt;/div&gt;
+  &lt;/div&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+"></iframe>
+      </section>
+    </div>
+  </div>
+</body>
+</html>
