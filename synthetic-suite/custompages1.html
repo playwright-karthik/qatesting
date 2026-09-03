@@ -1,0 +1,116 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Synthetic Waterfall Page</title>
+<style>
+body{font-family:Arial,sans-serif;margin:32px;line-height:1.45}
+code{background:#f2f2f2;padding:2px 5px}
+table{border-collapse:collapse;margin-top:16px}
+th,td{border:1px solid #bbb;padding:7px 12px;text-align:left}
+.ok{color:green}.warn{color:#9a6700}
+#resources{position:absolute;left:-10000px;width:1px;height:1px;overflow:hidden}
+</style>
+</head>
+<body>
+<h1>Synthetic Waterfall Page</h1>
+<p>GitHub Pages compatible static network-request generator.</p>
+<p id="url"></p>
+<table>
+<thead><tr><th>Resource type</th><th>Requested</th></tr></thead>
+<tbody id="summary"></tbody>
+<tfoot><tr><th>Total child requests</th><th id="total">0</th></tr></tfoot>
+</table>
+<p id="status" class="ok">Generating requests...</p>
+<div id="resources"></div>
+
+<script>
+(() => {
+  const p = new URLSearchParams(location.search);
+  const MAX = 100;
+  const types = ["css","js","img","json","iframe"];
+  const counts = Object.fromEntries(types.map(t => [t, 0]));
+
+  const clamp = v => {
+    const n = Number.parseInt(v,10);
+    return Number.isFinite(n) ? Math.max(0,Math.min(MAX,n)) : 0;
+  };
+
+  // Supported:
+  // ?css=3&js=2&img=4&json=2&iframe=1
+  // ?count=3&type=css
+  // ?count=3&type=all
+  // ?count=3  -> defaults to all resource types
+  const genericCount = clamp(p.get("count"));
+  const requestedType = (p.get("type") || "all").toLowerCase();
+
+  if (p.has("count")) {
+    if (requestedType === "all") types.forEach(t => counts[t] = genericCount);
+    else if (types.includes(requestedType)) counts[requestedType] = genericCount;
+  }
+  types.forEach(t => { if (p.has(t)) counts[t] = clamp(p.get(t)); });
+
+  // Optional cache busting. Default true.
+  const cacheBust = p.get("cacheBust") !== "false";
+  const run = Date.now() + "-" + Math.random().toString(36).slice(2);
+  const u = path => path + (cacheBust ? "?run=" + encodeURIComponent(run) : "");
+
+  const holder = document.getElementById("resources");
+
+  // CSS: each LINK creates an actual stylesheet request.
+  for(let i=1;i<=counts.css;i++){
+    const el=document.createElement("link");
+    el.rel="stylesheet"; el.href=u(`synthetic-resources/css/resource-${i}.css`);
+    document.head.appendChild(el);
+  }
+
+  // JS: each SCRIPT creates an actual script request.
+  for(let i=1;i<=counts.js;i++){
+    const el=document.createElement("script");
+    el.src=u(`synthetic-resources/js/resource-${i}.js`);
+    el.async=true;
+    document.body.appendChild(el);
+  }
+
+  // Images.
+  for(let i=1;i<=counts.img;i++){
+    const el=document.createElement("img");
+    el.src=u(`synthetic-resources/images/resource-${i}.svg`);
+    el.alt=`synthetic image ${i}`;
+    holder.appendChild(el);
+  }
+
+  // JSON via fetch. Each URL is unique and appears as Fetch/XHR in DevTools.
+  for(let i=1;i<=counts.json;i++){
+    fetch(u(`synthetic-resources/json/resource-${i}.json`))
+      .then(r => { if(!r.ok) throw new Error(r.status); return r.json(); })
+      .catch(e => console.error("JSON resource failed", i, e));
+  }
+
+  // Iframes.
+  for(let i=1;i<=counts.iframe;i++){
+    const el=document.createElement("iframe");
+    el.src=u(`synthetic-resources/iframe/frame-${i}.html`);
+    el.title=`synthetic iframe ${i}`;
+    holder.appendChild(el);
+  }
+
+  const labels={css:"CSS",js:"JavaScript",img:"Image",json:"JSON / Fetch",iframe:"Iframe"};
+  const tbody=document.getElementById("summary");
+  let total=0;
+  types.forEach(t=>{
+    total+=counts[t];
+    const tr=document.createElement("tr");
+    tr.innerHTML=`<td>${labels[t]}</td><td>${counts[t]}</td>`;
+    tbody.appendChild(tr);
+  });
+  document.getElementById("total").textContent=total;
+  document.getElementById("url").innerHTML=`Current query: <code>${location.search || "(none)"}</code>`;
+  document.getElementById("status").textContent =
+    total ? `Generated ${total} child network request(s). Open DevTools → Network to inspect the waterfall.`
+          : "No child requests requested. Add query parameters to the URL.";
+})();
+</script>
+</body>
+</html>
