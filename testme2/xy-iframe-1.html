@@ -3,25 +3,27 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Single iFrame Layer</title>
+    <title>Single iFrame Wrapper</title>
     <style>
         body {
             margin: 0;
             padding: 20px;
-            background-color: #e9ecef;
             font-family: Arial, sans-serif;
+            background-color: #f4f6f9;
         }
         iframe {
             width: 100%;
-            height: 500px;
+            height: 600px;
             border: 2px dashed #007bff;
             border-radius: 8px;
-            background-color: white;
+            background-color: #ffffff;
         }
     </style>
 </head>
 <body>
-    <h3>Single iFrame Layer (Loads login.html)</h3>
-    <iframe src="login.html" title="Login iFrame"></iframe>
+    <h2>Single iFrame Level (xy-iframe-1.html)</h2>
+    <p>Loading <code>up1.html</code> inside an iframe below:</p>
+    
+    <iframe src="../up1.html" title="Login Test Page iFrame"></iframe>
 </body>
 </html>
