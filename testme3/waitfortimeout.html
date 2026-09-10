@@ -9,49 +9,64 @@
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
             background-color: #f0f4f8;
             color: #333;
-            max-width: 650px;
-            margin: 50px auto;
+            max-width: 750px;
+            margin: 40px auto;
             padding: 20px;
         }
         .card {
             background: white;
-            padding: 30px;
+            padding: 35px;
             border-radius: 12px;
             box-shadow: 0 4px 15px rgba(0,0,0,0.05);
             border: 1px solid #d0d7de;
             text-align: center;
         }
+        h2 {
+            font-size: 1.8rem;
+            margin-top: 0;
+        }
+        .instruction {
+            font-size: 1.15rem;
+        }
+        /* Main Timer Display - Scaled Up */
         .timer-display {
             font-family: 'Courier New', Courier, monospace;
-            font-size: 2.8rem;
-            color: #1a1a1a;
-            margin: 20px 0;
+            font-size: 4.5rem;
+            margin: 25px 0;
             font-weight: bold;
             background: #24292e;
             color: #ff79c6;
-            padding: 15px;
-            border-radius: 8px;
+            padding: 20px;
+            border-radius: 10px;
             box-shadow: inset 0 2px 8px rgba(0,0,0,0.2);
+            letter-spacing: 2px;
         }
         .metric-matrix {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 15px;
+            gap: 18px;
             margin-bottom: 25px;
         }
         .metric-box {
             background: #fafafa;
-            padding: 12px;
-            border-radius: 6px;
+            padding: 16px;
+            border-radius: 8px;
             border: 1px solid #e1e4e8;
+        }
+        .metric-box label {
+            font-size: 0.95rem;
+            color: #555;
+            font-weight: bold;
+            display: block;
+            margin-bottom: 8px;
         }
         .interactive-btn {
             background-color: #bdc3c7;
             color: #7f8c8d;
-            padding: 16px 30px;
+            padding: 20px 30px;
             border: none;
-            border-radius: 6px;
-            font-size: 1.1rem;
+            border-radius: 8px;
+            font-size: 1.4rem;
             font-weight: bold;
             cursor: not-allowed;
             transition: all 0.2s ease;
@@ -70,17 +85,30 @@
             color: white;
             cursor: pointer;
         }
+        /* Badges & Status Text - Scaled Up */
         .status-badge {
             display: inline-block;
-            padding: 4px 10px;
-            border-radius: 4px;
-            font-size: 0.85rem;
+            padding: 6px 16px;
+            border-radius: 6px;
+            font-size: 1.15rem;
             font-weight: bold;
             background: #e74c3c;
             color: white;
         }
         .status-badge.ready { background: #2ecc71; }
         .status-badge.clicked-active { background: #9b59b6; }
+        
+        #click-timestamp {
+            font-weight: bold;
+            color: #9b59b6;
+            font-size: 1.4rem;
+        }
+        #gate-timer {
+            font-weight: bold;
+            color: #e67e22;
+            margin-bottom: 25px;
+            font-size: 1.35rem;
+        }
     </style>
 </head>
 <body>
@@ -91,17 +119,17 @@
         
         <div class="metric-matrix">
             <div class="metric-box">
-                <div style="font-size: 0.78rem; color: #666; font-weight: bold;">GATE RESOLUTION</div>
-                <div id="status" class="status-badge" style="margin-top: 5px;">LOCKED</div>
+                <label>GATE RESOLUTION</label>
+                <div id="status" class="status-badge">LOCKED</div>
             </div>
             <div class="metric-box">
-                <div style="font-size: 0.78rem; color: #666; font-weight: bold;">LAST CLICK CAPTURED AT</div>
-                <div id="click-timestamp" style="font-weight: bold; color: #9b59b6; font-size: 1.1rem; margin-top: 3px;">&lt;no interaction&gt;</div>
+                <label>LAST CLICK CAPTURED AT</label>
+                <div id="click-timestamp">&lt;no interaction&gt;</div>
             </div>
         </div>
 
         <div class="timer-display" id="elapsed-counter">0.00s</div>
-        <div id="gate-timer" style="font-weight: bold; color: #e67e22; margin-bottom: 20px;">5000ms REMAINING UNTIL GATE OPEN</div>
+        <div id="gate-timer">5000ms REMAINING UNTIL GATE OPEN</div>
 
         <button id="target-action-btn" class="interactive-btn" disabled onclick="handleExecutionClick()">
             Locked Action Element
