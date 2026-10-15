@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Range Request Test</title>
+</head>
+<body>
+  <h1>Range Request Test</h1>
+  <p>This page fetches a static file with a Range header and displays the result.</p>
+  <pre id="result">Running…</pre>
+
+  <script>
+    async function run() {
+      const output = document.getElementById("result");
+      const url = new URL("range-test.bin", window.location.href);
+
+      try {
+        const response = await fetch(url, {
+          headers: { Range: "bytes=0-99" },
+          cache: "no-store"
+        });
+
+        output.textContent = [
+          `URL: ${url}`,
+          `Status: ${response.status} ${response.statusText}`,
+          `Content-Range: ${response.headers.get("Content-Range") || "(not exposed)"}`,
+          `Accept-Ranges: ${response.headers.get("Accept-Ranges") || "(not exposed)"}`,
+          `Bytes received: ${(await response.arrayBuffer()).byteLength}`
+        ].join("\n");
+      } catch (error) {
+        output.textContent = `Fetch failed: ${error}`;
+      }
+    }
+
+    run();
+  </script>
+</body>
+</html>
