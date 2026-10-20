@@ -14,6 +14,7 @@
 <p><strong>Page UA:</strong> <code id="ua"></code></p>
 <label for="endpoint">POST endpoint</label>
 <input id="endpoint" type="url">
+<p><strong>Active POST endpoint:</strong> <code id="endpointDisplay"></code></p>
 <label for="navigateTo">Destination URL for C after the keepalive POST starts</label>
 <input id="navigateTo" type="url">
 <div class="row">
@@ -28,11 +29,18 @@ const $ = id => document.getElementById(id);
 const log = (message, data) => { $("log").textContent += "[" + new Date().toISOString() + "] " + message + (data ? "\n" + JSON.stringify(data, null, 2) : "") + "\n\n"; };
 const endpoint = $("endpoint");
 const navigateTo = $("navigateTo");
-endpoint.value = location.href;
+const endpointStorageKey = "keepalive-ua-lab-endpoint";
+endpoint.value = localStorage.getItem(endpointStorageKey) || location.href;
 navigateTo.value = new URL(location.href).toString();
 $("ua").textContent = navigator.userAgent;
 const params = new URLSearchParams(location.search);
 if (params.has("endpoint")) endpoint.value = params.get("endpoint");
+const updateEndpointDisplay = () => {
+  $("endpointDisplay").textContent = endpoint.value || "(enter an endpoint)";
+  localStorage.setItem(endpointStorageKey, endpoint.value);
+};
+endpoint.addEventListener("input", updateEndpointDisplay);
+updateEndpointDisplay();
 async function send(keepalive) {
   const url = new URL(endpoint.value, location.href);
   const id = (keepalive ? "keepalive" : "normal") + "-" + Date.now();
