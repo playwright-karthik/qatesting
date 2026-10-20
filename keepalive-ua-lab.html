@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Fetch keepalive UA experiment</title>
+<style>
+:root{color-scheme:light dark;font:16px/1.5 system-ui,sans-serif}body{max-width:900px;margin:2rem auto;padding:0 1rem}h1{line-height:1.15}.note{padding:.8rem 1rem;border-left:4px solid #4b9;background:#8882}label{display:block;font-weight:600;margin:.9rem 0 .25rem}input{box-sizing:border-box;width:100%;padding:.65rem;font:inherit}button{padding:.65rem 1rem;margin:.4rem .4rem .4rem 0;font:inherit;cursor:pointer}pre{white-space:pre-wrap;overflow-wrap:anywhere;padding:1rem;background:#8882;min-height:8rem;border-radius:.4rem}.row{display:flex;flex-wrap:wrap;gap:.4rem}
+</style>
+</head>
+<body>
+<h1>Fetch keepalive UA experiment</h1>
+<p class="note">Each test sends a same-origin POST without setting a User-Agent header. Inspect the request in Playwright debug logs or NetLog. Use an endpoint that accepts POST and does not redirect for clean comparisons.</p>
+<p><strong>Page UA:</strong> <code id="ua"></code></p>
+<label for="endpoint">POST endpoint for A and B</label>
+<input id="endpoint" type="url">
+<label for="navigateTo">Destination URL for C after the keepalive POST starts</label>
+<input id="navigateTo" type="url">
+<div class="row">
+<button id="normal">A &mdash; Normal fetch, no navigation</button>
+<button id="keepalive">B &mdash; Keepalive fetch, no navigation</button>
+<button id="navigate">C &mdash; Keepalive fetch, then navigate</button>
+<button id="clear">Clear log</button>
+</div>
+<pre id="log" aria-live="polite"></pre>
+<script>
+const $ = id => document.getElementById(id);
+const log = (message, data) => { $("log").textContent += "[" + new Date().toISOString() + "] " + message + (data ? "\n" + JSON.stringify(data, null, 2) : "") + "\n\n"; };
+const endpoint = $("endpoint");
+const navigateTo = $("navigateTo");
+endpoint.value = location.href;
+navigateTo.value = new URL(location.href).toString();
+$("ua").textContent = navigator.userAgent;
+async function send(keepalive) {
+  const url = new URL(endpoint.value, location.href);
+  if (url.origin !== location.origin) throw new Error("Use a same-origin endpoint; cross-origin requests may be blocked by CORS.");
+  const id = (keepalive ? "keepalive" : "normal") + "-" + Date.now();
+  log("Starting " + (keepalive ? "keepalive" : "normal") + " POST", {url: url.href, id, pageUA: navigator.userAgent, keepalive});
+  // Deliberately do not set User-Agent: page JavaScript cannot set this forbidden header.
+  const promise = fetch(url, {method: "POST", keepalive, headers: {"Content-Type": "text/plain"}, body: JSON.stringify({experiment: id, keepalive, startedAt: new Date().toISOString()})});
+  promise.then(async response => log(id + ": response", {status: response.status, url: response.url}))
+    .catch(error => log(id + ": fetch rejected", {message: String(error)}));
+  return promise;
+}
+$("normal").addEventListener("click", () => send(false).catch(e => log("A failed to start", {message:String(e)})));
+$("keepalive").addEventListener("click", () => send(true).catch(e => log("B failed to start", {message:String(e)})));
+$("navigate").addEventListener("click", () => {
+  const target = navigateTo.value;
+  try { const url = new URL(target, location.href); if (url.protocol !== "http:" && url.protocol !== "https:") throw new Error("Destination must use HTTP or HTTPS."); }
+  catch (e) { log("C has an invalid destination", {message:String(e)}); return; }
+  send(true).catch(e => log("C failed to start", {message:String(e)}));
+  log("C navigating immediately after starting the keepalive POST", {destination: target});
+  location.assign(target);
+});
+$("clear").addEventListener("click", () => { $("log").textContent = ""; });
+log("Ready", {origin: location.origin, endpoint: endpoint.value});
+</script>
+</body>
+</html>
