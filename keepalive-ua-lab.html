@@ -10,9 +10,9 @@
 </head>
 <body>
 <h1>Fetch keepalive UA experiment</h1>
-<p class="note">Each test sends a same-origin POST without setting a User-Agent header. Inspect the request in Playwright debug logs or NetLog. Use an endpoint that accepts POST and does not redirect for clean comparisons.</p>
+<p class="note">Each test sends a POST without setting a User-Agent header. Inspect the request in Playwright debug logs or NetLog. For a cross-origin endpoint, use a CORS-enabled receiver if you need to read its response; the browser can still send some requests even when JavaScript cannot read the response.</p>
 <p><strong>Page UA:</strong> <code id="ua"></code></p>
-<label for="endpoint">POST endpoint for A and B</label>
+<label for="endpoint">POST endpoint</label>
 <input id="endpoint" type="url">
 <label for="navigateTo">Destination URL for C after the keepalive POST starts</label>
 <input id="navigateTo" type="url">
@@ -31,12 +31,14 @@ const navigateTo = $("navigateTo");
 endpoint.value = location.href;
 navigateTo.value = new URL(location.href).toString();
 $("ua").textContent = navigator.userAgent;
+const params = new URLSearchParams(location.search);
+if (params.has("endpoint")) endpoint.value = params.get("endpoint");
 async function send(keepalive) {
   const url = new URL(endpoint.value, location.href);
-  if (url.origin !== location.origin) throw new Error("Use a same-origin endpoint; cross-origin requests may be blocked by CORS.");
   const id = (keepalive ? "keepalive" : "normal") + "-" + Date.now();
   log("Starting " + (keepalive ? "keepalive" : "normal") + " POST", {url: url.href, id, pageUA: navigator.userAgent, keepalive});
   // Deliberately do not set User-Agent: page JavaScript cannot set this forbidden header.
+  // text/plain keeps this a CORS-safelisted content type for cross-origin endpoints.
   const promise = fetch(url, {method: "POST", keepalive, headers: {"Content-Type": "text/plain"}, body: JSON.stringify({experiment: id, keepalive, startedAt: new Date().toISOString()})});
   promise.then(async response => log(id + ": response", {status: response.status, url: response.url}))
     .catch(error => log(id + ": fetch rejected", {message: String(error)}));
