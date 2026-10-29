@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Register Account</title>
+  <style>
+    :root { color-scheme: light; font-family: Arial, Helvetica, sans-serif; color: #333; }
+    body { margin: 0; background: #fff; }
+    main { max-width: 920px; margin: 36px auto; padding: 0 20px; }
+    h1.page-title.h3 { margin: 0 0 24px; font-size: 28px; font-weight: 500; }
+    h2 { margin: 24px 0 14px; font-size: 20px; }
+    .field { margin: 0 0 14px; }
+    label { display: block; margin-bottom: 6px; }
+    input.form-control { display: block; box-sizing: border-box; width: 100%; height: 38px; padding: 8px 12px; border: 1px solid #ccc; border-radius: 4px; font-size: 14px; }
+    .newsletter { display: flex; gap: 18px; align-items: center; margin: 10px 0 18px; }
+    .newsletter label { display: inline-flex; gap: 6px; align-items: center; margin: 0; }
+    .agree { display: flex; gap: 8px; align-items: center; margin: 16px 0; }
+    button { padding: 9px 16px; color: #fff; background: #337ab7; border: 1px solid #2e6da4; border-radius: 4px; cursor: pointer; }
+    .alert { padding: 12px 16px; margin: 0 0 20px; border: 1px solid transparent; border-radius: 4px; }
+    .alert-danger { color: #a94442; background: #f2dede; border-color: #ebccd1; }
+    [hidden] { display: none !important; }
+  </style>
+</head>
+<body>
+  <main>
+    <section id="warning" class="alert alert-danger alert-dismissible" role="alert" hidden>
+      Warning: You must agree to the Privacy Policy!
+    </section>
+    <h1 class="page-title h3">Register Account</h1>
+    <p>If you already have an account with us, please login at the login page.</p>
+
+    <form id="register-form" novalidate>
+      <h2>Your Personal Details</h2>
+      <div class="field">
+        <label for="input-firstname">First Name</label>
+        <input class="form-control" id="input-firstname" name="firstname" type="text">
+      </div>
+      <div class="field">
+        <label for="input-lastname">Last Name</label>
+        <input class="form-control" id="input-lastname" name="lastname" type="text">
+      </div>
+      <div class="field">
+        <label for="input-email">E-Mail</label>
+        <input class="form-control" id="input-email" name="email" type="email">
+      </div>
+      <div class="field">
+        <label for="input-telephone">Telephone</label>
+        <input class="form-control" id="input-telephone" name="telephone" type="tel">
+      </div>
+
+      <h2>Your Password</h2>
+      <div class="field">
+        <label for="input-password">Password</label>
+        <input class="form-control" id="input-password" name="password" type="password">
+      </div>
+      <div class="field">
+        <label for="input-confirm">Password Confirm</label>
+        <input class="form-control" id="input-confirm" name="confirm" type="password">
+      </div>
+
+      <h2>Newsletter</h2>
+      <div>Subscribe</div>
+      <div class="newsletter">
+        <label><input id="input-newsletter-yes" name="newsletter" type="radio" value="1"> Yes</label>
+        <label><input id="input-newsletter-no" name="newsletter" type="radio" value="0" checked> No</label>
+      </div>
+
+      <label class="agree">
+        <input id="input-agree" name="agree" type="checkbox">
+        <span>I have read and agree to the Privacy Policy</span>
+      </label>
+      <button type="submit" value="Continue">Continue</button>
+    </form>
+  </main>
+  <script>
+    document.getElementById('register-form').addEventListener('submit', (event) => {
+      event.preventDefault();
+      const warning = document.getElementById('warning');
+      warning.hidden = document.getElementById('input-agree').checked;
+      if (!warning.hidden) warning.scrollIntoView({ block: 'nearest' });
+    });
+  </script>
+</body>
+</html>
