@@ -108,8 +108,8 @@
         <div class="control-group">
             <label for="browser">Browser Type</label>
             <select id="browser">
-                <option value="chrome" selected>Chrome</option>
-                <option value="msedge">MS Edge</option>
+                <option value="chrome" selected>Chrome-Monitor</option>
+                <option value="msedge">Edge-Monitor</option>
             </select>
         </div>
 
@@ -149,11 +149,11 @@
 
             const isPlaywright = engine === "playwright";
             const pluginDir = isPlaywright
-                ? "/opt/CatchPoint/Agent/Plugins/Native/Playwright"
-                : "/opt/CatchPoint/Agent/Plugins/Native/Puppeteer";
+                ? "/var/CatchPoint/Agent/Plugins/Playwright"
+                : "/var/CatchPoint/Agent/Plugins/Playwright";
             const dataDir = isPlaywright
                 ? "/var/CatchPoint/Agent/Plugins/Playwright"
-                : "/var/CatchPoint/Agent/Plugins/Puppeteer";
+                : "/var/CatchPoint/Agent/Plugins/Playwright";
             const testUrl = isPlaywright
                 ? "cp-playwright-http://localhost/"
                 : "cp-puppeteer-http://localhost/";
