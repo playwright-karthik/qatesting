@@ -195,7 +195,7 @@
             const safeBashJson = escapeForBashSingleQuotes(jsonString);
 
             // Includes cd into the plugin directory so ./dns-resolver-override.sh resolves properly
-            const command = `cd ${pluginDir} && echo '${safeBashJson}' | ./launcher.sh`;
+            const command = `cd ${pluginDir} && echo '${safeBashJson}' | ./opt/CatchPoint/Agent/Plugins/Native/Playwright/launcher.sh`;
 
             document.getElementById('output').innerText = command;
         }
